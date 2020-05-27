@@ -36,7 +36,7 @@ CREATE TABLE dbo.DimAcademicCalendar
 CREATE TABLE dbo.DimSchool
 (
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
-  [_sourceKey] NVARCHAR(50) NOT NULL,  
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|Id'
   
   SchoolCode NVARCHAR(15) NOT NULL,     
   SchoolName NVARCHAR(100) NOT NULL,    
