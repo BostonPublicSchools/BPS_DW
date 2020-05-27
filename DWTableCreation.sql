@@ -49,8 +49,8 @@ CREATE TABLE dbo.DimSchool
   
   GradeLevelsServed NVARCHAR(100) NOT NULL,  -- KG,01,02,03,04,05
 
-  GradeLevelsServed_Lowest CHAR(2) NOT NULL, -- KG
-  GradeLevelsServed_Highest CHAR(2) NOT NULL, -- 05
+  GradeLevelsServed_Lowest CHAR(2) NULL, -- KG
+  GradeLevelsServed_Highest CHAR(2) NULL, -- 05
 
   GradeLevelsServed_KGIndicator CHAR(1) NOT NULL, -- Y,N
   GradeLevelsServed_01Indicator CHAR(1) NOT NULL, -- Y,N
@@ -67,7 +67,7 @@ CREATE TABLE dbo.DimSchool
   GradeLevelsServed_12Indicator CHAR(1) NOT NULL, -- Y,N
 
   Title1Indicator CHAR(1) NOT NULL, -- Y,N
-  AYPIndicator CHAR(1) NOT NULL, -- Y,N
+  AYPIndicator CHAR(1) NULL, -- Y,N
 
   EffectiveStartDate DATETIME NOT NULL,
   EffectiveEndDate DATETIME NOT NULL,
