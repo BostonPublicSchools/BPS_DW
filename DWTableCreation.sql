@@ -6,7 +6,7 @@ CREATE TABLE dbo.Lineage
    EndTime DATETIME NULL,
    LoadType CHAR(1) NOT NULL , -- F = Full, I = Incremental
    [Status] CHAR(1) NOT NULL, -- P = Processing , S = Success
-   CONSTRAINT PK_DimAcademicCalendar PRIMARY KEY (LineageKey),
+   CONSTRAINT PK_Lineage PRIMARY KEY (LineageKey),
 );
 
 CREATE TABLE dbo.DimAcademicCalendar
@@ -29,6 +29,54 @@ CREATE TABLE dbo.DimAcademicCalendar
 
   CONSTRAINT PK_DimAcademicCalendar PRIMARY KEY (AcademicCalendarKey),
   CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey]),
+);
+
+
+
+CREATE TABLE dbo.DimSchool
+(
+  SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
+  [_sourceKey] NVARCHAR(50) NOT NULL,  
+  
+  SchoolCode NVARCHAR(15) NOT NULL,     
+  SchoolName NVARCHAR(100) NOT NULL,    
+
+  SchoolType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
+  SchoolType_Elementary char(1) NOT NULL,      
+  SchoolType_Middle char(1) NOT NULL,
+  SchoolType_HighSchool char(1) NOT NULL,    
+  SchoolType_Combined char(1) NOT NULL,    
+  
+  GradeLevelsServed NVARCHAR(100) NOT NULL,  -- KG,01,02,03,04,05
+
+  GradeLevelsServed_Lowest CHAR(2) NOT NULL, -- KG
+  GradeLevelsServed_Highest CHAR(2) NOT NULL, -- 05
+
+  GradeLevelsServed_KGIndicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_01Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_02Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_03Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_04Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_05Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_06Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_07Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_08Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_09Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_10Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_11Indicator CHAR(1) NOT NULL, -- Y,N
+  GradeLevelsServed_12Indicator CHAR(1) NOT NULL, -- Y,N
+
+  Title1Indicator CHAR(1) NOT NULL, -- Y,N
+  AYPIndicator CHAR(1) NOT NULL, -- Y,N
+
+  EffectiveStartDate DATETIME NOT NULL,
+  EffectiveEndDate DATETIME NOT NULL,
+  IsCurrent BIT NOT NULL,
+  --ETLProcessedDateTime DATETIME NULL,
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey),
+  CONSTRAINT FK_DimSchool_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
@@ -97,54 +145,8 @@ CREATE TABLE dbo.DimTime
 
   CONSTRAINT PK_DimTime PRIMARY KEY (TimeKey),
   CONSTRAINT FK_DimTime_AcademicCalendarKey FOREIGN KEY (AcademicCalendarKey) REFERENCES dbo.DimAcademicCalendar(AcademicCalendarKey),
-  CONSTRAINT FK_DimTime_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES [dbo].[DimSchool](SchoolKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-);
-
-CREATE TABLE dbo.DimSchool
-(
-  SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
-  [_sourceKey] NVARCHAR(50) NOT NULL,  
-  
-  SchoolCode NVARCHAR(15) NOT NULL,     
-  SchoolName NVARCHAR(100) NOT NULL,    
-
-  SchoolType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
-  SchoolType_Elementary char(1) NOT NULL,      
-  SchoolType_Middle char(1) NOT NULL,
-  SchoolType_HighSchool char(1) NOT NULL,    
-  SchoolType_Combined char(1) NOT NULL,    
-  
-  GradeLevelsServed NVARCHAR(100) NOT NULL,  -- KG,01,02,03,04,05
-
-  GradeLevelsServed_Lowest CHAR(2) NOT NULL, -- KG
-  GradeLevelsServed_Highest CHAR(2) NOT NULL, -- 05
-
-  GradeLevelsServed_KGIndicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_01Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_02Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_03Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_04Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_05Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_06Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_07Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_08Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_09Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_10Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_11Indicator CHAR(1) NOT NULL, -- Y,N
-  GradeLevelsServed_12Indicator CHAR(1) NOT NULL, -- Y,N
-
-  Title1Indicator CHAR(1) NOT NULL, -- Y,N
-  AYPIndicator CHAR(1) NOT NULL, -- Y,N
-
-  EffectiveStartDate DATETIME NOT NULL,
-  EffectiveEndDate DATETIME NOT NULL,
-  IsCurrent BIT NOT NULL,
-  --ETLProcessedDateTime DATETIME NULL,
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_DimTime_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES [dbo].[DimSchool] (SchoolKey),
+  CONSTRAINT FK_DimTime_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
@@ -219,7 +221,7 @@ CREATE TABLE dbo.DimStudent
 
   CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey),
   CONSTRAINT FK_DimStudent_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_DimStudent_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
@@ -256,7 +258,7 @@ CREATE TABLE dbo.DimAssessment
     [LineageKey] INT NOT NULL,
 
 	CONSTRAINT PK_DimAssessment PRIMARY KEY (AssessmentKey),
-    CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+    CONSTRAINT FK_DimAssessment_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
@@ -285,7 +287,7 @@ CREATE TABLE dbo.DimCourse
     [LineageKey] INT NOT NULL,
 
   	CONSTRAINT PK_DimCourse PRIMARY KEY (CourseKey),
-    CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+    CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 /*
@@ -310,7 +312,7 @@ CREATE TABLE dbo.FactStudentBehavior
   CONSTRAINT PK_FactStudentBehavior PRIMARY KEY (StudentKey ASC, TimeKey ASC),
   CONSTRAINT FK_FactStudentBehavior_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentBehavior_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_FactStudentBehavior_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 CREATE TABLE dbo.FactStudentAttendance
@@ -329,7 +331,7 @@ CREATE TABLE dbo.FactStudentAttendance
   CONSTRAINT PK_FactStudentAttendance PRIMARY KEY (StudentKey ASC, TimeKey ASC),
   CONSTRAINT FK_FactStudentAttendance_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentAttendance_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_FactStudentAttendance_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
   
 );
 
@@ -353,7 +355,7 @@ CREATE TABLE dbo.FactStudentAssessmentScore
   CONSTRAINT FK_FactStudentAssessmentScores_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentAssessmentScores_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentAssessmentScore_TimeKey FOREIGN KEY (AssessmentKey) REFERENCES dbo.DimAssessment(AssessmentKey),
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_FactStudentAssessmentScore_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
@@ -374,7 +376,7 @@ CREATE TABLE dbo.FactStudentCourseGrade
   CONSTRAINT FK_FactStudentCourseGrade_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentCourseGrade_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentCourseGrade_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
-  CONSTRAINT FK_DimAcademicCalendar_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT FK_FactStudentCourseGrade_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
