@@ -1,4 +1,6 @@
-SELECT 'Ed-Fi|' + Convert(nvarchar,s.SchoolId) [_sourceKey], ShortNameOfInstitution, NameOfInstitution
+SELECT 'Ed-Fi|' + Convert(nvarchar,s.SchoolId) AS [_sourceKey], 
+       ShortNameOfInstitution, 
+	   NameOfInstitution
 ,sct.CodeValue SchoolCategoryType, sgld.CodeValue GradeLevelDescriptorCodeValue
 ,tIt.CodeValue TitleIPartASchoolDesignationTypeCodeValue
 FROM edfi.School s
@@ -8,3 +10,7 @@ LEFT JOIN edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCat
 LEFT JOIN edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
 LEFT JOIN edfi.SchoolGradeLevel sgl on s.SchoolId = sgl.SchoolId
 LEFT JOIN edfi.Descriptor sgld on sgl.GradeLevelDescriptorId = sgld.DescriptorId
+
+SELECT DISTINCT 'SchoolGradeLevel_' + REPLACE(CodeValue,' ','') + '_Indicator  BIT NOT NULL, -- True,False' FROM edfi.GradeLevelType;
+
+

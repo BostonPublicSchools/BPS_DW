@@ -25,7 +25,7 @@
 	    (SELECT distinct 'Migrant' FROM edfi.StudentProgramAssociation spa WHERE spa.ProgramName like 'Migrant%' and spa.StudentUSI=s.StudentUSI and spa.EndDate is null ) Migrant,
         (SELECT distinct 'Homeless' FROM edfi.StudentProgramAssociation spa WHERE spa.ProgramName like '%Homeless%' and spa.StudentUSI=s.StudentUSI and  spa.begindate > '2019-08-14' ) Homeless,
 	    (SELECT distinct 'Foster' FROM edfi.StudentProgramAssociation spa WHERE spa.ProgramName like '%Foster%' and spa.StudentUSI=s.StudentUSI and spa.EndDate is null ) foster
-
+--select *  
 FROM edfi.Student s
 INNER JOIN edfi.StudentSchoolAssociation ssa on s.StudentUSI = ssa.StudentUSI
 INNER JOIN edfi.Descriptor gld on ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
@@ -46,3 +46,11 @@ LEFT JOIN edfi.StudentRace sr5 ON s.StudentUSI = sr5.StudentUsi and sr5.RaceType
 LEFT JOIN edfi.StudentRace sr6 ON s.StudentUSI = sr6.StudentUsi and sr6.RaceTypeId = 6 --'Other'
 LEFT JOIN edfi.StudentRace sr7 ON s.StudentUSI = sr7.StudentUsi and sr7.RaceTypeId = 7 --'White'
 order by sic.IdentificationCode;
+
+SELECT * FROM edfi.Descriptor WHERE Namespace LIKE '%limited%'
+
+SELECT * FROM  edfi.SexType
+
+SELECT * FROM edfi.StudentRace
+
+SELECT * FROM edfi.Program
