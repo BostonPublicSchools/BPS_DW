@@ -18,14 +18,11 @@ CREATE TABLE dbo.DimSchool
   NameOfInstitution NVARCHAR(100) NOT NULL,    
 
   SchoolCategoryType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
-  SchoolCategoryType_Elementary BIT NOT NULL,      
-  SchoolCategoryType_Middle BIT NOT NULL,
-  SchoolCategoryType_HighSchool BIT NOT NULL,    
-  SchoolCategoryType_Combined BIT NOT NULL,    
+  SchoolCategoryType_Elementary_Indicator BIT NOT NULL,      
+  SchoolCategoryType_Middle_Indicator BIT NOT NULL,
+  SchoolCategoryType_HighSchool_Indicator BIT NOT NULL,    
+  SchoolCategoryType_Combined_Indicator BIT NOT NULL,    
   
-  SchoolGradeLevel_Lowest_Descriptor_CodeValue NVARCHAR(50) NULL, -- Ninth grade
-  SchoolGradeLevel_Highest_Descriptor_CodeValue  NVARCHAR(1024) NULL, -- Twelfth grade
-
   SchoolGradeLevel_AdultEducation_Indicator  BIT NOT NULL, -- True,False
   SchoolGradeLevel_EarlyEducation_Indicator  BIT NOT NULL, -- True,False
   SchoolGradeLevel_Eighthgrade_Indicator  BIT NOT NULL, -- True,False
@@ -73,60 +70,58 @@ CREATE TABLE dbo.DimSchool
 
 CREATE TABLE dbo.DimTime
 (
-  TimeKey INT NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
+  TimeKey INT NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate    
+  
+  SchoolDate DATE NOT NULL , -- 9/1/2019
+  SchoolDate_MMYYYY CHAR(6) NOT NULL,
+  SchoolDate_Fomat1 CHAR(10) NOT NULL,
+  SchoolDate_Fomat2 CHAR(8) NOT NULL,
+  SchoolDate_Fomat3 CHAR(10) NOT NULL,
     
-  SchoolDay DATE NOT NULL , -- 9/1/2019
+  SchoolYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020  
+  SchoolYearDescription NVARCHAR(50) NOT NULL, -- '2019-2020 or SchoolYear 2019 - 2020'
+  CalendarYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020
+  
+  DayOfMonth TINYINT NOT NULL, -- 1 - 30|31
+  DaySuffix CHAR(2) NOT NULL , -- 1st, 2nd, 3rd
+  DayName  NVARCHAR(15) NOT NULL, -- Monday, Tuesday    
+  DayNameShort NVARCHAR(15) NOT NULL, -- Mon, Tue
+  DayOfWeek TINYINT NOT NULL, -- 1 - 7
+  
+  WeekInMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this counts 7 days starting on the 1st of the month
+  WeekOfMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this is the actual week of the month (starting on sunday)
+  Weekend_Indicator BIT NOT NULL,
+  WeekOfYear TINYINT NOT NULL, -- 1 - 53   
+  FirstDayOfWeek DATE NOT NULL,
+  LastDayOfWeek DATE NOT NULL,
+  WeekBeforeChristmas_Indicator BIT NOT NULL, --  True,False
+  
+  
+  [Month] TINYINT NOT NULL, -- 1..12
+  MonthName  NVARCHAR(10) NOT NULL, --January,February,December
+  MonthNameShort CHAR(3) NOT NULL, --Jan,Feb,Dec  
+  FirstDayOfMonth DATE NOT NULL,
+  LastDayOfMonth DATE NOT NULL,
+  FirstDayOfNextMonth DATE NOT NULL,
+  LastDayOfNextMonth DATE NOT NULL,
+    
+  DayOfYear SMALLINT NOT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
+  LeapYear_Indicator BIT NOT NULL,  
+    
+  FederalHolidayName NVARCHAR(20) NULL, -- Memorial Day
+  FederalHoliday_Indicator BIT NOT NULL, --  True,False
   
   --all these vary by school
   SchoolKey INT NULL,  
-  InstructionnalDay NVARCHAR(50) NOT NULL, -- InstructionalDay, Non-Instructional Day
-  InstructionnalDayType NVARCHAR(50) NOT NULL, -- Full-Day, Partial-Day, Early-Release Day, Make-Up Day
-  InstructionnalDayType_FullDay BIT NOT NULL, 
-  InstructionnalDayType_PartialDay BIT NOT NULL, 
-  InstructionnalDayType_EarlyRelease BIT NOT NULL, 
-  InstructionnalDayType_MakeUpDay BIT NOT NULL, 
-  BlockScheduleDay NVARCHAR(50) NOT NULL, -- A-Day, B-day
-  BlockScheduleDay_ADay BIT NOT NULL, -- Y, N
-  BlockScheduleDay_BDay BIT NOT NULL, -- Y, N
-  Semester INT NULL, -- 1,2
-  SemesterCode NVARCHAR(50) NULL, -- S1,S1
-  SemesterDescription NVARCHAR(50) NULL, -- Semester 1, Semester 2
-  Trimester INT NULL, -- 1,2,3
-  TrimesterCode NVARCHAR(50) NULL, -- T1,T2
-  TrimesterDescription NVARCHAR(50) NULL, -- Timester 1, Timester 2, Timester 3
-  [Quarter] INT NULL, -- 1,2,3,4
-  QuarterCode NVARCHAR(50) NULL, -- Q1,Q2,Q3,Q4
-  QuarterDescription NVARCHAR(50) NULL, -- Quarter 1, Quarter 2, Quarter 3, Quarter 4
-
-
-
-  [Weekend_Indicator] BIT NOT NULL,
-  [Holiday_Indicator] BIT NOT NULL, --  1,0
-  [HolidayName] NVARCHAR(20) NOT NULL, -- Memorial Day
-  [SpecialDay] NVARCHAR(20) NOT NULL, --  Valentine Day
-
-
-  WeekBeforeChristmas_Indicator BIT NOT NULL, --  Y, N
-
-  StateExaminationPeriod_Indicator BIT NOT NULL, --  True,False
-
-  SchoolYear INT NOT NULL, -- ex: 9/1/2019 = 2020
-  SchoolYearDescription NVARCHAR(50) NOT NULL, -- '2019-2020 or SchoolYear 2019 - 2020'
   
-  [Month] TINYINT NOT NULL, -- 1..12
-  [MonthName]  NVARCHAR(10) NOT NULL, --January,February,December
-  [MonthNameShort]  CHAR(3) NOT NULL, --Jan,Feb,Dec
-  [MonthNameFirstLetter]  CHAR(1) NOT NULL, --J,F,D
+  SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+  SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+    
+  SchoolTermDescriptor_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+  SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
 
-  [DayOfMonth]  int NOT NULL, -- 1 - 30|31
-  [DayOfWeek]  int NOT NULL, -- 1 -7
-  [DayName]  NVARCHAR(15) NOT NULL, -- Monday, Tuesday
-   
-  CalendarYear INT NOT NULL, -- ex: 9/1/2019 = 2019
-
- 
+  --all indicators were removed until we see actual district's data.   
   
-
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
   IsCurrent BIT NOT NULL,  
@@ -158,9 +153,8 @@ CREATE TABLE dbo.DimStudent
   LastSurname NVARCHAR(50) NOT NULL,
   FullName NVARCHAR(50) NOT NULL,
   BirthDate DATE NOT NULL,
-  CurrentAge INT NOT NULL,
-  SchoolYearAdmitted INT NOT NULL,
-  Graduation_Indicator BIT NULL,
+  StudentAge INT NOT NULL,  
+  GraduationSchoolYear INT NOT NULL,  
   
   Homeroom  NVARCHAR(50) NULL,
   HomeroomTeacher NVARCHAR(100) NULL,
@@ -171,7 +165,7 @@ CREATE TABLE dbo.DimStudent
   SexType_Female_Indicator BIT NOT NULL,
   SexType_NotSelected_Indicator BIT NOT NULL,
   
-  RaceCode NVARCHAR(15) NOT NULL,
+  RaceCode NVARCHAR(50) NOT NULL,
   RaceDescription NVARCHAR(100) NOT NULL,    
   Race_AmericanIndianAlaskanNative_Indicator BIT NOT NULL,
   Race_Asian_Indicator BIT NOT NULL,
@@ -186,7 +180,9 @@ CREATE TABLE dbo.DimStudent
   EthnicityDescription NVARCHAR(100) NOT NULL,
   EthnicityHispanicLatino_Indicator BIT NOT NULL,
     
-  IEP_Indicator BIT NOT NULL, -- edfi.Program?
+  Migrant_Indicator BIT NOT NULL,
+  Homeless_Indicator BIT NOT NULL,
+  IEP_Indicator BIT NOT NULL,
   
   LimitedEnglishProficiencyDescriptor_CodeValue NVARCHAR(25) NOT NULL, -- L, F, N 
   LimitedEnglishProficiencyDescriptor_Description NVARCHAR(60) NOT NULL,  -- English Learner , Former, Neither  
@@ -195,23 +191,15 @@ CREATE TABLE dbo.DimStudent
   LimitedEnglishProficiency_Former_Indicator BIT NOT NULL,
   LimitedEnglishProficiency_NotEnglisLearner_Indicator BIT NOT NULL,
   
-  EconomicDisadvantage_Indicator BIT NOT NULL,   
+  EconomicDisadvantage_Indicator BIT NOT NULL,   --need to review some of these flags. Some of them should allow nulls. Showing a value of 0 by defautl will not be accurate
 
-  EntryGradeLevelReasonType_CodeValue NVARCHAR(50) NOT NULL, -- Promotion - Variable progress, Promotion - Other, etc
-  EntryGradeLevelReasonType_Description NVARCHAR(1024) NOT NULL,
-  EntryGradeLevelReasonType_PromotionVariableProgress_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_PromotionOther_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_NonpromotionFailedToMeetTestingRequirements_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_NonpromotionIllness_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_NonpromotionInsufficientCredits_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_NonpromotionProlongedAbsence_Indicator BIT NOT NULL,
-  EntryGradeLevelReasonType_NonpromotionImmaturity_Indicator BIT NOT NULL,
     
   EntryDate DATETIME2 NOT NULL,
   EntrySchoolYear INT NOT NULL,
   EntryCode NVARCHAR(25) NOT NULL, 
+  
   ExitWithdrawDate  DATETIME2 NULL,
-  ExitWithdrawSchoolYear INT NOT NULL,
+  ExitWithdrawSchoolYear INT NULL,
   ExitWithdrawCode  NVARCHAR(25) NULL,
      
   ValidFrom DATETIME NOT NULL, 
@@ -354,7 +342,8 @@ CREATE TABLE dbo.FactStudentRoster
 CREATE TABLE dbo.FactStudentBehavior
 (
   StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, -- this could be a date, or a specific period
+  TimeKey INT NOT NULL, 
+  
   NumberOfISSIncidents INT NOT NULL,
   NumberOfOSSIncidents INT NOT NULL,
 
@@ -369,7 +358,7 @@ CREATE TABLE dbo.FactStudentBehavior
 CREATE TABLE dbo.FactStudentAttendance
 (
   StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, -- this could be a date, or a specific period  
+  TimeKey INT NOT NULL,  
   NumberOfDaysPresent INT NOT NULL,
   NumberOfDaysAbsent INT NOT NULL,
   NumberOfDaysAbsentUnexcused INT NOT NULL,
@@ -389,7 +378,7 @@ CREATE TABLE dbo.FactStudentAttendance
 CREATE TABLE dbo.FactStudentAssessmentScore
 (
   StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, -- this could be a date, or a specific period
+  TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
 
   Result NVARCHAR(35) NOT NULL,
@@ -426,7 +415,7 @@ CREATE TABLE dbo.FactStudentAssessmentScore
 CREATE TABLE dbo.FactStudentCourseGrade
 (
   StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, -- this could be a date, or a specific period
+  TimeKey INT NOT NULL, 
   CourseKey INT NOT NULL,
 
   CreditsEarned INT NOT NULL,
