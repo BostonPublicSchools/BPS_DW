@@ -55,9 +55,6 @@ CREATE TABLE dbo.DimSchool
                                             
   TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
   
-  AYP_Indicator BIT NULL, -- True,False -- Edfi ?
-
-  
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
   IsCurrent BIT NOT NULL,  
@@ -106,6 +103,7 @@ CREATE TABLE dbo.DimTime
   LastDayOfNextMonth DATE NOT NULL,
     
   DayOfYear SMALLINT NOT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
+  DayOfSchoolYear SMALLINT NOT NULL, -- 1 - 180 - based on SIS(ODS) school calendar *****************************************change********************************
   LeapYear_Indicator BIT NOT NULL,  
     
   FederalHolidayName NVARCHAR(20) NULL, -- Memorial Day

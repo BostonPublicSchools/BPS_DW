@@ -36,8 +36,7 @@ DECLARE @EdFiSchools TABLE(
   [NameOfInstitution] [nvarchar](100) NOT NULL,
   [SchoolCategoryType] [nvarchar](100) NOT NULL,
   GradeLevelDescriptorCodeValue [nvarchar](100) NOT NULL, 
-  TitleIPartASchoolDesignationTypeCodeValue [nvarchar](500) NOT NULL,
-  [AYP_Indicator] [nvarchar](100) NOT NULL
+  TitleIPartASchoolDesignationTypeCodeValue [nvarchar](500) NOT NULL  
 )
 
 
@@ -73,8 +72,7 @@ DECLARE @DimSchool TABLE(
 	[SchoolGradeLevel_Twelfthgrade_Indicator] [bit] NOT NULL,
 	[SchoolGradeLevel_Ungraded_Indicator] [bit] NOT NULL,
 	[TitleIPartASchoolDesignationTypeCodeValue] [nvarchar](50) NOT NULL,
-	[TitleIPartASchoolDesignation_Indicator] [bit] NOT NULL,
-	[AYP_Indicator] [bit] NULL
+	[TitleIPartASchoolDesignation_Indicator] [bit] NOT NULL
  )
 
 --retrieving all schools from the ODS
@@ -91,8 +89,7 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		edorg.NameOfInstitution,
 		sct.CodeValue AS SchoolCategoryType, 		   
 		sgld.CodeValue AS GradeLevelDescriptorCodeValue,
-		tIt.CodeValue AS TitleIPartASchoolDesignationTypeCodeValue,
-		0 AS [AYP_Indicator]	  
+		tIt.CodeValue AS TitleIPartASchoolDesignationTypeCodeValue		
 --SELECT *
 FROM v25_EdFi_Ods_Populated_Template.edfi.School s
 INNER JOIN v25_EdFi_Ods_Populated_Template.edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
@@ -134,7 +131,7 @@ INSERT INTO @DimSchool ([_sourceKey]
 						,[SchoolGradeLevel_Ungraded_Indicator]
 						,[TitleIPartASchoolDesignationTypeCodeValue]
 						,[TitleIPartASchoolDesignation_Indicator]
-						,[AYP_Indicator])
+						)
 SELECT DISTINCT 
        [_sourceKey], 
        ShortNameOfInstitution,
@@ -167,8 +164,8 @@ SELECT DISTINCT
 	   0 AS [SchoolGradeLevel_Twelfthgrade_Indicator],
 	   0 AS [SchoolGradeLevel_Ungraded_Indicator],
 	   TitleIPartASchoolDesignationTypeCodeValue,
-	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator,
-	   [AYP_Indicator]	 
+	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator
+	   
 FROM @EdFiSchools;
 
 
@@ -336,7 +333,6 @@ INSERT INTO BPS_DW.[dbo].[DimSchool]
            ,[SchoolGradeLevel_Ungraded_Indicator]
            ,[TitleIPartASchoolDesignationTypeCodeValue]
            ,[TitleIPartASchoolDesignation_Indicator]
-           ,[AYP_Indicator]
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
@@ -373,7 +369,6 @@ SELECT   [_sourceKey]
         ,[SchoolGradeLevel_Ungraded_Indicator]
         ,[TitleIPartASchoolDesignationTypeCodeValue]
         ,[TitleIPartASchoolDesignation_Indicator]
-        ,[AYP_Indicator]
         ,GETDATE() AS ValidFrom
 	    ,'12/31/9999' AS ValidTo
 	    ,1 AS IsCurrent

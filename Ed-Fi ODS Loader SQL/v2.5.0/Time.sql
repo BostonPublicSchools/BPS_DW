@@ -167,6 +167,7 @@ AS (SELECT [SchoolDate] = TheDate,
            FirstDayOfNextMonth = DATEADD(MONTH, 1, TheFirstOfMonth),
            LastDayOfNextMonth = DATEADD(DAY, -1, DATEADD(MONTH, 2, TheFirstOfMonth)),
            [DayOfYear] = TheDayOfYear,
+		   DayOfSchoolYear = TheDayOfYear, --change this 
            LeapYear_Indicator = CONVERT(   BIT,
                                            CASE
                                                WHEN (TheYear % 400 = 0)
@@ -281,6 +282,9 @@ OPTION (MAXRECURSION 0);
 		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
 	   --ORDER BY [_sourceKey], SchoolDate
 )
+
+
+
 
 INSERT INTO BPS_DW.[dbo].[DimTime]
            ([SchoolDate]
