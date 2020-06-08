@@ -378,26 +378,17 @@ CREATE TABLE dbo.FactStudentAssessmentScore
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
-
-  Result NVARCHAR(35) NOT NULL,
-    
-  Score_AssessmentReportingMethodDescriptor_RawScore_Indicator BIT NOT NULL,
-  Score_AssessmentReportingMethodDescriptor_ScaleScore_Indicator BIT NOT NULL,
-  Score_AssessmentReportingMethodDescriptor_ProficiencyLevel_Indicator BIT NOT NULL,
-  Score_AssessmentReportingMethodDescriptor_Percentile_Indicator BIT NOT NULL,
   
-  Score_ResultDatatypeType_Level_Indicator BIT NOT NULL ,
-  Score_ResultDatatypeType_Integer_Indicator BIT NOT NULL ,
-  Score_ResultDatatypeType_Decimal_Indicator BIT NOT NULL ,
-  Score_ResultDatatypeType_Percentage_Indicator BIT NOT NULL ,
-  Score_ResultDatatypeType_Percentile_Indicator BIT NOT NULL ,
-  Score_ResultDatatypeType_Range_Indicator BIT NOT NULL ,
+  Score_AssessmentReportingMethodDescriptor_RawScore INT NULL,
+  Score_AssessmentReportingMethodDescriptor_ScaleScore INT NULL,
+  Score_AssessmentReportingMethodDescriptor_ProficiencyLevel  NVARCHAR(25) NULL,
+  Score_AssessmentReportingMethodDescriptor_Percentile FLOAT NULL,
   
-  PerformanceLevel_Descriptor_Failing_Indicator BIT NOT NULL , -- grade 10 tests
-  PerformanceLevel_Descriptor_Warning_Indicator BIT NOT NULL , -- grade 3-8 tests
-  PerformanceLevel_Descriptor_NeedsImprovement_Indicator BIT NOT NULL ,  
-  PerformanceLevel_Descriptor_Proficient_Indicator BIT NOT NULL ,
-  PerformanceLevel_Descriptor_Advanced_Indicator BIT NOT NULL ,
+  MCAS_PerformanceLevel_Descriptor_Failing_Indicator BIT NOT NULL , -- grade 10 tests
+  MCAS_PerformanceLevel_Descriptor_Warning_Indicator BIT NOT NULL , -- grade 3-8 tests
+  MCAS_PerformanceLevel_Descriptor_NeedsImprovement_Indicator BIT NOT NULL ,  
+  MCAS_PerformanceLevel_Descriptor_Proficient_Indicator BIT NOT NULL ,
+  MCAS_PerformanceLevel_Descriptor_Advanced_Indicator BIT NOT NULL ,
       
   
   [LineageKey] INT NOT NULL,
