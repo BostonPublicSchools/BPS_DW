@@ -261,14 +261,14 @@ OPTION (MAXRECURSION 0);
 
 ;WITH EdFiSchools AS
 (
-	SELECT DATEADD(YEAR,9,cd.Date) SchoolDate,
+	SELECT DATEADD(YEAR,9,cd.Date) SchoolDate, -- adding nine years to the year in the populated template. Will remove this when we switch to real ODS
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
 		   td.CodeValue TermDescriptorCodeValue,
 		   td.Description TermDescriptorDescription,       
 		   cet.CodeValue CalendarEventTypeCodeValue,
-		   cet.Description CalendarEventTypeDescription	   
-	   
+		   cet.Description CalendarEventTypeDescription, 
+	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear
 	FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.School s
 		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
 		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
@@ -280,10 +280,19 @@ OPTION (MAXRECURSION 0);
 		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Session ses ON s.SchoolId = ses.SchoolId
 																		 AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
 		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
-	   --ORDER BY [_sourceKey], SchoolDate
+	   -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
 )
 
 
+
+/*
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarDate
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Session
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.TermType
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.SessionGradingPeriod
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.GradingPeriod
+SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
+*/
 
 
 INSERT INTO BPS_DW.[dbo].[DimTime]
@@ -318,12 +327,14 @@ INSERT INTO BPS_DW.[dbo].[DimTime]
            ,[LeapYear_Indicator]
            ,[FederalHolidayName]
            ,[FederalHoliday_Indicator]
-           ,[SchoolKey]
+           
+		   ,[SchoolKey]
+		   ,DayOfSchoolYear
            ,SchoolCalendarEventType_CodeValue
            ,SchoolCalendarEventType_Description
            ,SchoolTermDescriptor_CodeValue
            ,SchoolTermDescriptor_Description
-           
+		   
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
@@ -360,6 +371,7 @@ select nst.[SchoolDate]
 	  ,nst.[FederalHolidayName]
 	  ,nst.[FederalHoliday_Indicator]
 	  ,ds.SchoolKey
+	  ,es.DayOfSchoolYear
 	  ,es.CalendarEventTypeCodeValue
 	  ,es.CalendarEventTypeDescription
 	  ,es.TermDescriptorCodeValue
@@ -370,16 +382,22 @@ select nst.[SchoolDate]
 	    ,1 AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
-     INNER JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
-	 INNER JOIN dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
+     LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
+	 left JOIN dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimTime] dt 
 					WHERE nst.[SchoolDate] = dt.[SchoolDate]
-					  AND ds.SchoolKey = dt.SchoolKey  );
---	 ORDER BY es.SchoolDate
+					  AND (
+					          (ds.SchoolKey IS NULL AND dt.SchoolKey IS NULL) 
+						    OR  
+					          (ds.SchoolKey = dt.SchoolKey) 
+						  )
+				  )
+	 --ORDER BY es.SchoolDate
+	 
 
 SELECT * FROM BPS_DW.[dbo].[DimTime] 
-WHERE SchoolKey IS NOT NULL
+--WHERE SchoolKey IS NOT NULL
 ORDER BY [SchoolDate] 
  
 

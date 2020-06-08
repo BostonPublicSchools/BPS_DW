@@ -102,8 +102,8 @@ CREATE TABLE dbo.DimTime
   FirstDayOfNextMonth DATE NOT NULL,
   LastDayOfNextMonth DATE NOT NULL,
     
-  DayOfYear SMALLINT NOT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
-  DayOfSchoolYear SMALLINT NOT NULL, -- 1 - 180 - based on SIS(ODS) school calendar *****************************************change********************************
+  DayOfYear SMALLINT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
+  
   LeapYear_Indicator BIT NOT NULL,  
     
   FederalHolidayName NVARCHAR(20) NULL, -- Memorial Day
@@ -111,12 +111,12 @@ CREATE TABLE dbo.DimTime
   
   --all these vary by school
   SchoolKey INT NULL,  
-  
+  DayOfSchoolYear SMALLINT NOT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
   SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
   SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
     
-  SchoolTermDescriptor_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
-  SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+  SchoolTermDescriptor_CodeValue NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc.  SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
+  SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
 
   --all indicators were removed until we see actual district's data.   
   
