@@ -32,8 +32,8 @@ END
 
 DECLARE @EdFiSchools TABLE(
   [_sourceKey] [nvarchar](50) NOT NULL,
-  [ShortNameOfInstitution] [nvarchar](15) NOT NULL,
-  [NameOfInstitution] [nvarchar](100) NOT NULL,
+  [ShortNameOfInstitution] [nvarchar](500) NOT NULL,
+  [NameOfInstitution] [nvarchar](500) NOT NULL,
   [SchoolCategoryType] [nvarchar](100) NOT NULL,
   GradeLevelDescriptorCodeValue [nvarchar](100) NOT NULL, 
   TitleIPartASchoolDesignationTypeCodeValue [nvarchar](500) NOT NULL  
@@ -43,8 +43,8 @@ DECLARE @EdFiSchools TABLE(
 
 DECLARE @DimSchool TABLE(	
 	[_sourceKey] [nvarchar](50) NOT NULL,
-	[ShortNameOfInstitution] [nvarchar](15) NOT NULL,
-	[NameOfInstitution] [nvarchar](100) NOT NULL,
+	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
+	[NameOfInstitution] [nvarchar](500) NOT NULL,
 	[SchoolCategoryType] [nvarchar](100) NOT NULL,
 	[SchoolCategoryType_Elementary_Indicator] [bit] NOT NULL,
 	[SchoolCategoryType_Middle_Indicator] [bit] NOT NULL,
@@ -81,23 +81,24 @@ INSERT INTO @EdFiSchools ([_sourceKey] ,
 						   [NameOfInstitution],
 						   [SchoolCategoryType],
 						   GradeLevelDescriptorCodeValue, 
-						   TitleIPartASchoolDesignationTypeCodeValue,
-						   [AYP_Indicator])
+						   TitleIPartASchoolDesignationTypeCodeValue
+						   )
 
 SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		edorg.ShortNameOfInstitution, 
 		edorg.NameOfInstitution,
 		sct.CodeValue AS SchoolCategoryType, 		   
 		sgld.CodeValue AS GradeLevelDescriptorCodeValue,
-		tIt.CodeValue AS TitleIPartASchoolDesignationTypeCodeValue		
---SELECT *
-FROM v25_EdFi_Ods_Populated_Template.edfi.School s
-INNER JOIN v25_EdFi_Ods_Populated_Template.edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
-LEFT JOIN  v25_EdFi_Ods_Populated_Template.edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
-LEFT JOIN  v25_EdFi_Ods_Populated_Template.edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
-LEFT JOIN  v25_EdFi_Ods_Populated_Template.edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
-LEFT JOIN  v25_EdFi_Ods_Populated_Template.edfi.SchoolGradeLevel sgl on s.SchoolId = sgl.SchoolId
-LEFT JOIN  v25_EdFi_Ods_Populated_Template.edfi.Descriptor sgld on sgl.GradeLevelDescriptorId = sgld.DescriptorId
+		ISNULL(tIt.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue		
+--SELECT distinct sct.CodeValue
+FROM [EdFi_BPS_Staging_Ods].edfi.School s
+INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolGradeLevel sgl on s.SchoolId = sgl.SchoolId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.Descriptor sgld on sgl.GradeLevelDescriptorId = sgld.DescriptorId
+
 
 
 INSERT INTO @DimSchool ([_sourceKey]
@@ -164,7 +165,7 @@ SELECT DISTINCT
 	   0 AS [SchoolGradeLevel_Twelfthgrade_Indicator],
 	   0 AS [SchoolGradeLevel_Ungraded_Indicator],
 	   TitleIPartASchoolDesignationTypeCodeValue,
-	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator
+	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school','N/A') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator
 	   
 FROM @EdFiSchools;
 

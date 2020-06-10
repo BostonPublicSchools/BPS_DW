@@ -9,13 +9,15 @@ CREATE TABLE dbo.Lineage
    CONSTRAINT PK_Lineage PRIMARY KEY (LineageKey),
 );
 
+--DIMENSION TABLES
+-------------------------------------------------------------------------------------------------
 CREATE TABLE dbo.DimSchool
 (
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|Id'
   
-  ShortNameOfInstitution NVARCHAR(15) NOT NULL,     
-  NameOfInstitution NVARCHAR(100) NOT NULL,    
+  ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
+  NameOfInstitution NVARCHAR(500) NOT NULL,    
 
   SchoolCategoryType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
   SchoolCategoryType_Elementary_Indicator BIT NOT NULL,      
@@ -111,7 +113,7 @@ CREATE TABLE dbo.DimTime
   
   --all these vary by school
   SchoolKey INT NULL,  
-  DayOfSchoolYear SMALLINT NOT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
+  DayOfSchoolYear SMALLINT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
   SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
   SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
     
@@ -133,82 +135,145 @@ CREATE TABLE dbo.DimTime
 
 CREATE TABLE dbo.DimStudent
 (
-  StudentKey INT NOT NULL IDENTITY(1,1),  -- surrogate
-  [_sourceKey] NVARCHAR(50) NOT NULL,
+    [StudentKey] [int] IDENTITY(1,1) NOT NULL, 
+	[_sourceKey] [nvarchar](50) NOT NULL,
 
-  StudentUniqueId NVARCHAR(32) NULL, -- district 
-  StateId NVARCHAR(32) NULL, -- state
+	[StudentUniqueId] [nvarchar](32) NULL,
+	[StateId] [nvarchar](32) NULL,
+
+	[SchoolKey] [int] NOT NULL,
+	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
+	[NameOfInstitution] [nvarchar](500) NOT NULL,
+	[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
+	[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,
+	
+	[FirstName] [nvarchar](100) NOT NULL,
+	[MiddleInitial] [char](1) NULL,
+	[MiddleName] [nvarchar](100) NULL,
+	[LastSurname] [nvarchar](100) NOT NULL,
+	[FullName] [nvarchar](500) NOT NULL,
+	[BirthDate] [date] NOT NULL,
+	[StudentAge] [int] NOT NULL,
+	[GraduationSchoolYear] [int] NULL,
+	
+	[Homeroom] [nvarchar](500) NULL,
+	[HomeroomTeacher] [nvarchar](500) NULL,
+
+	[SexType_Code] [nvarchar](100) NOT NULL,
+	[SexType_Description] [nvarchar](100) NOT NULL,
+	[SexType_Male_Indicator] [bit] NOT NULL,
+	[SexType_Female_Indicator] [bit] NOT NULL,
+	[SexType_NotSelected_Indicator] [bit] NOT NULL,
+	
+	[RaceCode] [nvarchar](100) NOT NULL,
+	[RaceDescription] [nvarchar](100) NOT NULL,
+	[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
+	[Race_Asian_Indicator] [bit] NOT NULL,
+	[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
+	[Race_NativeHawaiianPacificIslander_Indicator] [bit] NOT NULL,
+	[Race_White_Indicator] [bit] NOT NULL,
+	[Race_MultiRace_Indicator] [bit] NOT NULL,
+	[Race_ChooseNotRespond_Indicator] [bit] NOT NULL,
+	[Race_Other_Indicator] [bit] NOT NULL,
+
+	[EthnicityCode] [nvarchar](100) NOT NULL,
+	[EthnicityDescription] [nvarchar](100) NOT NULL,
+	[EthnicityHispanicLatino_Indicator] [bit] NOT NULL,
+	[Migrant_Indicator] [bit] NOT NULL,
+	[Homeless_Indicator] [bit] NOT NULL,
+	[IEP_Indicator] [bit] NOT NULL,
+	[LimitedEnglishProficiencyDescriptor_CodeValue] [nvarchar](100) NOT NULL,
+	[LimitedEnglishProficiencyDescriptor_Description] [nvarchar](100) NOT NULL,
+	[LimitedEnglishProficiency_EnglishLearner_Indicator] [bit] NOT NULL,
+	[LimitedEnglishProficiency_Former_Indicator] [bit] NOT NULL,
+	[LimitedEnglishProficiency_NotEnglisLearner_Indicator] [bit] NOT NULL,
+	[EconomicDisadvantage_Indicator] [bit] NOT NULL,
+	
+	[EntryDate] [datetime2](7) NOT NULL,
+	[EntrySchoolYear] [int] NOT NULL,
+	[EntryCode] [nvarchar](25) NOT NULL,
+	
+	[ExitWithdrawDate] [datetime2](7) NULL,
+	[ExitWithdrawSchoolYear] [int] NULL,
+	[ExitWithdrawCode] [nvarchar](100) NULL,
+
+	[ValidFrom] [datetime] NOT NULL,
+	[ValidTo] [datetime] NOT NULL,
+	[IsCurrent] [bit] NOT NULL,
+	[LineageKey] [int] NOT NULL,
+
+    CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey),
+    CONSTRAINT FK_DimStudent_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+    CONSTRAINT FK_DimStudent_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
+
+CREATE TABLE dbo.DimSection
+(
+  SectionKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|25590100101Trad120ENG112011'
   
+  [SchoolYear] [smallint] NOT NULL,  
   SchoolKey INT NOT NULL,
-  ShortNameOfInstitution NVARCHAR(10) NOT NULL,
-  NameOfInstitution NVARCHAR(100) NOT NULL,
-  GradeLevelDescriptor_CodeValue NVARCHAR(100) NOT NULL,
-  GradeLevelDescriptor_Description NVARCHAR(500) NOT NULL,
+  ShortNameOfInstitution nvarchar(500) NOT NULL,
+  NameOfInstitution nvarchar(500) NOT NULL,
+  [ClassPeriodName] [nvarchar](20) NOT NULL,
+  [ClassroomIdentificationCode] [nvarchar](20) NOT NULL,
+  [LocalCourseCode] [nvarchar](60) NOT NULL,
+  [SchoolTermDescriptor_CodeValue] nvarchar(50) not null,
+  [SchoolTermDescriptor_Description] nvarchar(50) not null,
   
-  FirstName NVARCHAR(50) NOT NULL,
-  MiddleInitial CHAR(1) NULL,
-  MiddleName NVARCHAR(50) NULL,
-  LastSurname NVARCHAR(50) NOT NULL,
-  FullName NVARCHAR(50) NOT NULL,
-  BirthDate DATE NOT NULL,
-  StudentAge INT NOT NULL,  
-  GraduationSchoolYear INT NOT NULL,  
-  
-  Homeroom  NVARCHAR(50) NULL,
-  HomeroomTeacher NVARCHAR(100) NULL,
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
 
+  CONSTRAINT PK_DimSection PRIMARY KEY (SectionKey ASC),
+  CONSTRAINT FK_DimSection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
+);
+
+
+CREATE TABLE dbo.DimStaff
+(
+  StaffKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|StaffUSI'
+  
+  [StaffUniqueId] [nvarchar](32) NOT NULL,
+  [PersonalTitlePrefix] [nvarchar](30) NULL,
+  [FirstName] [nvarchar](75) NOT NULL,
+  [MiddleName] [nvarchar](75) NULL,
+  [MiddleInitial CHAR(1) NULL,
+  [LastSurname] [nvarchar](75) NOT NULL,
+  [FullName] NVARCHAR(50) NOT NULL,
+  [GenerationCodeSuffix] [nvarchar](10) NULL,
+  [MaidenName] [nvarchar](75) NULL,  
+  [BirthDate] DATE NULL,
+  [StaffAge] INT NULL,  
+  
   SexType_Code NVARCHAR(15) NOT NULL,
   SexType_Description NVARCHAR(100) NOT NULL,    
   SexType_Male_Indicator BIT NOT NULL,
   SexType_Female_Indicator BIT NOT NULL,
   SexType_NotSelected_Indicator BIT NOT NULL,
   
-  RaceCode NVARCHAR(50) NOT NULL,
-  RaceDescription NVARCHAR(100) NOT NULL,    
-  Race_AmericanIndianAlaskanNative_Indicator BIT NOT NULL,
-  Race_Asian_Indicator BIT NOT NULL,
-  Race_BlackAfricaAmerican_Indicator BIT NOT NULL,
-  Race_NativeHawaiianPacificIslander_Indicator BIT NOT NULL,
-  Race_White_Indicator BIT NOT NULL,
-  Race_MultiRace_Indicator BIT NOT NULL,
-  Race_ChooseNotRespond_Indicator BIT NOT NULL,
-  Race_Other_Indicator BIT NOT NULL,
-	
-  EthnicityCode NVARCHAR(15) NOT NULL,
-  EthnicityDescription NVARCHAR(100) NOT NULL,
-  EthnicityHispanicLatino_Indicator BIT NOT NULL,
+  [HispanicLatinoEthnicity_Indicator] [bit] NOT NULL,
+  [OldEthnicityType_CodeValue] [int] NULL,
+  [OldEthnicityType_Description] [int] NULL,
+  [CitizenshipStatusType_CodeValue] [int] NULL,
+  [CitizenshipStatusType_Description] [int] NULL,
+  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] [int] NULL, 
+  [HighestLevelOfEducationDescriptorDescriptor_Description] [int] NULL, 
+  [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
+  [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
+  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
     
-  Migrant_Indicator BIT NOT NULL,
-  Homeless_Indicator BIT NOT NULL,
-  IEP_Indicator BIT NOT NULL,
-  
-  LimitedEnglishProficiencyDescriptor_CodeValue NVARCHAR(25) NOT NULL, -- L, F, N 
-  LimitedEnglishProficiencyDescriptor_Description NVARCHAR(60) NOT NULL,  -- English Learner , Former, Neither  
-
-  LimitedEnglishProficiency_EnglishLearner_Indicator BIT NOT NULL,
-  LimitedEnglishProficiency_Former_Indicator BIT NOT NULL,
-  LimitedEnglishProficiency_NotEnglisLearner_Indicator BIT NOT NULL,
-  
-  EconomicDisadvantage_Indicator BIT NOT NULL,   --need to review some of these flags. Some of them should allow nulls. Showing a value of 0 by defautl will not be accurate
-
-    
-  EntryDate DATETIME2 NOT NULL,
-  EntrySchoolYear INT NOT NULL,
-  EntryCode NVARCHAR(25) NOT NULL, 
-  
-  ExitWithdrawDate  DATETIME2 NULL,
-  ExitWithdrawSchoolYear INT NULL,
-  ExitWithdrawCode  NVARCHAR(25) NULL,
-     
   ValidFrom DATETIME NOT NULL, 
   ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,  
+  IsCurrent BIT NOT NULL,    
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey),
-  CONSTRAINT FK_DimStudent_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_DimStudent_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
 );
+
 
 
 CREATE TABLE dbo.DimAssessment
@@ -309,15 +374,35 @@ CREATE TABLE dbo.DimCourse
 	CourseTitle NVARCHAR(100) NOT NULL,
 	CourseDescription NVARCHAR(100) NOT NULL,
 
-	AcademicSubjectDescriptor_CodeValue  NVARCHAR(50) NOT NULL,
-	AcademicSubjectDescriptor_Description  NVARCHAR(1024) NOT NULL,
-	AcademicSubjectDescriptor_Math_Indicator  BIT NOT NULL,
-	AcademicSubjectDescriptor_ELA_Indicator  BIT NOT NULL,
-	AcademicSubjectDescriptor_Science_Indicator  BIT NOT NULL,
+	AcademicSubjectDescriptor_Biology_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_CareerAndTechnicalEducation_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Chemistry_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Composite_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_CriticalReading_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_EnglishLanguageArts_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_English_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_FineAndPerformingArts_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_ForeignLanguageAndLiterature_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_IntroductoryPhysics_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_LifeAndPhysicalSciences_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Mathematics_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_MilitaryScience_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Other_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_PhysicalHealthAndSafetyEducation_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Reading_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_ReligiousEducationAndTheology_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Science_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_SocialSciencesAndHistory_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_SocialStudies_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_TechnologyEngineering_Indicator BIT NOT NULL,
+	AcademicSubjectDescriptor_Writing_Indicator BIT NOT NULL,
 
 	HighSchoolCourseRequirement_Indicator BIT NOT NULL,
 	MinimumAvailableCredits INT NULL,
 	MaximumAvailableCredits INT NULL,
+
+	GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
+	GPAApplicabilityType_Description NVARCHAR(50) NULL,
 			
 	ValidFrom DATETIME NOT NULL, 
 	ValidTo DATETIME NOT NULL, 
@@ -328,14 +413,8 @@ CREATE TABLE dbo.DimCourse
     CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
-/*Not needed  now. Student Dimension is answering all our questions right now
-CREATE TABLE dbo.FactStudentRoster
-(
-  StudentKey INT NOT NULL,  
-  ETLProcessedDateTime DATETIME NULL,
-  CONSTRAINT FK_FactStudentRoster_PersonKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey)
-)
-*/
+--FACT TABLES
+----------------------------------------------------------------------
 
 CREATE TABLE dbo.FactStudentBehavior
 (
@@ -344,7 +423,7 @@ CREATE TABLE dbo.FactStudentBehavior
   
   NumberOfISSIncidents INT NOT NULL,
   NumberOfOSSIncidents INT NOT NULL,
-
+  
   [LineageKey] INT NOT NULL,
 
   CONSTRAINT PK_FactStudentBehavior PRIMARY KEY (StudentKey ASC, TimeKey ASC),
@@ -353,16 +432,17 @@ CREATE TABLE dbo.FactStudentBehavior
   CONSTRAINT FK_FactStudentBehavior_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
-CREATE TABLE dbo.FactStudentAttendance
+CREATE TABLE dbo.FactStudentAttendanceByDay
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL,  
-  NumberOfDaysPresent INT NOT NULL,
-  NumberOfDaysAbsent INT NOT NULL,
-  NumberOfDaysAbsentUnexcused INT NOT NULL,
-  NumberOfDaysMembership INT NOT NULL,
-  ADA INT NOT NULL,
-
+  Present_Indicator INT NOT NULL,
+  AbsentUnexcused_Indicator BIT NOT NULL,
+  AbsentExcused_Indicator BIT NOT NULL,  
+  Tardy_Indicator BIT NOT NULL,  
+  TardyUnexcused_Indicator BIT NOT NULL,  
+  TardyExcused_Indicator BIT NOT NULL,   
+  ADA_Indicator INT NOT NULL,    
   
   [LineageKey] INT NOT NULL,
 
@@ -373,12 +453,41 @@ CREATE TABLE dbo.FactStudentAttendance
   
 );
 
+CREATE TABLE dbo.FactStudentAttendanceBySection
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL,  
+  SectionKey INT NOT NULL,
+  StaffKey INT NOT NULL,
+  AttendanCode nvarchar(15) NOT NULL,
+  Present_Indicator BIT NOT NULL,  
+  AbsentUnexcused_Indicator BIT NOT NULL,
+  AbsentExcused_Indicator BIT NOT NULL,  
+  Tardy_Indicator BIT NOT NULL,  
+  TardyUnexcused_Indicator BIT NOT NULL,  
+  TardyExcused_Indicator BIT NOT NULL,    
+  ADA_Indicator INT NOT NULL,  
+  
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC, StaffKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
+);
+
+
+
+
 CREATE TABLE dbo.FactStudentAssessmentScore
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
   
+   
   Score_AssessmentReportingMethodDescriptor_RawScore INT NULL,
   Score_AssessmentReportingMethodDescriptor_ScaleScore INT NULL,
   Score_AssessmentReportingMethodDescriptor_ProficiencyLevel  NVARCHAR(25) NULL,
@@ -389,8 +498,7 @@ CREATE TABLE dbo.FactStudentAssessmentScore
   MCAS_PerformanceLevel_Descriptor_NeedsImprovement_Indicator BIT NOT NULL ,  
   MCAS_PerformanceLevel_Descriptor_Proficient_Indicator BIT NOT NULL ,
   MCAS_PerformanceLevel_Descriptor_Advanced_Indicator BIT NOT NULL ,
-      
-  
+        
   [LineageKey] INT NOT NULL,
 
   CONSTRAINT PK_FactStudentAssessmentScores PRIMARY KEY (StudentKey ASC, TimeKey ASC, AssessmentKey ASC),

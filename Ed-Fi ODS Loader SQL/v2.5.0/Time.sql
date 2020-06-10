@@ -261,7 +261,7 @@ OPTION (MAXRECURSION 0);
 
 ;WITH EdFiSchools AS
 (
-	SELECT DATEADD(YEAR,9,cd.Date) SchoolDate, -- adding nine years to the year in the populated template. Will remove this when we switch to real ODS
+	SELECT cd.Date as SchoolDate, -- adding nine years to the year in the populated template. Will remove this when we switch to real ODS
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
 		   td.CodeValue TermDescriptorCodeValue,
@@ -269,29 +269,29 @@ OPTION (MAXRECURSION 0);
 		   cet.CodeValue CalendarEventTypeCodeValue,
 		   cet.Description CalendarEventTypeDescription, 
 	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear
-	FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.School s
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarDateCalendarEvent cdce ON cd.SchoolId = cdce.SchoolId
+	FROM [EdFi_BPS_Staging_Ods].edfi.School s
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.CalendarDateCalendarEvent cdce ON cd.SchoolId = cdce.SchoolId
 																							AND cd.Date = cdce.Date
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarEventDescriptor ced  ON cdce.CalendarEventDescriptorId = ced.CalendarEventDescriptorId
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor cedv  ON ced.CalendarEventDescriptorId = cedv.DescriptorId
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarEventType cet ON ced.CalendarEventTypeId = cet.CalendarEventTypeId
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Session ses ON s.SchoolId = ses.SchoolId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.CalendarEventDescriptor ced  ON cdce.CalendarEventDescriptorId = ced.CalendarEventDescriptorId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor cedv  ON ced.CalendarEventDescriptorId = cedv.DescriptorId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.CalendarEventType cet ON ced.CalendarEventTypeId = cet.CalendarEventTypeId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.Session ses ON s.SchoolId = ses.SchoolId
 																		 AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
-		INNER JOIN v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
+		INNER JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
 	   -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
 )
 
 
 
 /*
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.CalendarDate
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Session
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.TermType
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.SessionGradingPeriod
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.GradingPeriod
-SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.CalendarDate
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.Session
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.TermType
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.SessionGradingPeriod
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.GradingPeriod
+SELECT * FROM [EdFi_BPS_Staging_Ods].edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
 */
 
 

@@ -29,6 +29,7 @@ BEGIN
 	 WHERE TableName= 'dbo.DimStudent'
 END 
 
+
 INSERT INTO BPS_DW.[dbo].[DimStudent]
            ([_sourceKey]
            ,[StudentUniqueId]
@@ -120,8 +121,8 @@ SELECT
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
 
-	   rt.CodeValue AS RaceCode,
-	   rt.Description AS RaceDescription,
+	   ISNULL(rt.CodeValue,'N/A') AS RaceCode,
+	   ISNULL(rt.Description,'N/A') AS RaceDescription,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =1 THEN 1 ELSE 0 END AS Race_AmericanIndianAlaskanNative_Indicator,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =2 THEN 1 ELSE 0 END AS Race_Asian_Indicator,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =3 THEN 1 ELSE 0 END AS Race_BlackAfricaAmerican_Indicator,
@@ -137,21 +138,21 @@ SELECT
 
 	   CASE WHEN EXISTS (
 					   SELECT 1
-					   FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentProgramAssociation spa
+					   FROM [EdFi_BPS_Staging_Ods].edfi.StudentProgramAssociation spa
 					   WHERE CHARINDEX('Migrant', spa.ProgramName,1) > 1
 							 AND spa.StudentUSI = s.StudentUSI
 							 AND spa.EndDate IS NULL
 				   ) THEN 1 ELSE 0 End AS Migrant_Indicator,
 	   CASE WHEN EXISTS (
 					   SELECT 1
-					   FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentProgramAssociation spa
+					   FROM [EdFi_BPS_Staging_Ods].edfi.StudentProgramAssociation spa
 					   WHERE CHARINDEX('Homeless', spa.ProgramName,1) > 1
 							 AND spa.StudentUSI = s.StudentUSI
 							 AND spa.EndDate IS NULL
 				   ) THEN 1 ELSE 0 End AS Homeless_Indicator,
         CASE WHEN EXISTS (
 					   SELECT *
-					   FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentSpecialEducationProgramAssociation spa
+					   FROM [EdFi_BPS_Staging_Ods].edfi.StudentSpecialEducationProgramAssociation spa
 					   WHERE CHARINDEX('IEP', spa.ProgramName,1) > 1 -- Will it have a name?
 							 AND spa.StudentUSI = s.StudentUSI
 							 AND spa.IEPEndDate IS NULL
@@ -178,36 +179,38 @@ SELECT
 
        ,GETDATE() AS ValidFrom
 	   ,'12/31/9999' AS ValidTo
-	   ,1 AS IsCurrent
+	   ,case when ssa.ExitWithdrawDate is null then 1 else 0 end AS IsCurrent
 	   ,@lineageKey AS [LineageKey]
 --select *  
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Student s
-    INNER JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
+FROM [EdFi_BPS_Staging_Ods].edfi.Student s
+    INNER JOIN [EdFi_BPS_Staging_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 	INNER JOIN BPS_DW.dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
-    INNER JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
-    LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
-    LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
-    LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
-    LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.ExitWithdrawType ewt ON ewtd.ExitWithdrawTypeId = ewt.ExitWithdrawTypeId
-    INNER JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
+    INNER JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
+    LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
+    LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
+    LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
+    LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ExitWithdrawType ewt ON ewtd.ExitWithdrawTypeId = ewt.ExitWithdrawTypeId
+    INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
 
     --lunch
-	LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor food ON s.SchoolFoodServicesEligibilityDescriptorId = food.DescriptorId
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor food ON s.SchoolFoodServicesEligibilityDescriptorId = food.DescriptorId
     --sex
-	INNER JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
+	INNER JOIN [EdFi_BPS_Staging_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
 	--state id
-    LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentIdentificationCode sic ON s.StudentUSI = sic.StudentUSI
+    LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StudentIdentificationCode sic ON s.StudentUSI = sic.StudentUSI
 																				       AND AssigningOrganizationIdentificationCode = 'State' 
     --lep
-	LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
 	
     --races
-	LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentRace sr ON s.StudentUSI = sr.StudentUsi
-	LEFT JOIN v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUsi
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimStudent] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) = ds._sourceKey)
 ORDER BY sic.IdentificationCode;
+
+select * from BPS_DW.[dbo].[DimStudent]
 
 --updatng the lineage table
 UPDATE BPS_DW.[dbo].[Lineage]
@@ -222,29 +225,29 @@ WHERE LineageKey = @lineageKey;
 /*
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor
+FROM [EdFi_BPS_Staging_Ods].edfi.Descriptor
 WHERE Namespace LIKE '%datatype%';
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.ResultDatatypeType;
+FROM [EdFi_BPS_Staging_Ods].edfi.ResultDatatypeType;
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.SexType;
+FROM [EdFi_BPS_Staging_Ods].edfi.SexType;
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentRace;
+FROM [EdFi_BPS_Staging_Ods].edfi.StudentRace;
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.Program;
+FROM [EdFi_BPS_Staging_Ods].edfi.Program;
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.EntryGradeLevelReasonType;
+FROM [EdFi_BPS_Staging_Ods].edfi.EntryGradeLevelReasonType;
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.StudentSchoolAssociation;
+FROM [EdFi_BPS_Staging_Ods].edfi.StudentSchoolAssociation;
 
 
 SELECT *
-FROM v26_EdFi_Ods_Sandbox_populatedSandbox.edfi.RaceType;
+FROM [EdFi_BPS_Staging_Ods].edfi.RaceType;
 
 */
