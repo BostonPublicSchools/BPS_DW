@@ -235,14 +235,14 @@ CREATE TABLE dbo.DimSection
 CREATE TABLE dbo.DimStaff
 (
   StaffKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|StaffUSI'
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
   
   [StaffUniqueId] [nvarchar](32) NOT NULL,
   [PersonalTitlePrefix] [nvarchar](30) NULL,
   [FirstName] [nvarchar](75) NOT NULL,
   [MiddleName] [nvarchar](75) NULL,
-  [MiddleInitial CHAR(1) NULL,
-  [LastSurname] [nvarchar](75) NOT NULL,
+  [MiddleInitial] CHAR(1) NULL,
+  [LastSurname] nvarchar(75) NOT NULL,
   [FullName] NVARCHAR(50) NOT NULL,
   [GenerationCodeSuffix] [nvarchar](10) NULL,
   [MaidenName] [nvarchar](75) NULL,  
@@ -256,12 +256,12 @@ CREATE TABLE dbo.DimStaff
   SexType_NotSelected_Indicator BIT NOT NULL,
   
   [HispanicLatinoEthnicity_Indicator] [bit] NOT NULL,
-  [OldEthnicityType_CodeValue] [int] NULL,
-  [OldEthnicityType_Description] [int] NULL,
-  [CitizenshipStatusType_CodeValue] [int] NULL,
-  [CitizenshipStatusType_Description] [int] NULL,
-  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] [int] NULL, 
-  [HighestLevelOfEducationDescriptorDescriptor_Description] [int] NULL, 
+  [OldEthnicityType_CodeValue] NVARCHAR(100)  NULL,
+  [OldEthnicityType_Description] NVARCHAR(100)  NULL,
+  [CitizenshipStatusType_CodeValue] NVARCHAR(100)  NULL,
+  [CitizenshipStatusType_Description] NVARCHAR(100)  NULL,
+  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] NVARCHAR(100)  NULL, 
+  [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
   [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
   [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
   [HighlyQualifiedTeacher_Indicator] [bit] NULL,
