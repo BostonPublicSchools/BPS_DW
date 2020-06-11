@@ -436,19 +436,27 @@ CREATE TABLE dbo.FactStudentAttendanceByDay
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL,  
-  Present_Indicator INT NOT NULL,
-  AbsentUnexcused_Indicator BIT NOT NULL,
-  AbsentExcused_Indicator BIT NOT NULL,  
-  Tardy_Indicator BIT NOT NULL,  
-  TardyUnexcused_Indicator BIT NOT NULL,  
-  TardyExcused_Indicator BIT NOT NULL,   
-  ADA_Indicator INT NOT NULL,    
+  SchoolKey INT NOT NULL,
+  
+  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
+  AttendanceEventCategoryDescriptor_Description nvarchar(50) NOT NULL,
+  AttendanceEventReason nvarchar(500) NOT NULL,
+  [InAttendance_Indicator] BIT NOT NULL,  
+  [UnexcusedAbsence_Indicator] BIT NOT NULL,
+  [ExcusedAbsence_Indicator] BIT NOT NULL,  
+  [Tardy_Indicator] BIT NOT NULL,    
+ -- [UnexcusedTardy_Indicator] BIT NOT NULL,  
+  --[ExcusedTardy_Indicator] BIT NOT NULL,  
+  [EarlyDeparture_Indicator]  BIT NOT NULL,  
+  --[NoContact_Indicator] BIT NOT NULL,    
+  --[ADA_Indicator] INT NOT NULL,    
   
   [LineageKey] INT NOT NULL,
 
   CONSTRAINT PK_FactStudentAttendance PRIMARY KEY (StudentKey ASC, TimeKey ASC),
   CONSTRAINT FK_FactStudentAttendance_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentAttendance_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentAttendance_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
   CONSTRAINT FK_FactStudentAttendance_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
   
 );
@@ -459,14 +467,20 @@ CREATE TABLE dbo.FactStudentAttendanceBySection
   TimeKey INT NOT NULL,  
   SectionKey INT NOT NULL,
   StaffKey INT NOT NULL,
-  AttendanCode nvarchar(15) NOT NULL,
-  Present_Indicator BIT NOT NULL,  
-  AbsentUnexcused_Indicator BIT NOT NULL,
-  AbsentExcused_Indicator BIT NOT NULL,  
-  Tardy_Indicator BIT NOT NULL,  
-  TardyUnexcused_Indicator BIT NOT NULL,  
-  TardyExcused_Indicator BIT NOT NULL,    
-  ADA_Indicator INT NOT NULL,  
+  SchoolKey INT NOT NULL,
+
+  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
+  AttendanceEventCategoryDescriptor_Description nvarchar(50) NOT NULL,
+  AttendanceEventReason nvarchar(500) NOT NULL,
+  [InAttendance_Indicator] BIT NOT NULL,  
+  [UnexcusedAbsence_Indicator] BIT NOT NULL,
+  [ExcusedAbsence_Indicator] BIT NOT NULL,  
+  [Tardy_Indicator] BIT NOT NULL,    
+  --[UnexcusedTardy_Indicator] BIT NOT NULL,  
+  --[ExcusedTardy_Indicator] BIT NOT NULL,  
+  [EarlyDeparture_Indicator]  BIT NOT NULL,  
+  --[NoContact_Indicator] BIT NOT NULL,    
+  [ADA_Indicator] INT NOT NULL,  
   
   [LineageKey] INT NOT NULL,
 
@@ -475,6 +489,7 @@ CREATE TABLE dbo.FactStudentAttendanceBySection
   CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
 );
 
