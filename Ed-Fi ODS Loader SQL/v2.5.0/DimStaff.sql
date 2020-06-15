@@ -31,8 +31,11 @@ END
 
 
 
-INSERT INTO [dbo].[DimStaff]
+INSERT INTO BPS_DW.[dbo].[DimStaff]
            ([_sourceKey]
+		   ,[PrimaryElectronicMailAddress]
+		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+		   ,[PrimaryElectronicMailTypeDescriptor_Description]
            ,[StaffUniqueId]
            ,[PersonalTitlePrefix]
            ,[FirstName]
@@ -68,6 +71,9 @@ INSERT INTO [dbo].[DimStaff]
 
 select  distinct 
          'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) AS [_sourceKey]
+		,sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress]
+	    ,emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue]
+	    ,emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description]
         ,s.StaffUniqueId
 		,s.PersonalTitlePrefix
 	    ,s.FirstName
@@ -108,6 +114,9 @@ FROM EdFi_BPS_Staging_Ods.edfi.Staff s
 	 left join [EdFi_BPS_Staging_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
 	 left join [EdFi_BPS_Staging_Ods].edfi.CitizenshipStatusType cst on s.CitizenshipStatusTypeId = cst.CitizenshipStatusTypeId
 	 left join [EdFi_BPS_Staging_Ods].edfi.Descriptor d_le on s.HighestCompletedLevelOfEducationDescriptorId = d_le.DescriptorId
+	 LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StaffElectronicMail sem ON s.StaffUSI = sem.StaffUSI
+	                                                              AND sem.PrimaryEmailAddressIndicator = 1
+	 LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimStaff] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey);

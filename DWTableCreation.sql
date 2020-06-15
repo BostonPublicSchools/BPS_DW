@@ -141,6 +141,10 @@ CREATE TABLE dbo.DimStudent
 	[StudentUniqueId] [nvarchar](32) NULL,
 	[StateId] [nvarchar](32) NULL,
 
+	PrimaryElectronicMailAddress [nvarchar](128) NULL,
+	PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
+	PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+
 	[SchoolKey] [int] NOT NULL,
 	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
 	[NameOfInstitution] [nvarchar](500) NOT NULL,
@@ -237,6 +241,10 @@ CREATE TABLE dbo.DimStaff
   StaffKey INT NOT NULL IDENTITY(1,1),
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
   
+  PrimaryElectronicMailAddress [nvarchar](128) NULL,
+  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
+  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+
   [StaffUniqueId] [nvarchar](32) NOT NULL,
   [PersonalTitlePrefix] [nvarchar](30) NULL,
   [FirstName] [nvarchar](75) NOT NULL,

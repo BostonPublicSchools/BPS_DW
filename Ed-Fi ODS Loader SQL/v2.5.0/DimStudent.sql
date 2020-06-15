@@ -32,6 +32,9 @@ END
 
 INSERT INTO BPS_DW.[dbo].[DimStudent]
            ([_sourceKey]
+           ,[PrimaryElectronicMailAddress]
+		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+		   ,[PrimaryElectronicMailTypeDescriptor_Description]
            ,[StudentUniqueId]
            ,[StateId]
            ,[SchoolKey]
@@ -89,7 +92,9 @@ INSERT INTO BPS_DW.[dbo].[DimStudent]
 
 SELECT 
        'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) AS [_sourceKey],
-	   
+	   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
+	   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
+	   emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description],
 	   s.StudentUniqueId,       
        sic.IdentificationCode AS StateId,
        
@@ -190,6 +195,9 @@ FROM [EdFi_BPS_Staging_Ods].edfi.Student s
     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ExitWithdrawType ewt ON ewtd.ExitWithdrawTypeId = ewt.ExitWithdrawTypeId
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StudentElectronicMail sem ON s.StudentUSI = sem.StudentUSI
+	                                                               AND sem.PrimaryEmailAddressIndicator = 1
+	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
     INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
 
     --lunch
@@ -198,7 +206,7 @@ FROM [EdFi_BPS_Staging_Ods].edfi.Student s
 	INNER JOIN [EdFi_BPS_Staging_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
 	--state id
     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StudentIdentificationCode sic ON s.StudentUSI = sic.StudentUSI
-																				       AND AssigningOrganizationIdentificationCode = 'State' 
+																				       AND sic.AssigningOrganizationIdentificationCode = 'State' 
     --lep
 	LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
 	
@@ -209,8 +217,6 @@ WHERE NOT EXISTS(SELECT 1
 					FROM BPS_DW.[dbo].[DimStudent] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) = ds._sourceKey)
 ORDER BY sic.IdentificationCode;
-
-select * from BPS_DW.[dbo].[DimStudent]
 
 --updatng the lineage table
 UPDATE BPS_DW.[dbo].[Lineage]
@@ -249,5 +255,8 @@ FROM [EdFi_BPS_Staging_Ods].edfi.StudentSchoolAssociation;
 
 SELECT *
 FROM [EdFi_BPS_Staging_Ods].edfi.RaceType;
+
+select * from [EdFi_BPS_Staging_Ods].edfi.StudentElectronicMail
+
 
 */
