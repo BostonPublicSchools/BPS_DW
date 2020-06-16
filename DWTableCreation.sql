@@ -428,13 +428,15 @@ CREATE TABLE dbo.FactStudentBehavior
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
-  
-  NumberOfISSIncidents INT NOT NULL,
-  NumberOfOSSIncidents INT NOT NULL,
-  
+  IncidentDateTime DATETIME NOT NULL, 
+  IncidentTypeCode NVARCHAR(100) NOT NULL,
+  IncidentActionCode NVARCHAR(100) NULL,
+  IncidentLocationCode NVARCHAR(500) NULL,  
+  [ISS_Indicator] BIT NOT NULL,  
+  [OSS_Indicator] BIT NOT NULL,
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_FactStudentBehavior PRIMARY KEY (StudentKey ASC, TimeKey ASC),
+  CONSTRAINT PK_FactStudentBehavior PRIMARY KEY (StudentKey ASC, TimeKey ASC, IncidentDateTime ASC),
   CONSTRAINT FK_FactStudentBehavior_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentBehavior_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentBehavior_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
