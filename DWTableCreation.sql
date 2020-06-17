@@ -1,3 +1,25 @@
+DECLARE @dropExistingTables BIT = 0
+
+IF (@dropExistingTables = 1)
+BEGIN
+  
+  DROP TABLE dbo.FactStudentAttendanceBySection;
+  DROP TABLE dbo.FactStudentAttendanceByDay;
+  DROP TABLE dbo.FactStudentAssessmentScore;
+  DROP TABLE dbo.FactStudentBehavior;
+  DROP TABLE dbo.FactStudentCourseGrade;
+
+  DROP TABLE dbo.DimTime;
+  DROP TABLE dbo.DimStudent;
+  DROP TABLE dbo.DimCourse;
+  DROP TABLE dbo.DimAssessment;
+  DROP TABLE dbo.DimSchool;
+  
+  DROP TABLE dbo.Lineage;
+
+END;
+
+
 CREATE TABLE dbo.Lineage
 (
    LineageKey INT NOT NULL IDENTITY(1,1), -- surrogate
@@ -428,7 +450,7 @@ CREATE TABLE dbo.FactStudentBehavior
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
-  IncidentDateTime DATETIME NOT NULL, 
+  IncidentDateTime DATETIME2 NOT NULL, 
   IncidentTypeCode NVARCHAR(100) NOT NULL,
   IncidentActionCode NVARCHAR(100) NULL,
   IncidentLocationCode NVARCHAR(500) NULL,  
