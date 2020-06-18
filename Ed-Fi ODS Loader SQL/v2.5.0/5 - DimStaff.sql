@@ -105,11 +105,12 @@ select  distinct
 		,s.YearsOfPriorTeachingExperience
 		,s.HighlyQualifiedTeacher
         ,GETDATE() AS ValidFrom
-	    ,case when ssa.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  '12/31/9999' else GETDATE() END AS ValidTo
-	    ,case when ssa.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  1 else 0 end AS IsCurrent
+	    ,case when seoea.EndDate IS null then  '12/31/9999' else seoea.EndDate  END AS ValidTo
+	    ,case when seoea.EndDate IS NULL THEN  1 else 0 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM EdFi_BPS_Staging_Ods.edfi.Staff s 
      INNER JOIN [EdFi_BPS_Staging_Ods].edfi.StaffSchoolAssociation ssa ON s.StaffUSI = ssa.StaffUSI
+	 INNER JOIN EdFi_BPS_Staging_Ods.edfi.StaffEducationOrganizationEmploymentAssociation seoea ON s.StaffUSI = seoea.StaffUSI
 	 --sex	 
 	 left JOIN [EdFi_BPS_Staging_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
 	 left join [EdFi_BPS_Staging_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
@@ -123,7 +124,7 @@ WHERE NOT EXISTS(SELECT 1
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey)
 	  AND ssa.SchoolYear IN (2019,2020);
 
-SELECT * FROM BPS_DW.[dbo].[DimStaff]
+
 
 --updatng the lineage table
 UPDATE BPS_DW.[dbo].[Lineage]
@@ -135,9 +136,9 @@ WHERE LineageKey = @lineageKey;
 /*
 SELECT * FROM EdFi_BPS_Staging_Ods.edfi.Staff
 SELECT * FROM EdFi_BPS_Staging_Ods.edfi.StaffSchoolAssociation
+SELECT * FROM EdFi_BPS_Staging_Ods.edfi.StaffEducationOrganizationEmploymentAssociation
 
 */
-
 
 
 

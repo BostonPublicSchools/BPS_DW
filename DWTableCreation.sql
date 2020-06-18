@@ -447,7 +447,8 @@ CREATE TABLE dbo.DimStaff
 
   CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
 );
---are staff always in StaffSchoolAssociation? how do you know if staff is active
+--use SELECT * FROM EdFi_BPS_Staging_Ods.edfi.StaffEducationOrganizationEmploymentAssociation - enddate
+
 
 
 --discipline incident types
@@ -754,10 +755,13 @@ CREATE TABLE dbo.FactStudentDiscipline
   TimeKey INT NOT NULL, 
   SchoolKey INT NOT NULL,
   IncidentTime TIME(7) NOT NULL, 
+  
   DisciplineIncidentBehaviorKey INT NOT NULL, -- Weapons Possession (Firearms and Other Weapons), Drugs. etcs
   DisciplineIncidentLocationKey INT NOT NULL, -- Hallway, Cafeteria, Classroom, etc
   DisciplineIncidentActionKey INT NOT NULL, -- ISS, OSS
   DisciplineIncidentReporterTypeKey INT NOT NULL, --Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student,
+
+
   IncidentReporterName NVARCHAR(100) NULL ,
   ReportedToLawEnforcement_Indicator BIT NOT NULL ,
   IncidentCost Money NOT NULL,
