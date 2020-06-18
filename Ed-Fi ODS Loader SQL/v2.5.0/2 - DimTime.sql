@@ -376,10 +376,15 @@ select nst.[SchoolDate]
 	  ,es.CalendarEventTypeDescription
 	  ,es.TermDescriptorCodeValue
 	  ,es.TermDescriptorDescription	  
-
 	   ,GETDATE() AS ValidFrom
-	    ,'12/31/9999' AS ValidTo
-	    ,1 AS IsCurrent
+	   ,CASE WHEN ds._sourceKey IS NOT NULL THEN 
+		      CASE WHEN ds.IsCurrent = 1 THEN '12/31/9999' 
+			    ELSE GETDATE() 
+			  END
+		 ELSE
+		     '12/31/9999' 
+		 END  AS ValidTo
+	    ,CASE WHEN ds._sourceKey IS NOT NULL THEN ds.IsCurrent ELSE  1 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
      LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
@@ -394,9 +399,8 @@ WHERE NOT EXISTS(SELECT 1
 						  )
 				  )
 	 --ORDER BY es.SchoolDate
-	 
+ 
 
-SELECT * FROM BPS_DW.[dbo].[DimTime] 
 --WHERE SchoolKey IS NOT NULL
 ORDER BY [SchoolDate] 
  

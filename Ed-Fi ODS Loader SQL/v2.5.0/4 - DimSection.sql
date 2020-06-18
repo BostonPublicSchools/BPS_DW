@@ -60,17 +60,18 @@ select  distinct
 		,d_t.CodeValue as TermDescriptorCodeValue
 		,d_t.Description as TermDescriptorDescription
         ,GETDATE() AS ValidFrom
-	    ,'12/31/9999' AS ValidTo
-	    , case when s.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  1 else 0 end AS IsCurrent
+	    ,case when s.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  '12/31/9999' else GETDATE() END AS ValidTo
+	    ,case when s.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  1 else 0 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM EdFi_BPS_Staging_Ods.edfi.Section s 
      INNER JOIN BPS_DW.dbo.DimSchool ds ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId)   = ds._sourceKey
 	 INNER JOIN [EdFi_BPS_Staging_Ods].edfi.Descriptor d_t ON s.TermDescriptorId = d_t.DescriptorId
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimSection] ds 
-					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.UniqueSectionCode) = ds._sourceKey);
+					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.UniqueSectionCode) = ds._sourceKey)
+	  AND s.SchoolYear IN (2019,2020);
 
-SELECT * FROM BPS_DW.[dbo].[DimSection]
+--SELECT * FROM BPS_DW.[dbo].[DimSection]
 
 
 --updatng the lineage table
@@ -79,6 +80,10 @@ UPDATE BPS_DW.[dbo].[Lineage]
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
+
+
+
+
 
 
 

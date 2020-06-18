@@ -36,7 +36,9 @@ DECLARE @EdFiSchools TABLE(
   [NameOfInstitution] [nvarchar](500) NOT NULL,
   [SchoolCategoryType] [nvarchar](100) NOT NULL,
   GradeLevelDescriptorCodeValue [nvarchar](100) NOT NULL, 
-  TitleIPartASchoolDesignationTypeCodeValue [nvarchar](500) NOT NULL  
+  TitleIPartASchoolDesignationTypeCodeValue [nvarchar](500) NOT NULL ,
+  OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+  OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL
 )
 
 
@@ -72,7 +74,10 @@ DECLARE @DimSchool TABLE(
 	[SchoolGradeLevel_Twelfthgrade_Indicator] [bit] NOT NULL,
 	[SchoolGradeLevel_Ungraded_Indicator] [bit] NOT NULL,
 	[TitleIPartASchoolDesignationTypeCodeValue] [nvarchar](50) NOT NULL,
-	[TitleIPartASchoolDesignation_Indicator] [bit] NOT NULL
+	[TitleIPartASchoolDesignation_Indicator] [bit] NOT NULL,
+	OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+    OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL
+
  )
 
 --retrieving all schools from the ODS
@@ -81,7 +86,9 @@ INSERT INTO @EdFiSchools ([_sourceKey] ,
 						   [NameOfInstitution],
 						   [SchoolCategoryType],
 						   GradeLevelDescriptorCodeValue, 
-						   TitleIPartASchoolDesignationTypeCodeValue
+						   TitleIPartASchoolDesignationTypeCodeValue,
+						   OperationalStatusTypeDescriptor_CodeValue,
+						   OperationalStatusTypeDescriptor_Description
 						   )
 
 SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
@@ -89,17 +96,20 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		edorg.NameOfInstitution,
 		sct.CodeValue AS SchoolCategoryType, 		   
 		sgld.CodeValue AS GradeLevelDescriptorCodeValue,
-		ISNULL(tIt.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue		
+		ISNULL(tIt.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue,
+		ISNULL(ost.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue,	
+		ISNULL(ost.[Description],'N/A') AS TitleIPartASchoolDesignationTypeCodeValue	
 --SELECT distinct sct.CodeValue
 FROM [EdFi_BPS_Staging_Ods].edfi.School s
 INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
+INNER JOIN [EdFi_BPS_Staging_Ods].edfi.OperationalStatusType ost ON edorg.OperationalStatusTypeId = ost.OperationalStatusTypeId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolGradeLevel sgl on s.SchoolId = sgl.SchoolId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.Descriptor sgld on sgl.GradeLevelDescriptorId = sgld.DescriptorId
 
-
+ 
 
 INSERT INTO @DimSchool ([_sourceKey]
 						,[ShortNameOfInstitution]
@@ -131,7 +141,9 @@ INSERT INTO @DimSchool ([_sourceKey]
 						,[SchoolGradeLevel_Twelfthgrade_Indicator]
 						,[SchoolGradeLevel_Ungraded_Indicator]
 						,[TitleIPartASchoolDesignationTypeCodeValue]
-						,[TitleIPartASchoolDesignation_Indicator]
+						,[TitleIPartASchoolDesignation_Indicator],
+						 OperationalStatusTypeDescriptor_CodeValue,
+						 OperationalStatusTypeDescriptor_Description
 						)
 SELECT DISTINCT 
        [_sourceKey], 
@@ -165,8 +177,9 @@ SELECT DISTINCT
 	   0 AS [SchoolGradeLevel_Twelfthgrade_Indicator],
 	   0 AS [SchoolGradeLevel_Ungraded_Indicator],
 	   TitleIPartASchoolDesignationTypeCodeValue,
-	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school','N/A') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator
-	   
+	   CASE WHEN TitleIPartASchoolDesignationTypeCodeValue NOT IN ('Not designated as a Title I Part A school','N/A') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator,
+	   OperationalStatusTypeDescriptor_CodeValue,
+	   OperationalStatusTypeDescriptor_Description
 FROM @EdFiSchools;
 
 
@@ -301,7 +314,6 @@ FROM @DimSchool ds
 WHERE es.GradeLevelDescriptorCodeValue = 'Ungraded'
 
 
-
 INSERT INTO BPS_DW.[dbo].[DimSchool]
            ([_sourceKey]
            ,[ShortNameOfInstitution]
@@ -334,6 +346,8 @@ INSERT INTO BPS_DW.[dbo].[DimSchool]
            ,[SchoolGradeLevel_Ungraded_Indicator]
            ,[TitleIPartASchoolDesignationTypeCodeValue]
            ,[TitleIPartASchoolDesignation_Indicator]
+		   ,OperationalStatusTypeDescriptor_CodeValue
+		   ,OperationalStatusTypeDescriptor_Description
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
@@ -370,16 +384,18 @@ SELECT   [_sourceKey]
         ,[SchoolGradeLevel_Ungraded_Indicator]
         ,[TitleIPartASchoolDesignationTypeCodeValue]
         ,[TitleIPartASchoolDesignation_Indicator]
+		,OperationalStatusTypeDescriptor_CodeValue
+		,OperationalStatusTypeDescriptor_Description
         ,GETDATE() AS ValidFrom
-	    ,'12/31/9999' AS ValidTo
-	    ,1 AS IsCurrent
+	    ,CASE WHEN OperationalStatusTypeDescriptor_CodeValue IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE GETDATE() END AS ValidTo
+	    ,CASE WHEN OperationalStatusTypeDescriptor_CodeValue IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @DimSchool s
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimSchool] ds 
 					WHERE s._sourceKey = ds._sourceKey);
 
-SELECT * FROM BPS_DW.[dbo].[DimSchool]
+--SELECT * FROM BPS_DW.[dbo].[DimSchool]
 
 
 --updatng the lineage table
@@ -396,7 +412,7 @@ WHERE LineageKey = @lineageKey;
 
 	
 
-
+	
 
 
 

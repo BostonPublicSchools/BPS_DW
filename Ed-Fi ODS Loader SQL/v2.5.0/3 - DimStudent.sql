@@ -183,7 +183,7 @@ SELECT
 	   ewt.CodeValue ExitWithdrawCode              
 
        ,GETDATE() AS ValidFrom
-	   ,'12/31/9999' AS ValidTo
+	   ,case when ssa.ExitWithdrawDate is null then '12/31/9999'  else ssa.ExitWithdrawDate END AS ValidTo
 	   ,case when ssa.ExitWithdrawDate is null then 1 else 0 end AS IsCurrent
 	   ,@lineageKey AS [LineageKey]
 --select *  
@@ -216,6 +216,7 @@ FROM [EdFi_BPS_Staging_Ods].edfi.Student s
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimStudent] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) = ds._sourceKey)
+	  AND ssa.SchoolYear IN (2019,2020)
 ORDER BY sic.IdentificationCode;
 
 --updatng the lineage table
@@ -224,6 +225,7 @@ UPDATE BPS_DW.[dbo].[Lineage]
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
+
 
 
 

@@ -1,25 +1,130 @@
-DECLARE @dropExistingTables BIT = 0
+USE BPS_DW
+GO
+
+DECLARE @dropExistingTables BIT = 1
 
 IF (@dropExistingTables = 1)
 BEGIN
-  
-  DROP TABLE dbo.FactStudentAttendanceBySection;
-  DROP TABLE dbo.FactStudentAttendanceByDay;
-  DROP TABLE dbo.FactStudentAssessmentScore;
-  DROP TABLE dbo.FactStudentBehavior;
-  DROP TABLE dbo.FactStudentCourseGrade;
 
-  DROP TABLE dbo.DimTime;
-  DROP TABLE dbo.DimStudent;
-  DROP TABLE dbo.DimCourse;
-  DROP TABLE dbo.DimAssessment;
-  DROP TABLE dbo.DimSchool;
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.FactStudentAttendanceBySection; 
+     
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAssessmentScore' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.FactStudentAssessmentScore; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.FactStudentDiscipline; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentCourseGrade' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.FactStudentCourseGrade; 
+
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimTime' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimTime; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimStudent' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimStudent; 
+
+  IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimStaff' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimStaff; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimCourse' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimCourse; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAssessment' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimAssessment; 
+
+  IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSection' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimSection; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSchool' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimSchool; 
+
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentBehavior' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimDisciplineIncidentBehavior; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentLocation' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimDisciplineIncidentLocation; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentAction' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimDisciplineIncidentAction; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentReporterType' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimDisciplineIncidentReporterType; 
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimAttendanceEventCategory; 
   
-  DROP TABLE dbo.Lineage;
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimAttendanceEventCategory; 
+
+  IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'Lineage' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.Lineage; 
+
 
 END;
 
 
+--Lineage
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'Lineage' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.Lineage
 (
    LineageKey INT NOT NULL IDENTITY(1,1), -- surrogate
@@ -31,8 +136,14 @@ CREATE TABLE dbo.Lineage
    CONSTRAINT PK_Lineage PRIMARY KEY (LineageKey),
 );
 
+
 --DIMENSION TABLES
 -------------------------------------------------------------------------------------------------
+--school
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSchool' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimSchool
 (
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
@@ -78,7 +189,9 @@ CREATE TABLE dbo.DimSchool
 																	--Title I school wide eligible school - no program
                                             
   TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
-  
+  OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+  OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
+
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
   IsCurrent BIT NOT NULL,  
@@ -87,8 +200,26 @@ CREATE TABLE dbo.DimSchool
   CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey),
   CONSTRAINT FK_DimSchool_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
+--QUESTIONS
+--isCurrent = ('Active','Added','Changed Agency','Continuing','New','Reopened') ???
+/*
+Active
+Added
+Changed Agency
+Closed
+Continuing
+Future
+Inactive
+New
+Reopened
+*/
 
 
+--time
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimTime' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimTime
 (
   TimeKey INT NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate    
@@ -154,7 +285,11 @@ CREATE TABLE dbo.DimTime
   CONSTRAINT FK_DimTime_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
-
+--student
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimStudent' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimStudent
 (
     [StudentKey] [int] IDENTITY(1,1) NOT NULL, 
@@ -233,6 +368,11 @@ CREATE TABLE dbo.DimStudent
     CONSTRAINT FK_DimStudent_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
+--section
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSection' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimSection
 (
   SectionKey INT NOT NULL IDENTITY(1,1),
@@ -257,7 +397,11 @@ CREATE TABLE dbo.DimSection
   CONSTRAINT FK_DimSection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
 );
 
-
+--staff
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimStaff' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimStaff
 (
   StaffKey INT NOT NULL IDENTITY(1,1),
@@ -303,9 +447,128 @@ CREATE TABLE dbo.DimStaff
 
   CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
 );
+--are staff always in StaffSchoolAssociation? how do you know if staff is active
+
+
+--discipline incident types
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentBehavior' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimDisciplineIncidentBehavior
+(
+  DisciplineIncidentBehaviorKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  [BehaviorDescriptor_CodeValue] nvarchar(50) not null,
+  [BehaviorDescriptor_Description] nvarchar(1024) not null,
+  
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimDisciplineIncidentBehavior PRIMARY KEY (DisciplineIncidentBehaviorKey ASC)  
+);
+
+--discipline incident location
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentLocation' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimDisciplineIncidentLocation
+(
+  DisciplineIncidentLocationKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  [LocationDescriptor_CodeValue] nvarchar(50) not null,
+  [LocationDescriptor_Description] nvarchar(1024) not null,
+  
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimDisciplineIncidentLocation PRIMARY KEY (DisciplineIncidentLocationKey  ASC)     
+);
+
+--discipline incident location
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentAction' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimDisciplineIncidentAction
+(
+  DisciplineIncidentActionKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  [DisciplineDescriptor_CodeValue] nvarchar(50) not null,
+  [DisciplineDescriptor_Description] nvarchar(1024) not null,
+  
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimDisciplineIncidentAction PRIMARY KEY (DisciplineIncidentActionKey ASC)  
+);
+
+--discipline incident reporter types
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncidentReporterType' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimDisciplineIncidentReporterType
+(
+  DisciplineIncidentReporterTypeKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  ReporterDescriptor_CodeValue nvarchar(50) NOT NULL,
+  ReporterDescriptor_Description nvarchar(1024) NOT NULL,
+  
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimDisciplineIncidentReporterType PRIMARY KEY (DisciplineIncidentReporterTypeKey ASC)  
+);
+
+--attendance event type
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimAttendanceEventCategory
+(
+  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
+  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
+  
+  [InAttendance_Indicator] BIT NOT NULL,  
+  [UnexcusedAbsence_Indicator] BIT NOT NULL,
+  [ExcusedAbsence_Indicator] BIT NOT NULL,  
+  [Tardy_Indicator] BIT NOT NULL,    
+  [EarlyDeparture_Indicator]  BIT NOT NULL,    
+
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
+);
 
 
 
+--pending analysis----------------------------------------------------------------------------------------------
+--assessment
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAssessment' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimAssessment
 (
     AssessmentKey INT NOT NULL IDENTITY(1,1),  
@@ -321,18 +584,18 @@ CREATE TABLE dbo.DimAssessment
 	AssessmentIdentifier NVARCHAR(25) NOT NULL,   
 	AssessmentTitle NVARCHAR(500) NOT NULL,
 	--scores 
-	AssessmentScore_AssessmentReportingMethod_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	AssessmentScore_AssessmentReportingMethod_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   
+	AssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	AssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
-	AssessmentScore_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	AssessmentScore_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,   
+	AssessmentScore_ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+	AssessmentScore_ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
 	--performanceLevels
-	AssessmentPerformanceLevel_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	AssessmentPerformanceLevel_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   	
+	AssessmentPerformanceLevel_Descriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	AssessmentPerformanceLevel_Descriptor_Description NVARCHAR(1024) NOT NULL,   	
 	
 	AssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	PerformanceLevel_AssessmentReportingMethodDescriptor_DescriptorDescription NVARCHAR(1024) NOT NULL,   		
+	AssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   		
 
 	AssessmentPerformanceLevel_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
 	AssessmentPerformanceLevel_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,   	
@@ -343,11 +606,11 @@ CREATE TABLE dbo.DimAssessment
 	ParentObjectiveAssessmentIdentificationCode NVARCHAR(60) NOT NULL,   
 	ParentObjectiveAssessmentIdentificationDescription NVARCHAR(1024) NOT NULL,  
 	--scores 
-	ParentObjectiveAssessmentScore_AssessmentReportingMethod_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentScore_AssessmentReportingMethod_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   
+	ParentObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	ParentObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
-	ParentObjectiveAssessmentScore_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentScore_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,   
+	ParentObjectiveAssessmentScore_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+	ParentObjectiveAssessmentScore_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,   
 	
 	--performanceLevels
 	ParentObjectiveAssessmentPerformanceLevel_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
@@ -365,21 +628,21 @@ CREATE TABLE dbo.DimAssessment
 	ChildObjectiveAssessmentIdentificationCode NVARCHAR(60) NOT NULL,   
 	ChildObjectiveAssessmentIdentificationDescription NVARCHAR(1024) NOT NULL,  
 	--scores 
-	ChildObjectiveAssessmentScore_AssessmentReportingMethod_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentScore_AssessmentReportingMethod_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   
+	ChildObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	ChildObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
-	ChildObjectiveAssessmentScore_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentScore_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,   
+	ChildObjectiveAssessmentScore_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+	ChildObjectiveAssessmentScore_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,   
 	
 	--performanceLevels
-	ChildObjectiveAssessmentPerformanceLevel_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentPerformanceLevel_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   	
+	ChildObjectiveAssessmentPerformanceLevel_Descriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	ChildObjectiveAssessmentPerformanceLevel_Descriptor_Description NVARCHAR(1024) NOT NULL,   	
 	
 	ChildObjectiveAssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectivePerformanceLevel_AssessmentReportingMethodDescriptor_DescriptorDescription NVARCHAR(1024) NOT NULL,   		
+	ChildObjectiveAssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   		
 
-	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,  
+	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,  
 	-----------------------------------------------------------------------------------------
 	
 	
@@ -394,7 +657,11 @@ CREATE TABLE dbo.DimAssessment
 );
 
 
-
+--course
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimCourse' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.DimCourse
 (
     CourseKey INT NOT NULL IDENTITY(1,1),  --surrogate
@@ -443,56 +710,16 @@ CREATE TABLE dbo.DimCourse
     CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
+--end of pending analysis----------------------------------------------------------------------------------------------
+
+
 --FACT TABLES
 ----------------------------------------------------------------------
-
-CREATE TABLE dbo.FactStudentBehavior
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, 
-  IncidentDateTime DATETIME2 NOT NULL, 
-  IncidentTypeCode NVARCHAR(100) NOT NULL,
-  IncidentActionCode NVARCHAR(100) NULL,
-  IncidentLocationCode NVARCHAR(500) NULL,  
-  [ISS_Indicator] BIT NOT NULL,  
-  [OSS_Indicator] BIT NOT NULL,
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentBehavior PRIMARY KEY (StudentKey ASC, TimeKey ASC, IncidentDateTime ASC),
-  CONSTRAINT FK_FactStudentBehavior_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentBehavior_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentBehavior_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-);
-
-CREATE TABLE dbo.FactStudentAttendanceByDay
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL,  
-  SchoolKey INT NOT NULL,
-  
-  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
-  AttendanceEventCategoryDescriptor_Description nvarchar(50) NOT NULL,
-  AttendanceEventReason nvarchar(500) NOT NULL,
-  [InAttendance_Indicator] BIT NOT NULL,  
-  [UnexcusedAbsence_Indicator] BIT NOT NULL,
-  [ExcusedAbsence_Indicator] BIT NOT NULL,  
-  [Tardy_Indicator] BIT NOT NULL,    
- -- [UnexcusedTardy_Indicator] BIT NOT NULL,  
-  --[ExcusedTardy_Indicator] BIT NOT NULL,  
-  [EarlyDeparture_Indicator]  BIT NOT NULL,  
-  --[NoContact_Indicator] BIT NOT NULL,    
-  --[ADA_Indicator] INT NOT NULL,    
-  
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentAttendance PRIMARY KEY (StudentKey ASC, TimeKey ASC),
-  CONSTRAINT FK_FactStudentAttendance_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentAttendance_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentAttendance_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_FactStudentAttendance_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-  
-);
-
+--attendance by section
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentAttendanceBySection
 (
   StudentKey INT NOT NULL,
@@ -500,51 +727,71 @@ CREATE TABLE dbo.FactStudentAttendanceBySection
   SectionKey INT NOT NULL,
   StaffKey INT NOT NULL,
   SchoolKey INT NOT NULL,
-
-  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
-  AttendanceEventCategoryDescriptor_Description nvarchar(50) NOT NULL,
+  AttendanceEventCategoryKey INT NOT NULL ,
   AttendanceEventReason nvarchar(500) NOT NULL,
-  [InAttendance_Indicator] BIT NOT NULL,  
-  [UnexcusedAbsence_Indicator] BIT NOT NULL,
-  [ExcusedAbsence_Indicator] BIT NOT NULL,  
-  [Tardy_Indicator] BIT NOT NULL,    
-  --[UnexcusedTardy_Indicator] BIT NOT NULL,  
-  --[ExcusedTardy_Indicator] BIT NOT NULL,  
-  [EarlyDeparture_Indicator]  BIT NOT NULL,  
-  --[NoContact_Indicator] BIT NOT NULL,    
-  [ADA_Indicator] INT NOT NULL,  
-  
+
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC, StaffKey),
+  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC, StaffKey ASC, AttendanceEventCategoryKey ASC),
   CONSTRAINT FK_FactStudentAttendanceBySection_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey),
   CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
 );
 
 
+--discipline
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentDiscipline
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL, 
+  SchoolKey INT NOT NULL,
+  IncidentTime TIME(7) NOT NULL, 
+  DisciplineIncidentBehaviorKey INT NOT NULL, -- Weapons Possession (Firearms and Other Weapons), Drugs. etcs
+  DisciplineIncidentLocationKey INT NOT NULL, -- Hallway, Cafeteria, Classroom, etc
+  DisciplineIncidentActionKey INT NOT NULL, -- ISS, OSS
+  DisciplineIncidentReporterTypeKey INT NOT NULL, --Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student,
+  IncidentReporterName NVARCHAR(100) NULL ,
+  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
+  IncidentCost Money NOT NULL,
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, IncidentTime ASC),
+  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentBehaviorKey FOREIGN KEY (DisciplineIncidentBehaviorKey) REFERENCES dbo.DimDisciplineIncidentBehavior(DisciplineIncidentBehaviorKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentLocationKey FOREIGN KEY (DisciplineIncidentLocationKey) REFERENCES dbo.DimDisciplineIncidentLocation(DisciplineIncidentLocationKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentActionKey FOREIGN KEY (DisciplineIncidentActionKey) REFERENCES dbo.DimDisciplineIncidentAction(DisciplineIncidentActionKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentReporterTypeKey FOREIGN KEY (DisciplineIncidentReporterTypeKey) REFERENCES dbo.DimDisciplineIncidentReporterType(DisciplineIncidentReporterTypeKey),
+  
+  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
 
 
+
+--pending analysis-----------------------
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAssessmentScore' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentAssessmentScore
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
-  
-   
+     
   Score_AssessmentReportingMethodDescriptor_RawScore INT NULL,
   Score_AssessmentReportingMethodDescriptor_ScaleScore INT NULL,
   Score_AssessmentReportingMethodDescriptor_ProficiencyLevel  NVARCHAR(25) NULL,
   Score_AssessmentReportingMethodDescriptor_Percentile FLOAT NULL,
-  
-  MCAS_PerformanceLevel_Descriptor_Failing_Indicator BIT NOT NULL , -- grade 10 tests
-  MCAS_PerformanceLevel_Descriptor_Warning_Indicator BIT NOT NULL , -- grade 3-8 tests
-  MCAS_PerformanceLevel_Descriptor_NeedsImprovement_Indicator BIT NOT NULL ,  
-  MCAS_PerformanceLevel_Descriptor_Proficient_Indicator BIT NOT NULL ,
-  MCAS_PerformanceLevel_Descriptor_Advanced_Indicator BIT NOT NULL ,
         
   [LineageKey] INT NOT NULL,
 
@@ -556,6 +803,10 @@ CREATE TABLE dbo.FactStudentAssessmentScore
 );
 
 
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentCourseGrade' 
+			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentCourseGrade
 (
   StudentKey INT NOT NULL,
@@ -574,6 +825,5 @@ CREATE TABLE dbo.FactStudentCourseGrade
   CONSTRAINT FK_FactStudentCourseGrade_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
   CONSTRAINT FK_FactStudentCourseGrade_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
-
-
+--end of pending analysis-----------------------
 

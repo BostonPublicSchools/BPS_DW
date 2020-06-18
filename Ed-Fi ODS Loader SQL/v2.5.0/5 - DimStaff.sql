@@ -105,11 +105,12 @@ select  distinct
 		,s.YearsOfPriorTeachingExperience
 		,s.HighlyQualifiedTeacher
         ,GETDATE() AS ValidFrom
-	    ,'12/31/9999' AS ValidTo
-	    ,1 AS IsCurrent
-	    --,@lineageKey AS [LineageKey]
+	    ,case when ssa.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  '12/31/9999' else GETDATE() END AS ValidTo
+	    ,case when ssa.SchoolYear = BPS_DW.dbo.Func_GetSchoolYear(GETDATE()) then  1 else 0 end AS IsCurrent
+	    ,@lineageKey AS [LineageKey]
 FROM EdFi_BPS_Staging_Ods.edfi.Staff s 
-     --sex
+     INNER JOIN [EdFi_BPS_Staging_Ods].edfi.StaffSchoolAssociation ssa ON s.StaffUSI = ssa.StaffUSI
+	 --sex	 
 	 left JOIN [EdFi_BPS_Staging_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
 	 left join [EdFi_BPS_Staging_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
 	 left join [EdFi_BPS_Staging_Ods].edfi.CitizenshipStatusType cst on s.CitizenshipStatusTypeId = cst.CitizenshipStatusTypeId
@@ -119,7 +120,8 @@ FROM EdFi_BPS_Staging_Ods.edfi.Staff s
 	 LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimStaff] ds 
-					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey);
+					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey)
+	  AND ssa.SchoolYear IN (2019,2020);
 
 SELECT * FROM BPS_DW.[dbo].[DimStaff]
 
@@ -129,6 +131,16 @@ UPDATE BPS_DW.[dbo].[Lineage]
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
+
+/*
+SELECT * FROM EdFi_BPS_Staging_Ods.edfi.Staff
+SELECT * FROM EdFi_BPS_Staging_Ods.edfi.StaffSchoolAssociation
+
+*/
+
+
+
+
 
 
 
