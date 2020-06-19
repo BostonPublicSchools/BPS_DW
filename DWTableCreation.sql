@@ -6,12 +6,20 @@ DECLARE @dropExistingTables BIT = 1
 IF (@dropExistingTables = 1)
 BEGIN
 
+  
+
+  if exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAttendanceByDay' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.FactStudentAttendanceByDay; 
+
   if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.FactStudentAttendanceBySection; 
-     
+    
   if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentAssessmentScore' 
@@ -31,17 +39,6 @@ BEGIN
       DROP TABLE dbo.FactStudentCourseGrade; 
 
 
-  if exists (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimTime' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP TABLE dbo.DimTime; 
-
-  if exists (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimStudent' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP TABLE dbo.DimStudent; 
 
   IF exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -67,12 +64,12 @@ BEGIN
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.DimSection; 
 
-  if exists (select 1
+    if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimSchool' 
+             WHERE TABLE_NAME = 'DimDisciplineIncident' 
 			   AND TABLE_SCHEMA = 'dbo')
-      DROP TABLE dbo.DimSchool; 
-
+      DROP TABLE dbo.DimDisciplineIncident; 
+	  
 
   if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -110,12 +107,32 @@ BEGIN
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.DimAttendanceEventCategory; 
 
-  IF exists (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'Lineage' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP TABLE dbo.Lineage; 
+   IF exists (select 1
+					FROM INFORMATION_SCHEMA.TABLES
+					WHERE TABLE_NAME = 'DimStudent' 
+					AND TABLE_SCHEMA = 'dbo')
+			DROP TABLE dbo.DimStudent; 
 
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimTime' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimTime; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSchool' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimSchool;
+	   
+   IF exists (select 1
+				FROM INFORMATION_SCHEMA.TABLES
+				WHERE TABLE_NAME = 'Lineage' 
+				AND TABLE_SCHEMA = 'dbo')
+		DROP TABLE dbo.Lineage; 
+
+  
+  
 
 END;
 
@@ -147,7 +164,7 @@ if NOT EXISTS (select 1
 CREATE TABLE dbo.DimSchool
 (
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|Id'
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
   
   ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
   NameOfInstitution NVARCHAR(500) NOT NULL,    
@@ -200,19 +217,6 @@ CREATE TABLE dbo.DimSchool
   CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey),
   CONSTRAINT FK_DimSchool_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
---QUESTIONS
---isCurrent = ('Active','Added','Changed Agency','Continuing','New','Reopened') ???
-/*
-Active
-Added
-Changed Agency
-Closed
-Continuing
-Future
-Inactive
-New
-Reopened
-*/
 
 
 --time
@@ -376,7 +380,7 @@ if NOT EXISTS (select 1
 CREATE TABLE dbo.DimSection
 (
   SectionKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'ODS|25590100101Trad120ENG112011'
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|25590100101Trad120ENG112011'
   
   [SchoolYear] [smallint] NOT NULL,  
   SchoolKey INT NOT NULL,
@@ -447,11 +451,83 @@ CREATE TABLE dbo.DimStaff
 
   CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
 );
---use SELECT * FROM EdFi_BPS_Staging_Ods.edfi.StaffEducationOrganizationEmploymentAssociation - enddate
 
+--discipline incident
+--this is not a slowly changing dimension since there not a natural source key to match by
+--we will deleting and repopulating the current year info
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimDisciplineIncident' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimDisciplineIncident
+(
+  DisciplineIncidentKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+  
+  SchoolKey INT NOT NULL,
+  ShortNameOfInstitution nvarchar(500) NOT NULL,
+  NameOfInstitution nvarchar(500) NOT NULL,
+  SchoolYear INT NOT NULL,
+  IncidentDate DATE NOT NULL,   
+  IncidentTime TIME(7) NOT NULL,   
+
+  [BehaviorDescriptor_CodeValue] nvarchar(50) not null, -- IncidentType: Weapons Possession (Firearms and Other Weapons), Drugs, Abuse Of Volatile Chemical,School Code of Conduct,  etc
+  [BehaviorDescriptor_Description] nvarchar(1024) not null,
+
+  [LocationDescriptor_CodeValue] nvarchar(50) not null,  -- Hallway, Cafeteria, Classroom, etc
+  [LocationDescriptor_Description] nvarchar(1024) not null,
+
+  [DisciplineDescriptor_CodeValue] nvarchar(50) not null, -- Actions: Community Service, Expulsion,In School Suspension,Out of School Suspension, Removal from Classroom, etc
+  [DisciplineDescriptor_Description] nvarchar(1024) not null,
+  DisciplineDescriptor_ISS_Indicator BIT NOT NULL,
+  DisciplineDescriptor_OSS_Indicator BIT NOT NULL,
+
+  ReporterDescriptor_CodeValue nvarchar(50) NOT NULL, -- Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student  
+  ReporterDescriptor_Description nvarchar(1024) NOT NULL,
+  
+  IncidentReporterName NVARCHAR(100) NOT NULL ,
+  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
+  IncidentCost Money NOT NULL,
+  
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimDisciplineIncident PRIMARY KEY (DisciplineIncidentKey ASC)  ,
+  CONSTRAINT FK_DimDisciplineIncident_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
+);
+
+
+
+--attendance event category
+-- NOT USED FOR NOW
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimAttendanceEventCategory
+(
+  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL, 
+   
+  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
+  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
+  
+  [InAttendance_Indicator] BIT NOT NULL,  
+  [UnexcusedAbsence_Indicator] BIT NOT NULL,
+  [ExcusedAbsence_Indicator] BIT NOT NULL,  
+  [Tardy_Indicator] BIT NOT NULL,    
+  [EarlyDeparture_Indicator]  BIT NOT NULL,    
+
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
+);
 
 
 --discipline incident types
+-- NOT USED FOR NOW
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimDisciplineIncidentBehavior' 
@@ -494,6 +570,7 @@ CREATE TABLE dbo.DimDisciplineIncidentLocation
 );
 
 --discipline incident location
+-- NOT USED FOR NOW
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimDisciplineIncidentAction' 
@@ -505,7 +582,8 @@ CREATE TABLE dbo.DimDisciplineIncidentAction
   
   [DisciplineDescriptor_CodeValue] nvarchar(50) not null,
   [DisciplineDescriptor_Description] nvarchar(1024) not null,
-  
+  DisciplineDescriptor_ISS_Indicator BIT NOT NULL,
+  DisciplineDescriptor_OSS_Indicator BIT NOT NULL,
   ValidFrom DATETIME NOT NULL, 
   ValidTo DATETIME NOT NULL, 
   IsCurrent BIT NOT NULL,    
@@ -515,6 +593,7 @@ CREATE TABLE dbo.DimDisciplineIncidentAction
 );
 
 --discipline incident reporter types
+-- NOT USED FOR NOW
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimDisciplineIncidentReporterType' 
@@ -535,36 +614,156 @@ CREATE TABLE dbo.DimDisciplineIncidentReporterType
   CONSTRAINT PK_DimDisciplineIncidentReporterType PRIMARY KEY (DisciplineIncidentReporterTypeKey ASC)  
 );
 
---attendance event type
+
+
+--FACT TABLES
+----------------------------------------------------------------------
+--attendance by day
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
+             WHERE TABLE_NAME = 'FactStudentAttendanceByDay' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimAttendanceEventCategory
+CREATE TABLE dbo.FactStudentAttendanceByDay
 (
-  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
-  
-  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
-  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
-  
-  [InAttendance_Indicator] BIT NOT NULL,  
-  [UnexcusedAbsence_Indicator] BIT NOT NULL,
-  [ExcusedAbsence_Indicator] BIT NOT NULL,  
-  [Tardy_Indicator] BIT NOT NULL,    
-  [EarlyDeparture_Indicator]  BIT NOT NULL,    
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL,  
+  SchoolKey INT NOT NULL,
+  AttendanceEventCategoryKey INT NOT NULL ,
+  AttendanceEventReason nvarchar(500) NOT NULL,
 
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
+  CONSTRAINT PK_FactStudentAttendanceByDay PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, AttendanceEventCategoryKey ASC),
+  CONSTRAINT FK_FactStudentAttendanceByDay_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentAttendanceByDay_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),  
+  CONSTRAINT FK_FactStudentAttendanceByDay_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentAttendanceByDay_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey),
+  CONSTRAINT FK_FactStudentAttendanceByDay_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
 );
 
 
+--attendance by section
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentAttendanceBySection
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL,  
+  SectionKey INT NOT NULL,
+  StaffKey INT NOT NULL,
+  SchoolKey INT NOT NULL,
 
---pending analysis----------------------------------------------------------------------------------------------
+  AttendanceEventCategoryKey INT NOT NULL ,
+  AttendanceEventReason nvarchar(500) NOT NULL,
+
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC,SchoolKey ASC, StaffKey ASC, AttendanceEventCategoryKey ASC),
+  CONSTRAINT FK_FactStudentAttendanceBySection_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey),
+  CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
+);
+
+--discipline -- v1
+/*
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentDiscipline
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL, 
+  SchoolKey INT NOT NULL,
+  IncidentTime TIME(7) NOT NULL, 
+  
+  DisciplineIncidentBehaviorKey INT NOT NULL, -- Weapons Possession (Firearms and Other Weapons), Drugs. etcs
+  DisciplineIncidentLocationKey INT NOT NULL, -- Hallway, Cafeteria, Classroom, etc
+  DisciplineIncidentActionKey INT NOT NULL, -- ISS, OSS
+  DisciplineIncidentReporterTypeKey INT NOT NULL, --Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student,
+
+
+  IncidentReporterName NVARCHAR(100) NULL ,
+  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
+  IncidentCost Money NOT NULL,
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, IncidentTime ASC),
+  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentBehaviorKey FOREIGN KEY (DisciplineIncidentBehaviorKey) REFERENCES dbo.DimDisciplineIncidentBehavior(DisciplineIncidentBehaviorKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentLocationKey FOREIGN KEY (DisciplineIncidentLocationKey) REFERENCES dbo.DimDisciplineIncidentLocation(DisciplineIncidentLocationKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentActionKey FOREIGN KEY (DisciplineIncidentActionKey) REFERENCES dbo.DimDisciplineIncidentAction(DisciplineIncidentActionKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentReporterTypeKey FOREIGN KEY (DisciplineIncidentReporterTypeKey) REFERENCES dbo.DimDisciplineIncidentReporterType(DisciplineIncidentReporterTypeKey),
+  
+  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
+*/
+
+--discipline -- v2
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentDiscipline
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL, 
+  SchoolKey INT NOT NULL,
+  DisciplineIncidentKey INT NOT NULL,
+
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, DisciplineIncidentKey ASC),
+  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentKey FOREIGN KEY (DisciplineIncidentKey) REFERENCES dbo.DimDisciplineIncident(DisciplineIncidentKey), 
+  
+  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
+
+
+--discipline
+--alternative -- extracting discipline details to separate table
+/*
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentDiscipline
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL, 
+  SchoolKey INT NOT NULL,
+  DisciplineIncidentKey INT NOT NULL,
+
+  [LineageKey] INT NOT NULL,
+  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, DisciplineIncidentKey ASC),
+  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),  
+  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentKey FOREIGN KEY (DisciplineIncidentKey) REFERENCES dbo.DimDisciplineIncident(DisciplineIncidentKey),  
+  
+  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
+
+*/
+
+
+
+
+---------------------------------------------------------Pending Analysis---------------------------------------------------------------
+
+
+--pending analysis-----------------------
 --assessment
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -658,7 +857,7 @@ CREATE TABLE dbo.DimAssessment
 );
 
 
---course
+--pending analysis-----------------------
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimCourse' 
@@ -711,73 +910,6 @@ CREATE TABLE dbo.DimCourse
     CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
---end of pending analysis----------------------------------------------------------------------------------------------
-
-
---FACT TABLES
-----------------------------------------------------------------------
---attendance by section
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentAttendanceBySection
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL,  
-  SectionKey INT NOT NULL,
-  StaffKey INT NOT NULL,
-  SchoolKey INT NOT NULL,
-  AttendanceEventCategoryKey INT NOT NULL ,
-  AttendanceEventReason nvarchar(500) NOT NULL,
-
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC, StaffKey ASC, AttendanceEventCategoryKey ASC),
-  CONSTRAINT FK_FactStudentAttendanceBySection_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])  
-);
-
-
---discipline
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentDiscipline' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentDiscipline
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, 
-  SchoolKey INT NOT NULL,
-  IncidentTime TIME(7) NOT NULL, 
-  
-  DisciplineIncidentBehaviorKey INT NOT NULL, -- Weapons Possession (Firearms and Other Weapons), Drugs. etcs
-  DisciplineIncidentLocationKey INT NOT NULL, -- Hallway, Cafeteria, Classroom, etc
-  DisciplineIncidentActionKey INT NOT NULL, -- ISS, OSS
-  DisciplineIncidentReporterTypeKey INT NOT NULL, --Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student,
-
-
-  IncidentReporterName NVARCHAR(100) NULL ,
-  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
-  IncidentCost Money NOT NULL,
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, IncidentTime ASC),
-  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentBehaviorKey FOREIGN KEY (DisciplineIncidentBehaviorKey) REFERENCES dbo.DimDisciplineIncidentBehavior(DisciplineIncidentBehaviorKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentLocationKey FOREIGN KEY (DisciplineIncidentLocationKey) REFERENCES dbo.DimDisciplineIncidentLocation(DisciplineIncidentLocationKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentActionKey FOREIGN KEY (DisciplineIncidentActionKey) REFERENCES dbo.DimDisciplineIncidentAction(DisciplineIncidentActionKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentReporterTypeKey FOREIGN KEY (DisciplineIncidentReporterTypeKey) REFERENCES dbo.DimDisciplineIncidentReporterType(DisciplineIncidentReporterTypeKey),
-  
-  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-);
 
 
 
@@ -807,6 +939,7 @@ CREATE TABLE dbo.FactStudentAssessmentScore
 );
 
 
+--pending analysis-----------------------
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentCourseGrade' 
@@ -829,5 +962,3 @@ CREATE TABLE dbo.FactStudentCourseGrade
   CONSTRAINT FK_FactStudentCourseGrade_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
   CONSTRAINT FK_FactStudentCourseGrade_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
---end of pending analysis-----------------------
-

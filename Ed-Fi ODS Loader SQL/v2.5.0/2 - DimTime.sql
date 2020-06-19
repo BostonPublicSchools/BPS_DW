@@ -181,9 +181,9 @@ AS (SELECT [SchoolDate] = TheDate,
                                                    0
                                            END
                                        ),
-           FederalHolidayName = [dbo].[Func_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
+           FederalHolidayName = BPS_DW.[dbo].[Func_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
            FederalHoliday_Indicator = (CASE
-											WHEN [dbo].[Func_GetHolidayFromDate](TheDate) = 'Non-Holiday' THEN
+											WHEN BPS_DW.[dbo].[Func_GetHolidayFromDate](TheDate) = 'Non-Holiday' THEN
 												0
 											ELSE
 												1
@@ -388,7 +388,7 @@ select nst.[SchoolDate]
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
      LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
-	 left JOIN dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
+	 left JOIN BPS_DW.dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
 WHERE NOT EXISTS(SELECT 1 
 					FROM BPS_DW.[dbo].[DimTime] dt 
 					WHERE nst.[SchoolDate] = dt.[SchoolDate]
@@ -400,10 +400,8 @@ WHERE NOT EXISTS(SELECT 1
 				  )
 	 --ORDER BY es.SchoolDate
  
+--select * from BPS_DW.[dbo].[DimTime]
 
---WHERE SchoolKey IS NOT NULL
-ORDER BY [SchoolDate] 
- 
 
  --updatng the lineage table
 UPDATE BPS_DW.[dbo].[Lineage]

@@ -29,7 +29,7 @@ BEGIN
 	 WHERE TableName= 'dbo.DimSection'
 END 
 
-INSERT INTO [dbo].[DimSection]
+INSERT INTO BPS_DW.[dbo].[DimSection]
            ([_sourceKey]
            ,[SchoolYear]
            ,[SchoolKey]

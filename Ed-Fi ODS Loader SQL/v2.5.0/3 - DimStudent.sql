@@ -227,7 +227,7 @@ UPDATE BPS_DW.[dbo].[Lineage]
 WHERE LineageKey = @lineageKey;
 
 
-
+--SELECT * FROM  BPS_DW.dbo.DimStudent
 
 
 /*
