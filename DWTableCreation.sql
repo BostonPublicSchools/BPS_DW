@@ -130,9 +130,12 @@ BEGIN
 				WHERE TABLE_NAME = 'Lineage' 
 				AND TABLE_SCHEMA = 'dbo')
 		DROP TABLE dbo.Lineage; 
-
-  
-  
+		    
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAssessmentScores' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAssessmentScores; 
 
 END;
 
@@ -731,39 +734,7 @@ CREATE TABLE dbo.FactStudentDiscipline
 );
 
 
---discipline
---alternative -- extracting discipline details to separate table
-/*
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentDiscipline' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentDiscipline
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, 
-  SchoolKey INT NOT NULL,
-  DisciplineIncidentKey INT NOT NULL,
 
-  [LineageKey] INT NOT NULL,
-  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, DisciplineIncidentKey ASC),
-  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),  
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentKey FOREIGN KEY (DisciplineIncidentKey) REFERENCES dbo.DimDisciplineIncident(DisciplineIncidentKey),  
-  
-  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-);
-
-*/
-
-
-
-
----------------------------------------------------------Pending Analysis---------------------------------------------------------------
-
-
---pending analysis-----------------------
 --assessment
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -772,80 +743,29 @@ if NOT EXISTS (select 1
 CREATE TABLE dbo.DimAssessment
 (
     AssessmentKey INT NOT NULL IDENTITY(1,1),  
-	[_sourceKey] NVARCHAR(50) NOT NULL,
+	[_sourceKey] NVARCHAR(2000) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
 	
+	--assessment 
+	--------------------------------------------------------------------------------------
 	AssessmentCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,    
 	AssessmentCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,    
 	AssessmentFamilyTitle NVARCHAR(100) NULL,    	
 	AdaptiveAssessment_Indicator bit NOT NULL, 
-
-	--assessment 
-	--------------------------------------------------------------------------------------
-	AssessmentIdentifier NVARCHAR(25) NOT NULL,   
+	AssessmentIdentifier NVARCHAR(60) NOT NULL,   
 	AssessmentTitle NVARCHAR(500) NOT NULL,
-	--scores 
-	AssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	AssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	AssessmentScore_ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
-	AssessmentScore_ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	--performanceLevels
-	AssessmentPerformanceLevel_Descriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	AssessmentPerformanceLevel_Descriptor_Description NVARCHAR(1024) NOT NULL,   	
-	
-	AssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	AssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   		
 
-	AssessmentPerformanceLevel_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	AssessmentPerformanceLevel_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,   	
-	-----------------------------------------------------------------------------------------
 
-	--parent objective assessment
-	--------------------------------------------------------------------------------------
-	ParentObjectiveAssessmentIdentificationCode NVARCHAR(60) NOT NULL,   
-	ParentObjectiveAssessmentIdentificationDescription NVARCHAR(1024) NOT NULL,  
-	--scores 
-	ParentObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	ReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+	ReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
-	ParentObjectiveAssessmentScore_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentScore_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,   
+	ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+	ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
 	
-	--performanceLevels
-	ParentObjectiveAssessmentPerformanceLevel_DescriptorCodeValue NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentPerformanceLevel_DescriptorDescriptorDescription NVARCHAR(1024) NOT NULL,   	
-	
-	ParentObjectiveAssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ParentObjectivePerformanceLevel_AssessmentReportingMethodDescriptor_DescriptorDescription NVARCHAR(1024) NOT NULL,   		
+	AssessmentScore_Indicator  BIT NOT NULL,
+	AssessmentPerformanceLevel_Indicator  BIT NOT NULL,
 
-	ParentObjectiveAssessmentPerformanceLevel_ResultDatatypeType_DescriptorCodeValue  NVARCHAR(50) NOT NULL,   
-	ParentObjectiveAssessmentPerformanceLevel_ResultDatatypeType_DescriptorDescription NVARCHAR(1024) NOT NULL,  
-	-----------------------------------------------------------------------------------------
-	
-	--child objective assessment
-	--------------------------------------------------------------------------------------
-	ChildObjectiveAssessmentIdentificationCode NVARCHAR(60) NOT NULL,   
-	ChildObjectiveAssessmentIdentificationDescription NVARCHAR(1024) NOT NULL,  
-	--scores 
-	ChildObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentScore_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	ChildObjectiveAssessmentScore_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentScore_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	--performanceLevels
-	ChildObjectiveAssessmentPerformanceLevel_Descriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentPerformanceLevel_Descriptor_Description NVARCHAR(1024) NOT NULL,   	
-	
-	ChildObjectiveAssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentPerformanceLevel_AssessmentReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   		
-
-	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_Descriptor_CodeValue  NVARCHAR(50) NOT NULL,   
-	ChildObjectiveAssessmentPerformanceLevel_ResultDatatypeType_Descriptor_Description NVARCHAR(1024) NOT NULL,  
-	-----------------------------------------------------------------------------------------
-	
-	
+	ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
+	ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
 	
 	ValidFrom DATETIME NOT NULL, 
 	ValidTo DATETIME NOT NULL, 
@@ -857,7 +777,29 @@ CREATE TABLE dbo.DimAssessment
 );
 
 
---pending analysis-----------------------
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'FactStudentAssessmentScore' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.FactStudentAssessmentScore
+(
+  StudentKey INT NOT NULL,
+  TimeKey INT NOT NULL, 
+  AssessmentKey INT NOT NULL,
+  ScoreResult   NVARCHAR(50) NOT NULL,
+  IntegerScoreResult INT NULL,
+  DecimalScoreResult FLOAT NULL,
+  LiteralScoreResult NVARCHAR(60) NULL,
+  
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_FactStudentAssessmentScores PRIMARY KEY (StudentKey ASC, TimeKey ASC, AssessmentKey ASC),
+  CONSTRAINT FK_FactStudentAssessmentScores_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentAssessmentScores_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentAssessmentScore_TimeKey FOREIGN KEY (AssessmentKey) REFERENCES dbo.DimAssessment(AssessmentKey),
+  CONSTRAINT FK_FactStudentAssessmentScore_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+);
+
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimCourse' 
@@ -871,33 +813,16 @@ CREATE TABLE dbo.DimCourse
 	CourseTitle NVARCHAR(100) NOT NULL,
 	CourseDescription NVARCHAR(100) NOT NULL,
 
-	AcademicSubjectDescriptor_Biology_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_CareerAndTechnicalEducation_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Chemistry_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Composite_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_CriticalReading_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_EnglishLanguageArts_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_English_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_FineAndPerformingArts_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_ForeignLanguageAndLiterature_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_IntroductoryPhysics_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_LifeAndPhysicalSciences_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Mathematics_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_MilitaryScience_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Other_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_PhysicalHealthAndSafetyEducation_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Reading_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_ReligiousEducationAndTheology_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Science_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_SocialSciencesAndHistory_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_SocialStudies_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_TechnologyEngineering_Indicator BIT NOT NULL,
-	AcademicSubjectDescriptor_Writing_Indicator BIT NOT NULL,
+	CourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(60) NOT NULL,
+	CourseLevelCharacteristicTypeDescriptor_Descriptor NVARCHAR(1024) NOT NULL,
+
+	AcademicSubjectDescriptor_CodeValue  NVARCHAR(60) NOT NULL,
+	AcademicSubjectDescriptor_Descriptor  NVARCHAR(1024) NOT NULL,
 
 	HighSchoolCourseRequirement_Indicator BIT NOT NULL,
 	MinimumAvailableCredits INT NULL,
 	MaximumAvailableCredits INT NULL,
-
+	
 	GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
 	GPAApplicabilityType_Description NVARCHAR(50) NULL,
 			
@@ -910,36 +835,6 @@ CREATE TABLE dbo.DimCourse
     CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
-
-
-
---pending analysis-----------------------
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentAssessmentScore' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentAssessmentScore
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, 
-  AssessmentKey INT NOT NULL,
-     
-  Score_AssessmentReportingMethodDescriptor_RawScore INT NULL,
-  Score_AssessmentReportingMethodDescriptor_ScaleScore INT NULL,
-  Score_AssessmentReportingMethodDescriptor_ProficiencyLevel  NVARCHAR(25) NULL,
-  Score_AssessmentReportingMethodDescriptor_Percentile FLOAT NULL,
-        
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentAssessmentScores PRIMARY KEY (StudentKey ASC, TimeKey ASC, AssessmentKey ASC),
-  CONSTRAINT FK_FactStudentAssessmentScores_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentAssessmentScores_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentAssessmentScore_TimeKey FOREIGN KEY (AssessmentKey) REFERENCES dbo.DimAssessment(AssessmentKey),
-  CONSTRAINT FK_FactStudentAssessmentScore_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
-);
-
-
---pending analysis-----------------------
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentCourseGrade' 
@@ -962,3 +857,60 @@ CREATE TABLE dbo.FactStudentCourseGrade
   CONSTRAINT FK_FactStudentCourseGrade_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
   CONSTRAINT FK_FactStudentCourseGrade_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
+
+
+--- Views 
+----------------------------------------------------------
+--assessment scores
+
+PRINT 'creating view :  View_StudentAssessmentScores'
+GO
+
+CREATE VIEW dbo.View_StudentAssessmentScores
+AS(
+SELECT StudentId, 
+       StudentStateId, 
+	   FirstName, 
+	   LastName, 
+	   AssessmentIdentifier, 
+	   AssessmentTitle,
+	   AssessmentDate,  
+	   --pivoted from row values
+	   [Achievement/proficiency level],
+	   [Composite Rating],[Composite Score],
+	   [Percentile rank],
+	   [Proficiency level],
+	   [Promotion score],
+	   [Raw score],
+	   [Scale score]
+FROM (
+		SELECT ds.StudentUniqueId AS StudentId,
+			   ds.StateId AS StudentStateId,
+			   ds.FirstName,
+			   ds.LastSurname AS LastName,
+			   da.AssessmentIdentifier,
+			   da.AssessmentTitle,
+			   dt.SchoolDate AS AssessmentDate, 
+			   da.[ReportingMethodDescriptor_CodeValue] AS ScoreType,
+			   fas.ScoreResult AS Score
+		FROM dbo.FactStudentAssessmentScore fas 
+			 INNER JOIN dbo.DimStudent ds ON fas.StudentKey = ds.StudentKey
+			 INNER JOIN dbo.DimTime dt ON fas.TimeKey = dt.TimeKey	 
+			 INNER JOIN dbo.DimAssessment da ON fas.AssessmentKey = da.AssessmentKey
+		WHERE da.AssessmentIdentifier = 'MCAS 03 Grade ELA Standard 2018'
+	) AS SourceTable 
+PIVOT 
+   (
+      MAX(Score)
+	  FOR ScoreType IN ([Achievement/proficiency level],
+	                    [Composite Rating],[Composite Score],
+						[Percentile rank],
+						[Proficiency level],
+						[Promotion score],
+						[Raw score],
+						[Scale score])
+   ) AS PivotTable
+)
+
+	 
+

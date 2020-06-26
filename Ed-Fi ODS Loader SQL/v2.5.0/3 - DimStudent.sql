@@ -182,7 +182,7 @@ SELECT
 	   BPS_DW.dbo.Func_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
 	   ewt.CodeValue ExitWithdrawCode              
 
-       ,GETDATE() AS ValidFrom
+       ,ssa.EntryDate AS ValidFrom
 	   ,case when ssa.ExitWithdrawDate is null then '12/31/9999'  else ssa.ExitWithdrawDate END AS ValidTo
 	   ,case when ssa.ExitWithdrawDate is null then 1 else 0 end AS IsCurrent
 	   ,@lineageKey AS [LineageKey]
