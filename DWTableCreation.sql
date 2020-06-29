@@ -169,6 +169,7 @@ CREATE TABLE dbo.DimSchool
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
   
+  StateSchoolCode NVARCHAR(50) NULL ,
   ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
   NameOfInstitution NVARCHAR(500) NOT NULL,    
 
