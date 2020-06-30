@@ -261,7 +261,7 @@ OPTION (MAXRECURSION 0);
 
 ;WITH EdFiSchools AS
 (
-	SELECT cd.Date as SchoolDate, -- adding nine years to the year in the populated template. Will remove this when we switch to real ODS
+	SELECT cd.Date as SchoolDate, 
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
 		   td.CodeValue TermDescriptorCodeValue,

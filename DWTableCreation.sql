@@ -34,9 +34,9 @@ BEGIN
 
   if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentCourseGrade' 
+             WHERE TABLE_NAME = 'FactStudentCourseTranscript' 
 			   AND TABLE_SCHEMA = 'dbo')
-      DROP TABLE dbo.FactStudentCourseGrade; 
+      DROP TABLE dbo.FactStudentCourseTranscript; 
 
 
 
@@ -838,25 +838,27 @@ CREATE TABLE dbo.DimCourse
 
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentCourseGrade' 
+             WHERE TABLE_NAME = 'FactStudentCourseTranscript' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentCourseGrade
+CREATE TABLE dbo.FactStudentCourseTranscript
 (
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   CourseKey INT NOT NULL,
-
-  CreditsEarned INT NOT NULL,
-  CreditsPossible INT NOT NULL,
-  FinalMark NVARCHAR(10) NOT NULL,
+  SchoolKey INT NOT NULL,
+  EarnedCredits INT NOT NULL,
+  PossibleCredits INT NOT NULL,
+  FinalLetterGradeEarned NVARCHAR(10)  NULL,
+  FinalNumericGradeEarned DECIMAL(9,2) NULL,
     
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_FactStudentCourseGrade PRIMARY KEY (StudentKey ASC, TimeKey ASC, CourseKey ASC),
-  CONSTRAINT FK_FactStudentCourseGrade_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentCourseGrade_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentCourseGrade_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
-  CONSTRAINT FK_FactStudentCourseGrade_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
+  CONSTRAINT PK_FactStudentCourseTranscript PRIMARY KEY (StudentKey ASC, TimeKey ASC, CourseKey ASC),
+  CONSTRAINT FK_FactStudentCourseTranscript_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+  CONSTRAINT FK_FactStudentCourseTranscript_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
+  CONSTRAINT FK_FactStudentCourseTranscript_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
+  CONSTRAINT FK_FactStudentCourseTranscript_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
+  CONSTRAINT FK_FactStudentCourseTranscript_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
 
