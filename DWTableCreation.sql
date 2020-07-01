@@ -222,6 +222,7 @@ CREATE TABLE dbo.DimSchool
   TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
   OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
   OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
+  UmbrellaSchoolCode NVARCHAR(50) NULL,
 
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
@@ -1008,6 +1009,5 @@ FROM dbo.FactStudentDiscipline fsd
 		INNER JOIN dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 
 		INNER JOIN dbo.DimSchool dsc ON fsd.SchoolKey = dsc.SchoolKey	 
 		INNER JOIN dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey		
-WHERE ds.StudentUniqueId = 363896
 )
 
