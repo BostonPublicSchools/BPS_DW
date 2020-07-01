@@ -37,9 +37,7 @@ BEGIN
              WHERE TABLE_NAME = 'FactStudentCourseTranscript' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.FactStudentCourseTranscript; 
-
-
-
+	  
   IF exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimStaff' 
@@ -136,6 +134,18 @@ BEGIN
              WHERE TABLE_NAME = 'View_StudentAssessmentScores' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP VIEW dbo.View_StudentAssessmentScores; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAssessmentScores; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentDiscipline; 
 
 END;
 
@@ -879,13 +889,14 @@ SELECT StudentId,
 	   AssessmentTitle,
 	   AssessmentDate,  
 	   --pivoted from row values
-	   [Achievement/proficiency level],
-	   [Composite Rating],[Composite Score],
-	   [Percentile rank],
-	   [Proficiency level],
-	   [Promotion score],
-	   [Raw score],
-	   [Scale score]
+	   [Achievement/proficiency level] AS AchievementProficiencyLevel ,
+	   [Composite Rating] AS CompositeRating,
+	   [Composite Score] AS CompositeScore,
+	   [Percentile rank] AS PercentileRank,
+	   [Proficiency level] AS ProficiencyLevel,
+	   [Promotion score] AS PromotionScore,
+	   [Raw score] AS RawScore,
+	   [Scale score] AS ScaleScore
 FROM (
 		SELECT ds.StudentUniqueId AS StudentId,
 			   ds.StateId AS StudentStateId,
@@ -915,5 +926,88 @@ PIVOT
    ) AS PivotTable
 )
 
-	 
+--attendance by day
+PRINT 'creating view :  View_StudentAttendanceByDay'
+GO
+
+
+CREATE VIEW dbo.View_StudentAttendanceByDay
+AS(
+SELECT StudentId, 
+       StudentStateId, 
+	   FirstName, 
+	   LastName, 
+	   SchoolName, 
+	   AttedanceDate,
+
+	   --pivoted from row values	  
+	   [Early departure],
+	   [Excused Absence],
+	   [Unexcused Absence],
+	   [No Contact],
+	   [In Attendance],
+	   [Tardy]
+	   
+FROM (
+		SELECT DISTINCT 
+		       ds.StudentUniqueId AS StudentId,
+			   ds.StateId AS StudentStateId,
+			   ds.FirstName,
+			   ds.LastSurname AS LastName,
+			   dsc.NameOfInstitution AS SchoolName,
+			   dt.SchoolDate AS AttedanceDate, 		
+			   dact.AttendanceEventCategoryDescriptor_CodeValue AS AttendanceType			   
+		FROM dbo.[FactStudentAttendanceByDay] fsabd 
+			 INNER JOIN dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+			 INNER JOIN dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 
+			 INNER JOIN dbo.DimSchool dsc ON fsabd.SchoolKey = dsc.SchoolKey	 
+			 INNER JOIN dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+	    WHERE ds.StudentUniqueId = 363896
+		--AND dt.SchoolDate = '2019-09-10'
+
+		
+	) AS SourceTable 
+PIVOT 
+   (
+      count(AttendanceType)
+	  FOR AttendanceType IN ([Early departure],
+							 [Excused Absence],
+							 [Unexcused Absence],
+							 [No Contact],
+							 [In Attendance],
+							 [Tardy]
+						)
+   ) AS PivotTable
+)
+
+SELECT * FROM [dbo].[DimAttendanceEventCategory]
+
+
+--behavior incidents
+PRINT 'creating view :  View_StudentDiscipline'
+GO
+
+
+CREATE VIEW dbo.View_StudentDiscipline
+AS(
+SELECT DISTINCT 
+		ds.StudentUniqueId AS StudentId,
+		ds.StateId AS StudentStateId,
+		ds.FirstName,
+		ds.LastSurname AS LastName,
+		dsc.NameOfInstitution AS SchoolName,
+		dt.SchoolDate AS AttedanceDate, 		
+		ddi.BehaviorDescriptor_CodeValue AS IncidentType,
+		ddi.LocationDescriptor_CodeValue AS IncidentLocation,
+		ddi.DisciplineDescriptor_CodeValue AS IncidentAction ,
+		ddi.ReporterDescriptor_CodeValue AS IncidentReporter,
+		ddi.DisciplineDescriptor_ISS_Indicator AS IsISS,
+		ddi.DisciplineDescriptor_OSS_Indicator AS IsOSS
+FROM dbo.FactStudentDiscipline fsd 
+		INNER JOIN dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey
+		INNER JOIN dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 
+		INNER JOIN dbo.DimSchool dsc ON fsd.SchoolKey = dsc.SchoolKey	 
+		INNER JOIN dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey		
+WHERE ds.StudentUniqueId = 363896
+)
 
