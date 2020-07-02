@@ -45,6 +45,8 @@ DECLARE @EdFiSchools TABLE(
 
 DECLARE @DimSchool TABLE(	
 	[_sourceKey] [nvarchar](50) NOT NULL,
+	StateSchoolCode NVARCHAR(50) NULL,
+    UmbrellaSchoolCode NVARCHAR(50) NULL,
 	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
 	[NameOfInstitution] [nvarchar](500) NOT NULL,
 	[SchoolCategoryType] [nvarchar](100) NOT NULL,
@@ -82,6 +84,8 @@ DECLARE @DimSchool TABLE(
 
 --retrieving all schools from the ODS
 INSERT INTO @EdFiSchools ([_sourceKey] ,
+						   StateSchoolCode,
+						   UmbrellaSchoolCode,
 						   [ShortNameOfInstitution],
 						   [NameOfInstitution],
 						   [SchoolCategoryType],
@@ -92,6 +96,16 @@ INSERT INTO @EdFiSchools ([_sourceKey] ,
 						   )
 
 SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
+        eoic.IdentificationCode AS StateSchoolCode,
+        CASE
+		    WHEN s.SchoolId IN (1291, 1292, 1293, 1294) THEN '1290'
+			when s.SchoolId IN (1440,1441) THEN '1440' 
+			WHEN s.SchoolId IN (4192,4192) THEN '4192' 
+			WHEN s.SchoolId IN (4031,4033) THEN '4033' 
+			WHEN s.SchoolId IN (1990,1991) THEN '1990' 
+			WHEN s.SchoolId IN (1140,4391) THEN '1140' 
+			ELSE CAST(s.SchoolId AS NVARCHAR(50))
+		END AS UmbrellaSchoolCode,
 		edorg.ShortNameOfInstitution, 
 		edorg.NameOfInstitution,
 		sct.CodeValue AS SchoolCategoryType, 		   
@@ -108,10 +122,12 @@ LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategoryType sct on sc.SchoolCatego
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolGradeLevel sgl on s.SchoolId = sgl.SchoolId
 LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.Descriptor sgld on sgl.GradeLevelDescriptorId = sgld.DescriptorId
+LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId
 
- 
 
 INSERT INTO @DimSchool ([_sourceKey]
+						,StateSchoolCode
+						,UmbrellaSchoolCode
 						,[ShortNameOfInstitution]
 						,[NameOfInstitution]
 						,[SchoolCategoryType]
@@ -147,6 +163,8 @@ INSERT INTO @DimSchool ([_sourceKey]
 						)
 SELECT DISTINCT 
        [_sourceKey], 
+	   StateSchoolCode,
+	   UmbrellaSchoolCode,
        ShortNameOfInstitution,
        NameOfInstitution,
 	   SchoolCategoryType,
@@ -316,6 +334,8 @@ WHERE es.GradeLevelDescriptorCodeValue = 'Ungraded'
 
 INSERT INTO BPS_DW.[dbo].[DimSchool]
            ([_sourceKey]
+		   ,[StateSchoolCode]
+		   ,[UmbrellaSchoolCode]
            ,[ShortNameOfInstitution]
            ,[NameOfInstitution]
            ,[SchoolCategoryType]
@@ -347,13 +367,15 @@ INSERT INTO BPS_DW.[dbo].[DimSchool]
            ,[TitleIPartASchoolDesignationTypeCodeValue]
            ,[TitleIPartASchoolDesignation_Indicator]
 		   ,OperationalStatusTypeDescriptor_CodeValue
-		   ,OperationalStatusTypeDescriptor_Description
+		   ,OperationalStatusTypeDescriptor_Description		   
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
            ,[LineageKey])
 
 SELECT   [_sourceKey]
+        ,[StateSchoolCode]
+	    ,[UmbrellaSchoolCode]
         ,[ShortNameOfInstitution]
         ,[NameOfInstitution]
         ,[SchoolCategoryType]
@@ -406,11 +428,26 @@ UPDATE BPS_DW.[dbo].[Lineage]
 WHERE LineageKey = @lineageKey;
 
 
+/*
+
+UPDATE ds 
+SET  ds.StateSchoolCode = ISNULL(eoic.IdentificationCode,'N/A'),
+     ds.UmbrellaSchoolCode = CASE
+						WHEN s.SchoolId IN (1291, 1292, 1293, 1294) THEN '1290'
+						when s.SchoolId IN (1440,1441) THEN '1440' 
+						WHEN s.SchoolId IN (4192,4192) THEN '4192' 
+						WHEN s.SchoolId IN (4031,4033) THEN '4033' 
+						WHEN s.SchoolId IN (1990,1991) THEN '1990' 
+						WHEN s.SchoolId IN (1140,4391) THEN '1140' 
+						ELSE CAST(s.SchoolId AS NVARCHAR(50))
+					END 
+--select *
+FROM BPS_DW.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
+     INNER JOIN [EdFi_BPS_Staging_Ods].edfi.School s on ds._sourceKey = 'Ed-Fi|' + CAST(s.SchoolId AS NVARCHAR(50))
+     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50))
 
 
-
-
-	
+*/
 
 	
 

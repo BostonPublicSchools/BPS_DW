@@ -139,13 +139,26 @@ BEGIN
              FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
 			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentAssessmentScores; 
+      DROP VIEW dbo.View_StudentAttendanceByDay; 
 
    IF exists (select 1
              FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentDiscipline' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP VIEW dbo.View_StudentDiscipline; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentCourseTranscript' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentCourseTranscript; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentRoster' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentRoster; 
+
 
 END;
 
@@ -180,6 +193,8 @@ CREATE TABLE dbo.DimSchool
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
   
   StateSchoolCode NVARCHAR(50) NULL ,
+  UmbrellaSchoolCode NVARCHAR(50) NULL,
+
   ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
   NameOfInstitution NVARCHAR(500) NOT NULL,    
 
@@ -222,7 +237,7 @@ CREATE TABLE dbo.DimSchool
   TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
   OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
   OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
-  UmbrellaSchoolCode NVARCHAR(50) NULL,
+  
 
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
@@ -873,6 +888,7 @@ CREATE TABLE dbo.FactStudentCourseTranscript
 );
 
 
+
 --- Views 
 ----------------------------------------------------------
 --assessment scores
@@ -925,7 +941,8 @@ PIVOT
 						[Raw score],
 						[Scale score])
    ) AS PivotTable
-)
+);
+GO
 
 --attendance by day
 PRINT 'creating view :  View_StudentAttendanceByDay'
@@ -979,9 +996,9 @@ PIVOT
 							 [Tardy]
 						)
    ) AS PivotTable
-)
+);
+GO
 
-SELECT * FROM [dbo].[DimAttendanceEventCategory]
 
 
 --behavior incidents
@@ -1009,5 +1026,97 @@ FROM dbo.FactStudentDiscipline fsd
 		INNER JOIN dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 
 		INNER JOIN dbo.DimSchool dsc ON fsd.SchoolKey = dsc.SchoolKey	 
 		INNER JOIN dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey		
-)
+);
+GO
 
+--behavior incidents
+PRINT 'creating view :  View_StudentCourseTranscript'
+GO
+
+
+CREATE VIEW dbo.View_StudentCourseTranscript
+AS(
+SELECT DISTINCT 
+		ds.StudentUniqueId AS StudentId,
+		ds.StateId AS StudentStateId,
+		ds.FirstName,
+		ds.LastSurname AS LastName,
+		dsc.NameOfInstitution AS SchoolName,
+		dc.CourseCode,
+		dc.CourseTitle,
+		dt.SchoolTermDescriptor_CodeValue AS Term, 		
+		fsct.EarnedCredits,
+		fsct.PossibleCredits,
+		fsct.FinalLetterGradeEarned,
+		fsct.FinalNumericGradeEarned
+FROM dbo.FactStudentCourseTranscript fsct
+		INNER JOIN dbo.DimStudent ds ON fsct.StudentKey = ds.StudentKey
+		INNER JOIN dbo.DimTime dt ON fsct.TimeKey = dt.TimeKey	 
+		INNER JOIN dbo.DimSchool dsc ON fsct.SchoolKey = dsc.SchoolKey		
+		INNER JOIN dbo.DimCourse dc ON fsct.CourseKey = dc.CourseKey		
+);
+
+GO
+
+PRINT 'creating view :  View_StudentRoster'
+GO
+
+
+CREATE VIEW dbo.View_StudentRoster
+AS(
+SELECT DISTINCT TOP 1000
+		ds.StudentUniqueId AS StudentId,
+		ds.StateId AS StudentStateId,
+		ds.FirstName,
+		ds.MiddleName,
+		ds.MiddleInitial,
+		ds.FullName,
+		ds.LastSurname AS LastName,
+		ds.PrimaryElectronicMailAddress AS StudentEmail,
+		ds.GradeLevelDescriptor_CodeValue AS GradeLevel,
+		ds.BirthDate,
+		ds.StudentAge,
+		ds.[GraduationSchoolYear],
+		dsc.NameOfInstitution AS SchoolName,
+		dsc.StateSchoolCode AS SchoolStateCode,
+		dsc.UmbrellaSchoolCode AS SchoolUmbrellaCode,
+		ds.Homeroom,
+		ds.HomeroomTeacher,
+		ds.SexType_Code AS Sex,
+		ds.[SexType_Male_Indicator],
+	    ds.[SexType_Female_Indicator],
+	    ds.[SexType_NotSelected_Indicator],
+
+
+		ds.RaceCode AS Race,
+		ds.Race_AmericanIndianAlaskanNative_Indicator,
+		ds.Race_Asian_Indicator,
+		ds.Race_BlackAfricaAmerican_Indicator,
+		ds.Race_NativeHawaiianPacificIslander_Indicator,
+		ds.Race_White_Indicator,
+		ds.Race_MultiRace_Indicator,
+		ds.Race_ChooseNotRespond_Indicator,
+		ds.Race_Other_Indicator,
+
+		ds.[EthnicityCode],
+		ds.[EthnicityHispanicLatino_Indicator],
+		ds.[Migrant_Indicator],
+		ds.Homeless_Indicator,
+		ds.IEP_Indicator,		
+		ds.LimitedEnglishProficiencyDescriptor_CodeValue AS LEPCode,
+		ds.[LimitedEnglishProficiency_EnglishLearner_Indicator],
+		ds.[LimitedEnglishProficiency_Former_Indicator],
+		ds.[LimitedEnglishProficiency_NotEnglisLearner_Indicator],
+		ds.[EconomicDisadvantage_Indicator],
+
+
+		ds.ValidFrom,
+		ds.ValidTo,
+		ds.IsCurrent
+		
+FROM dbo.DimStudent ds 		
+     INNER JOIN dbo.DimSchool dsc ON ds.SchoolKey = dsc.SchoolKey
+		
+);
+
+GO
