@@ -203,29 +203,8 @@ CREATE TABLE dbo.DimSchool
   SchoolCategoryType_Middle_Indicator BIT NOT NULL,
   SchoolCategoryType_HighSchool_Indicator BIT NOT NULL,    
   SchoolCategoryType_Combined_Indicator BIT NOT NULL,    
+  SchoolCategoryType_Other_Indicator BIT NOT NULL,    
   
-  SchoolGradeLevel_AdultEducation_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_EarlyEducation_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Eighthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Eleventhgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Fifthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Firstgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Fourthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Grade13_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Infanttoddler_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Kindergarten_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Ninthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Other_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Postsecondary_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_PreschoolPrekindergarten_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Secondgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Seventhgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Sixthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Tenthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Thirdgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Twelfthgrade_Indicator  BIT NOT NULL, -- True,False
-  SchoolGradeLevel_Ungraded_Indicator  BIT NOT NULL, -- True,False
-
   TitleIPartASchoolDesignationTypeCodeValue  NVARCHAR(50) NOT NULL,--Not designated as a Title I Part A school
 																	--Title I Part A Schoolwide Assistance Program Schoo
 																	--Title I Part A Targeted Assistance School
