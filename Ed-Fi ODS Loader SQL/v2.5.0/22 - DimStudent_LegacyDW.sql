@@ -131,8 +131,8 @@ SELECT
 	   CASE WHEN s.Sex = 'F' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN s.Sex not in ( 'M','F') THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
 
-	   ISNULL(s.RacePrompt,'N/A') AS RaceCode,
-	   ISNULL(s.RacePrompt,'N/A') AS RaceDescription,	   
+	   COALESCE(s.RacePrompt,'N/A') AS RaceCode,
+	   COALESCE(s.RacePrompt,'N/A') AS RaceDescription,	   
 
 	   CASE WHEN s.RacePrompt IN ('Nat. Amer.','Native American') THEN 1 ELSE 0 END AS Race_AmericanIndianAlaskanNative_Indicator,
 	   CASE WHEN s.RacePrompt = 'Asian' THEN 1 ELSE 0 END AS Race_Asian_Indicator,
