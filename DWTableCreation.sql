@@ -1,4 +1,4 @@
-USE BPS_DW
+USE [LongitudinalPOC]
 GO
 
 DECLARE @dropExistingTables BIT = 1
@@ -6,8 +6,27 @@ DECLARE @dropExistingTables BIT = 1
 IF (@dropExistingTables = 1)
 BEGIN
 
-  
 
+
+  --schemas 
+  -------------------------------------------------------------
+  IF NOT EXISTS (SELECT 1 
+                 FROM sys.schemas 
+				 WHERE [name] = 'Staging')
+  EXEC sp_executesql 'CREATE SCHEMA [Staging] AUTHORIZATION dbo';
+
+  IF NOT EXISTS (SELECT 1 
+                 FROM sys.schemas 
+				 WHERE [name] = 'Raw_EdFi')
+  EXEC sp_executesql 'CREATE SCHEMA [Raw_EdFi] AUTHORIZATION dbo';
+
+  IF NOT EXISTS (SELECT 1 
+                 FROM sys.schemas 
+				 WHERE [name] = 'Raw_LegacyDW')
+  EXEC sp_executesql 'CREATE SCHEMA [Raw_LegacyDW] AUTHORIZATION dbo'; 
+  ---------------------------------------------------------------
+
+  --fact tables
   if exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentAttendanceByDay' 
@@ -38,6 +57,7 @@ BEGIN
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.FactStudentCourseTranscript; 
 	  
+  --dim table
   IF exists (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimStaff' 
@@ -122,13 +142,33 @@ BEGIN
              WHERE TABLE_NAME = 'DimSchool' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP TABLE dbo.DimSchool;
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimSchool' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP TABLE dbo.DimSchool;
+ 
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'School' 
+			   AND TABLE_SCHEMA = 'Staging')
+      DROP TABLE Staging.School;
 	   
+   --integration tables
    IF exists (select 1
 				FROM INFORMATION_SCHEMA.TABLES
 				WHERE TABLE_NAME = 'Lineage' 
 				AND TABLE_SCHEMA = 'dbo')
 		DROP TABLE dbo.Lineage; 
+
+   IF exists (select 1
+				FROM INFORMATION_SCHEMA.TABLES
+				WHERE TABLE_NAME = 'IncrementalLoads' 
+				AND TABLE_SCHEMA = 'dbo')
+		DROP TABLE dbo.IncrementalLoads; 
 		    
+   --views
    IF exists (select 1
              FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentAssessmentScores' 
@@ -178,6 +218,21 @@ CREATE TABLE dbo.Lineage
    [Status] CHAR(1) NOT NULL, -- P = Processing , S = Success
    CONSTRAINT PK_Lineage PRIMARY KEY (LineageKey),
 );
+
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'IncrementalLoads' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE [dbo].[IncrementalLoads](
+	[LoadDateKey] [int] IDENTITY(1,1) NOT NULL,
+	[TableName] [nvarchar](100) NOT NULL,
+	[LoadDate] [datetime] NOT NULL,
+ CONSTRAINT [PK_LoadDates] PRIMARY KEY CLUSTERED  ([LoadDateKey] ASC)
+) ON [PRIMARY]
+
+
+GO
+
 
 
 --DIMENSION TABLES
@@ -906,8 +961,7 @@ FROM (
 		FROM dbo.FactStudentAssessmentScore fas 
 			 INNER JOIN dbo.DimStudent ds ON fas.StudentKey = ds.StudentKey
 			 INNER JOIN dbo.DimTime dt ON fas.TimeKey = dt.TimeKey	 
-			 INNER JOIN dbo.DimAssessment da ON fas.AssessmentKey = da.AssessmentKey
-		WHERE da.AssessmentIdentifier = 'MCAS 03 Grade ELA Standard 2018'
+			 INNER JOIN dbo.DimAssessment da ON fas.AssessmentKey = da.AssessmentKey		
 	) AS SourceTable 
 PIVOT 
    (
@@ -993,7 +1047,7 @@ SELECT DISTINCT
 		ds.FirstName,
 		ds.LastSurname AS LastName,
 		dsc.NameOfInstitution AS SchoolName,
-		dt.SchoolDate AS AttedanceDate, 		
+		dt.SchoolDate AS IncidentDate, 		
 		ddi.BehaviorDescriptor_CodeValue AS IncidentType,
 		ddi.LocationDescriptor_CodeValue AS IncidentLocation,
 		ddi.DisciplineDescriptor_CodeValue AS IncidentAction ,
@@ -1099,3 +1153,168 @@ FROM dbo.DimStudent ds
 );
 
 GO
+
+
+--ETL Related Objects
+------------------------------------------------------------------------------
+ 
+ IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'School' 
+			   AND TABLE_SCHEMA = 'Staging')
+      DROP TABLE Staging.School; 
+
+
+--school
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'School' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.School
+(
+  SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
+  
+  StateSchoolCode NVARCHAR(50) NULL ,
+  UmbrellaSchoolCode NVARCHAR(50) NULL,
+
+  ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
+  NameOfInstitution NVARCHAR(500) NOT NULL,    
+
+  SchoolCategoryType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
+  SchoolCategoryType_Elementary_Indicator BIT NOT NULL,      
+  SchoolCategoryType_Middle_Indicator BIT NOT NULL,
+  SchoolCategoryType_HighSchool_Indicator BIT NOT NULL,    
+  SchoolCategoryType_Combined_Indicator BIT NOT NULL,    
+  SchoolCategoryType_Other_Indicator BIT NOT NULL,    
+  
+  TitleIPartASchoolDesignationTypeCodeValue  NVARCHAR(50) NOT NULL,--Not designated as a Title I Part A school
+																	--Title I Part A Schoolwide Assistance Program Schoo
+																	--Title I Part A Targeted Assistance School
+																	--Title I targeted eligible school - no program
+																	--Title I targeted school
+																	--Title I school wide eligible - Title I targeted pr
+																	--Title I school wide eligible school - no program
+                                            
+  TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
+  OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+  OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
+  
+  SchoolNameModifiedDate [datetime] NOT NULL,
+  SchoolOperationalStatusTypeModifiedDate [DATETIME] NOT NULL,
+  SchoolCategoryModifiedDate [datetime] NOT NULL,
+  SchoolTitle1StatusModifiedDate [datetime] NOT NULL,
+
+  ValidFrom DATETIME NOT NULL,
+  ValidTo DATETIME NOT NULL
+
+  CONSTRAINT PK_StagingSchool PRIMARY KEY (SchoolKey),
+  
+);
+GO
+
+IF EXISTS (
+        SELECT 1
+        FROM sys.procedures WITH(NOLOCK)
+        WHERE NAME = 'Proc_ETL_Lineage_GetKey'
+		      AND type = 'P'
+      )
+     DROP PROCEDURE [dbo].[Proc_ETL_Lineage_GetKey]
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_Lineage_GetKey]
+@LoadType nvarchar(1),
+@TableName nvarchar(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+	-- The load for @TableName starts now 
+	DECLARE @StartLoad datetime = SYSDATETIME();
+
+	
+	INSERT INTO LongitudinalPOC.[dbo].[Lineage](
+		 [TableName]
+		,StartTime
+		,EndTime
+		,[Status]
+		,[LoadType]
+		)
+	VALUES (
+		 @TableName
+		,@StartLoad
+		,NULL
+		,'P' --  P = In progress, E = Error, S = Success
+		,@LoadType -- F = Full load	- I = Incremental load
+		);
+
+	-- If we're doing an initial load, remove the date of the most recent load for this table
+	IF (@LoadType = 'F')
+		BEGIN
+			UPDATE LongitudinalPOC.[dbo].[IncrementalLoads]
+			SET LoadDate = '1753-01-01'
+			WHERE TableName = @TableName
+
+			DECLARE @sqlCmd NVARCHAR(MAX) = 'TRUNCATE TABLE ' + @TableName;
+			EXEC sp_executesql @sqlCmd;
+		END;
+
+	-- Select the key of the previously inserted row
+	SELECT MAX([LineageKey]) AS LineageKey
+	FROM LongitudinalPOC.dbo.[Lineage]
+	WHERE 
+		[TableName] = @TableName
+		AND StartTime = @StartLoad
+
+	RETURN 0;
+END;
+GO
+
+
+
+IF EXISTS (
+        SELECT 1
+        FROM sys.procedures
+        WHERE NAME = 'Proc_ETL_IncrementalLoads_GetLastLoadedDate'
+		      AND type = 'P'
+      )
+     DROP PROCEDURE [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate]
+GO
+
+
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate]
+@TableName nvarchar(100)
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+	-- If the procedure is executed with a wrong table name, throw an error.
+	IF NOT EXISTS(SELECT 1 FROM sys.tables WHERE name = @TableName AND Type = N'U')
+	BEGIN
+        PRINT N'The table does not exist in the data warehouse.';
+        THROW 51000, N'The table does not exist in the data warehouse.', 1;
+        RETURN -1;
+	END
+	
+    -- If the table exists, but was never loaded before, there won't have a record for it
+	-- A record is created for the @TableName with the minimum possible date in the LoadDate column
+	IF NOT EXISTS (SELECT 1 FROM LongitudinalPOC.[dbo].[IncrementalLoads] WHERE TableName = @TableName)
+		INSERT INTO LongitudinalPOC.[dbo].[IncrementalLoads](TableName,LoadDate)
+		SELECT @TableName, '1753-01-01'
+
+    -- Select the LoadDate for the @TableName
+	SELECT 
+		[LoadDate] AS [LoadDate]
+    FROM LongitudinalPOC.[dbo].[IncrementalLoads]
+    WHERE 
+		TableName = @TableName;
+
+    RETURN 0;
+END;
+GO
+
+--EXEC SP_ETL_School_PopulateStaging
+--EXEC SP_ETL_School_PopulateProduction

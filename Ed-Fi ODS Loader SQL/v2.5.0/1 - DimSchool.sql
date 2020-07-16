@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM BPS_DW.[dbo].[Lineage] WHERE TableName= 'dbo.DimSchool')
+IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimSchool')
 BEGIN
-    INSERT INTO BPS_DW.[dbo].[Lineage]
+    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,13 +25,13 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM BPS_DW.[dbo].[Lineage]
+	 FROM LongitudinalPOC.[dbo].[Lineage]
 	 WHERE TableName= 'dbo.DimSchool'
 END 
 
 
 
-INSERT INTO BPS_DW.[dbo].[DimSchool]
+INSERT INTO LongitudinalPOC.[dbo].[DimSchool]
            ([_sourceKey]
 		   ,[StateSchoolCode]
 		   ,[UmbrellaSchoolCode]
@@ -79,25 +79,24 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent,
 	    @lineageKey AS [LineageKey]
 --SELECT distinct sct.CodeValue
-FROM [EdFi_BPS_Staging_Ods].edfi.School s
-INNER JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
-INNER JOIN [EdFi_BPS_Staging_Ods].edfi.OperationalStatusType ost ON edorg.OperationalStatusTypeId = ost.OperationalStatusTypeId
-LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
-LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
-LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
-LEFT JOIN  [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
+FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
+INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
+INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.OperationalStatusType ost ON edorg.OperationalStatusTypeId = ost.OperationalStatusTypeId
+LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
+LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
+LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
+LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
                                                                                AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
 WHERE NOT EXISTS(SELECT 1 
-					FROM BPS_DW.[dbo].[DimSchool] ds 
+					FROM LongitudinalPOC.[dbo].[DimSchool] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) = ds._sourceKey);
 
+--SELECT * FROM LongitudinalPOC.[dbo].[DimSchool]
 
-
---SELECT * FROM BPS_DW.[dbo].[DimSchool]
 
 
 --updatng the lineage table
-UPDATE BPS_DW.[dbo].[Lineage]
+UPDATE LongitudinalPOC.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
@@ -118,9 +117,9 @@ SET  ds.StateSchoolCode = ISNULL(eoic.IdentificationCode,'N/A'),
 						ELSE CAST(s.SchoolId AS NVARCHAR(50))
 					END 
 --select *
-FROM BPS_DW.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
-     INNER JOIN [EdFi_BPS_Staging_Ods].edfi.School s on ds._sourceKey = 'Ed-Fi|' + CAST(s.SchoolId AS NVARCHAR(50))
-     LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50)) AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
+FROM LongitudinalPOC.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
+     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s on ds._sourceKey = 'Ed-Fi|' + CAST(s.SchoolId AS NVARCHAR(50))
+     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50)) AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
 	 
 
 

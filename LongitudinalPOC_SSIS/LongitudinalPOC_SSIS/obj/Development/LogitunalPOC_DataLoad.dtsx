@@ -1,0 +1,702 @@
+<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="7/8/2020 10:07:59 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-14U1PRC"
+  DTS:CreatorName="DESKTOP-14U1PRC\Emilio Baez"
+  DTS:DTSID="{C6FF52FC-7C66-484E-80CA-6C90EE69B570}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.2000.123"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Package"
+  DTS:PackageType="5"
+  DTS:VersionBuild="67"
+  DTS:VersionGUID="{E0C1844F-CA34-4216-9381-9B391E48CA5D}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[LongitudinalPOC_LegacyDW]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+      DTS:ObjectName="LongitudinalPOC_LegacyDW">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=10.244.1.131;User ID=LongitudinalPOC;Initial Catalog=LongitudinalPOC_Staging;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABd8M4jKDFbe4Fp1ek6yw/QrnkssrxfzeWZuBteXbdy9QAAAAAOgAAAAAIAACAAAADWkCsGJP2SBa7t3RXjsnJVmyTvtVbWfFpJLGhKQtZibSAAAACt/vjTy9SX+0PUhBk2WHOgZHbUh7M2hBuFaMRynGoBKEAAAABjoCoFqOxyFKscpzbYsw9Ci3hTdBPVeA5XHbBQsXoPSKg1XgHsVxecv4+eDndjurHb5jG2sjhOxtgEdbJSqLBa</DTS:Password>
+        </DTS:ConnectionManager>
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:PackageParameters>
+    <DTS:PackageParameter
+      DTS:CreationName=""
+      DTS:DataType="8"
+      DTS:DTSID="{7FF00A72-B128-4986-8249-85988F16938E}"
+      DTS:ObjectName="LoadType">
+      <DTS:Property
+        DTS:DataType="8"
+        DTS:Name="ParameterValue">F</DTS:Property>
+    </DTS:PackageParameter>
+  </DTS:PackageParameters>
+  <DTS:Variables>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{DA985B6C-FF6C-4261-8AC4-C09C026C52BA}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="LineageKey">
+      <DTS:VariableValue
+        DTS:DataType="3">-1</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{DE963A52-9FC4-4603-9C35-7E138C7E7918}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="LoadDate">
+      <DTS:VariableValue
+        DTS:DataType="7">12:00:00 AM</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{923261C5-8E30-4E3D-9DBF-4700F1E44FE3}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="LoadType">
+      <DTS:VariableValue
+        DTS:DataType="8">F</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{61D1E8E9-C94E-4276-B67A-0FFC43E4F14C}"
+      DTS:IncludeInDebugDump="6789"
+      DTS:Namespace="User"
+      DTS:ObjectName="PreviousLoadDate">
+      <DTS:VariableValue
+        DTS:DataType="7">12:00:00 AM</DTS:VariableValue>
+    </DTS:Variable>
+    <DTS:Variable
+      DTS:CreationName=""
+      DTS:DTSID="{FE70BB7D-226A-43BF-B78A-58ACE3B72C23}"
+      DTS:IncludeInDebugDump="2345"
+      DTS:Namespace="User"
+      DTS:ObjectName="TableName">
+      <DTS:VariableValue
+        DTS:DataType="8">dbo.DimSchool</DTS:VariableValue>
+    </DTS:Variable>
+  </DTS:Variables>
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\School Dimension"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{4BDF8357-533B-4A0D-8614-3783339F6A01}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="School Dimension">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Get Date Of Current Load"
+          DTS:CreationName="Microsoft.ExpressionTask"
+          DTS:Description="Expression Task"
+          DTS:DTSID="{EEDA193E-5A24-489E-86B0-F7BC260B6E09}"
+          DTS:ExecutableType="Microsoft.ExpressionTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get Date Of Current Load"
+          DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <ExpressionTask
+              Expression="@[User::LoadDate]= GETDATE()" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Get Date Of Previous Load"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="SQL Truncate Staging Tables"
+          DTS:DTSID="{fd00fd8e-797c-477c-8f3e-7f30bb33f265}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get Date Of Previous Load"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="Exec SP_GetDateOfLastLoad" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Populate Dim from Staging"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Populate Dim from Staging"
+          DTS:DTSID="{4232A7CF-6EE8-4339-9A08-BC130597F561}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Populate Dim from Staging"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="EXEC SP_PopulateDimSchoolFromStaging?,?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Populate Staging"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{86ECCDC6-51AF-4ED9-BCCD-94D6E9DEE0DA}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Populate Staging"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Set Table Name"
+          DTS:CreationName="Microsoft.ExpressionTask"
+          DTS:Description="Expression Task"
+          DTS:DTSID="{578CA3B8-A439-4C96-B012-CF3811FF784F}"
+          DTS:ExecutableType="Microsoft.ExpressionTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Set Table Name"
+          DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <ExpressionTask
+              Expression="@[User::TableName]=&quot;dbo.DimSchool&quot;" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Truncate Staging Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="SQL Truncate Staging Table"
+          DTS:DTSID="{D6974972-1681-45F1-9BFF-D3A5BD26BA41}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Truncate Staging Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="Truncate Table dbo.DimSchool" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\School Dimension\Update Lineage Table And Retrieve Key"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{D0CA23C8-F2F8-4D91-9A8D-567C9E087036}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update Lineage Table And Retrieve Key"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="EXEC SP_GetLineageKey ?,?,?"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::LineageKey" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="$Package::LoadType"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TableName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::LoadDate"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="7"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{CF07457D-BB6C-47E3-8A1A-7E347D3BBC91}"
+          DTS:From="Package\School Dimension\Get Date Of Current Load"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\School Dimension\Update Lineage Table And Retrieve Key" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{9CAD4847-7674-4EAE-B0C4-93E561A0932C}"
+          DTS:From="Package\School Dimension\Update Lineage Table And Retrieve Key"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\School Dimension\Truncate Staging Table" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{709E4E16-958C-459E-988C-6B8E7D0ED4D3}"
+          DTS:From="Package\School Dimension\Truncate Staging Table"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\School Dimension\Get Date Of Previous Load" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{0D23555B-C1BC-4B2B-87C8-FF758AAF9BB8}"
+          DTS:From="Package\School Dimension\Get Date Of Previous Load"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\School Dimension\Populate Staging" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{3E9688A7-6882-4F2A-AC07-392CF2A513C7}"
+          DTS:From="Package\School Dimension\Populate Staging"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\School Dimension\Populate Dim from Staging" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\School Dimension.PrecedenceConstraints[Constraint 5]"
+          DTS:CreationName=""
+          DTS:DTSID="{54CD91D1-6E77-4A7D-8B19-9DD695CB7E4B}"
+          DTS:From="Package\School Dimension\Set Table Name"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 5"
+          DTS:To="Package\School Dimension\Get Date Of Current Load" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\Time Dimension"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{bd78e179-612e-4183-a212-0a38e236d9cf}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="Time Dimension">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Get Date Of Current Load"
+          DTS:CreationName="Microsoft.ExpressionTask"
+          DTS:Description="Expression Task"
+          DTS:DTSID="{6a1e1b09-9f4c-49a5-9740-a3ff5457e16e}"
+          DTS:ExecutableType="Microsoft.ExpressionTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get Date Of Current Load"
+          DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <ExpressionTask
+              Expression="@[User::LoadDate]= GETDATE()" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Get Date Of Previous Load"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="SQL Truncate Staging Tables"
+          DTS:DTSID="{53cee9ec-927a-431e-93b1-d866b039a222}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Get Date Of Previous Load"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="2">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="Exec SP_GetDateOfLastLoad" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Populate Dim from Staging"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Populate Dim from Staging"
+          DTS:DTSID="{fd9e11ea-5f93-4cd8-8d77-b1f5b07513ae}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Populate Dim from Staging"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="3">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="EXEC SP_PopulateDimSchoolFromStaging?,?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Populate Staging"
+          DTS:CreationName="Microsoft.Pipeline"
+          DTS:Description="Data Flow Task"
+          DTS:DTSID="{9d39935f-a810-4eb9-acd2-cec411273fed}"
+          DTS:ExecutableType="Microsoft.Pipeline"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Populate Staging"
+          DTS:TaskContact="Performs high-performance data extraction, transformation and loading;Microsoft Corporation; Microsoft SQL Server; (C) Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <pipeline
+              version="1" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Set Table Name"
+          DTS:CreationName="Microsoft.ExpressionTask"
+          DTS:Description="Expression Task"
+          DTS:DTSID="{88cbd7cd-fa45-463b-ac11-a038f9b910f6}"
+          DTS:ExecutableType="Microsoft.ExpressionTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Set Table Name"
+          DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="4">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <ExpressionTask
+              Expression="@[User::TableName]=&quot;dbo.DimTime&quot;" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Truncate Staging Table"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="SQL Truncate Staging Table"
+          DTS:DTSID="{079ae451-cecf-48c9-8355-0be1ecb01ca2}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Truncate Staging Table"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="5">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="Truncate Table dbo.DimSchool" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Time Dimension\Update Lineage Table And Retrieve Key"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Execute SQL Task"
+          DTS:DTSID="{2e70c9d4-04df-4bce-b7fe-5d6b1af8d285}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Update Lineage Table And Retrieve Key"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{E3B97825-FC1B-4D5B-BC80-69E16956BC7B}"
+              SQLTask:SqlStatementSource="EXEC SP_GetLineageKey ?,?,?"
+              SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ResultBinding
+                SQLTask:ResultName="0"
+                SQLTask:DtsVariableName="User::LineageKey" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="$Package::LoadType"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::TableName"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="130"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="2"
+                SQLTask:DtsVariableName="User::LoadDate"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="7"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{588DB9B7-DC3B-4672-AA40-DCB0AF73328B}"
+      DTS:From="Package\School Dimension"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\Time Dimension" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="32" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="271.333333333334,43.3333333333334"
+          Id="Package\School Dimension\Get Date Of Current Load"
+          TopLeft="61.6250009592625,83.6842146989709" />
+        <NodeLayout
+          Size="265.333333333334,44.6666666666667"
+          Id="Package\School Dimension\Get Date Of Previous Load"
+          TopLeft="59.7500009872024,291.684218614055" />
+        <NodeLayout
+          Size="260,44"
+          Id="Package\School Dimension\Populate Dim from Staging"
+          TopLeft="63.5000009313228,437.421063462454" />
+        <NodeLayout
+          Size="260.666666666667,42"
+          Id="Package\School Dimension\Populate Staging"
+          TopLeft="64.7500009126965,361.456149739352" />
+        <NodeLayout
+          Size="268,44"
+          Id="Package\School Dimension\Set Table Name"
+          TopLeft="61.9999980628491,15.614038719475" />
+        <NodeLayout
+          Size="268,42"
+          Id="Package\School Dimension\Truncate Staging Table"
+          TopLeft="62.2500009499496,224.631585773007" />
+        <NodeLayout
+          Size="270.666666666667,42.6666666666667"
+          Id="Package\School Dimension\Update Lineage Table And Retrieve Key"
+          TopLeft="59.7500009872024,155.526321314378" />
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint]"
+          TopLeft="196.187500973233,127.017548032304">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.5087732820743"
+              Start="0,0"
+              End="0,21.0087732820743">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.0087732820743" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint 1]"
+          TopLeft="195.666667635243,198.192987981045">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,26.4385977919621"
+              Start="0,0"
+              End="0,18.9385977919621">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,18.9385977919621" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint 2]"
+          TopLeft="194.333334301909,266.631585773007">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.0526328410476"
+              Start="0,0"
+              End="0,17.5526328410476">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.5526328410476" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint 3]"
+          TopLeft="193.750000949949,336.350885280722">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.1052644586302"
+              Start="0,0"
+              End="0,17.6052644586302">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.6052644586302" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint 4]"
+          TopLeft="194.291667588676,403.456149739352">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,33.964913723102"
+              Start="0,0"
+              End="0,26.464913723102">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,26.464913723102" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\School Dimension.PrecedenceConstraints[Constraint 5]"
+          TopLeft="196.645832844389,59.614038719475">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.0701759794959"
+              Start="0,0"
+              End="0,16.5701759794959">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.5701759794959" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="448.666666666667,537.333333333334"
+          Size="448.666666666667,580"
+          Id="Package\School Dimension"
+          TopLeft="211.458338427668,135.473686760482" />
+        <NodeLayout
+          Size="268,44"
+          Id="Package\Time Dimension\Set Table Name"
+          TopLeft="92.2499966286116,14.1578938739782" />
+        <NodeLayout
+          Size="271.333333333334,43.3333333333334"
+          Id="Package\Time Dimension\Get Date Of Current Load"
+          TopLeft="92.4999995157118,82.2280698534741" />
+        <NodeLayout
+          Size="270.666666666667,42.6666666666667"
+          Id="Package\Time Dimension\Update Lineage Table And Retrieve Key"
+          TopLeft="90.6249995436517,154.070176468881" />
+        <NodeLayout
+          Size="268,42"
+          Id="Package\Time Dimension\Truncate Staging Table"
+          TopLeft="93.1249995063989,223.17544092751" />
+        <NodeLayout
+          Size="265.333333333334,44.6666666666667"
+          Id="Package\Time Dimension\Get Date Of Previous Load"
+          TopLeft="90.6249995436517,290.228073768558" />
+        <NodeLayout
+          Size="260.666666666667,42"
+          Id="Package\Time Dimension\Populate Staging"
+          TopLeft="95.6249994691458,360.000004893855" />
+        <NodeLayout
+          Size="260,44"
+          Id="Package\Time Dimension\Populate Dim from Staging"
+          TopLeft="94.3749994877721,435.964918616957" />
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="448.666666666667,533.333333333334"
+          Size="448.666666666667,576"
+          Id="Package\Time Dimension"
+          TopLeft="691.874989690259,141.052632351662" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="660.125005094335,427.263159556072">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="31.7499845959237,0"
+              Start="0,0"
+              End="24.2499845959237,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="24.2499845959237,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <AnnotationLayout
+          Text="1 - Save current load date&#xA;2 - Insert new row in the lineage table&#xA;3 - Truncate the staging table&#xA;4-  Populate the staging table&#xA;5 - Transfer data from staging to prod"
+          ParentId="Package"
+          FontInfo="{assembly:Null}"
+          Size="266.666666666667,104"
+          Id="9b8e2e64-0aa1-47a1-8fa3-04c0668ff612"
+          TopLeft="209.374996880069,18.4736845582476" />
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>

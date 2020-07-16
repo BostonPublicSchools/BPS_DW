@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30225.117
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "LongitudinalPOC_SSIS", "LongitudinalPOC_SSIS\LongitudinalPOC_SSIS.dtproj", "{B403367B-5A45-48A0-9A0D-EE9CB02FF30B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B403367B-5A45-48A0-9A0D-EE9CB02FF30B}.Development|Default.ActiveCfg = Development
+		{B403367B-5A45-48A0-9A0D-EE9CB02FF30B}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2206B7E2-4703-4B6F-96BE-CD95B692C1D3}
+	EndGlobalSection
+EndGlobal

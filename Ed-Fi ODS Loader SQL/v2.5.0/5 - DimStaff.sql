@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM BPS_DW.[dbo].[Lineage] WHERE TableName= 'dbo.DimStaff')
+IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimStaff')
 BEGIN
-    INSERT INTO BPS_DW.[dbo].[Lineage]
+    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,13 +25,13 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM BPS_DW.[dbo].[Lineage]
+	 FROM LongitudinalPOC.[dbo].[Lineage]
 	 WHERE TableName= 'dbo.DimStaff'
 END 
 
 
 
-INSERT INTO BPS_DW.[dbo].[DimStaff]
+INSERT INTO LongitudinalPOC.[dbo].[DimStaff]
            ([_sourceKey]
 		   ,[PrimaryElectronicMailAddress]
 		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
@@ -80,7 +80,7 @@ select  distinct
 	    ,s.MiddleName
 		,LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial	    
         ,s.LastSurname
-		,BPS_DW.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName
+		,LongitudinalPOC.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName
 		,s.GenerationCodeSuffix
 		,s.MaidenName        
 		,s.BirthDate
@@ -108,26 +108,26 @@ select  distinct
 	    ,case when seoea.EndDate IS null then  '12/31/9999' else seoea.EndDate  END AS ValidTo
 	    ,case when seoea.EndDate IS NULL THEN  1 else 0 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
-FROM EdFi_BPS_Staging_Ods.edfi.Staff s 
-     INNER JOIN [EdFi_BPS_Staging_Ods].edfi.StaffSchoolAssociation ssa ON s.StaffUSI = ssa.StaffUSI
-	 INNER JOIN EdFi_BPS_Staging_Ods.edfi.StaffEducationOrganizationEmploymentAssociation seoea ON s.StaffUSI = seoea.StaffUSI
+FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s 
+     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa ON s.StaffUSI = ssa.StaffUSI
+	 INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationEmploymentAssociation seoea ON s.StaffUSI = seoea.StaffUSI
 	 --sex	 
-	 left JOIN [EdFi_BPS_Staging_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
-	 left join [EdFi_BPS_Staging_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
-	 left join [EdFi_BPS_Staging_Ods].edfi.CitizenshipStatusType cst on s.CitizenshipStatusTypeId = cst.CitizenshipStatusTypeId
-	 left join [EdFi_BPS_Staging_Ods].edfi.Descriptor d_le on s.HighestCompletedLevelOfEducationDescriptorId = d_le.DescriptorId
-	 LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.StaffElectronicMail sem ON s.StaffUSI = sem.StaffUSI
+	 left JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
+	 left join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
+	 left join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CitizenshipStatusType cst on s.CitizenshipStatusTypeId = cst.CitizenshipStatusTypeId
+	 left join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_le on s.HighestCompletedLevelOfEducationDescriptorId = d_le.DescriptorId
+	 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffElectronicMail sem ON s.StaffUSI = sem.StaffUSI
 	                                                              AND sem.PrimaryEmailAddressIndicator = 1
-	 LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
+	 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
 WHERE NOT EXISTS(SELECT 1 
-					FROM BPS_DW.[dbo].[DimStaff] ds 
+					FROM LongitudinalPOC.[dbo].[DimStaff] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey)
 	  AND ssa.SchoolYear IN (2019,2020);
 
 
 
 --updatng the lineage table
-UPDATE BPS_DW.[dbo].[Lineage]
+UPDATE LongitudinalPOC.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
