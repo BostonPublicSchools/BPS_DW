@@ -246,7 +246,7 @@ CREATE TABLE dbo.DimSchool
 (
   SchoolKey int NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
-  
+  DistrictSchoolCode NVARCHAR(10) NULL ,
   StateSchoolCode NVARCHAR(50) NULL ,
   UmbrellaSchoolCode NVARCHAR(50) NULL,
 
@@ -875,10 +875,10 @@ CREATE TABLE dbo.DimCourse
 	CourseDescription NVARCHAR(100) NOT NULL,
 
 	CourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(60) NOT NULL,
-	CourseLevelCharacteristicTypeDescriptor_Descriptor NVARCHAR(1024) NOT NULL,
+	CourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(1024) NOT NULL, 
 
 	AcademicSubjectDescriptor_CodeValue  NVARCHAR(60) NOT NULL,
-	AcademicSubjectDescriptor_Descriptor  NVARCHAR(1024) NOT NULL,
+	AcademicSubjectDescriptor_Description  NVARCHAR(1024) NOT NULL,
 
 	HighSchoolCourseRequirement_Indicator BIT NOT NULL,
 	MinimumAvailableCredits INT NULL,
@@ -886,6 +886,9 @@ CREATE TABLE dbo.DimCourse
 	
 	GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
 	GPAApplicabilityType_Description NVARCHAR(50) NULL,
+
+	SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+	SecondaryCourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(50) NOT NULL,
 			
 	ValidFrom DATETIME NOT NULL, 
 	ValidTo DATETIME NOT NULL, 
@@ -1079,6 +1082,8 @@ SELECT DISTINCT
 		dsc.NameOfInstitution AS SchoolName,
 		dc.CourseCode,
 		dc.CourseTitle,
+		dc.CourseLevelCharacteristicTypeDescriptor_CodeValue AS CourseType,
+		dc.SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue AS MassCourseType,
 		dt.SchoolTermDescriptor_CodeValue AS Term, 		
 		fsct.EarnedCredits,
 		fsct.PossibleCredits,

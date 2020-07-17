@@ -97,7 +97,7 @@ SELECT
 	   null AS [PrimaryElectronicMailTypeDescriptor_Description],
 
 	   s.StudentNo AS [StudentUniqueId],       
-       a_st.STD_ID_STATE AS StateId,
+       s.sasid AS StateId,
        
 	   dschool.SchoolKey,
 	   dschool.ShortNameOfInstitution,
@@ -150,7 +150,7 @@ SELECT
 	   0 AS Migrant_Indicator,
 	   --CASE WHEN a_st.STD_FIELDA_024 = 1 OR COALESCE(a_st.STD_FIELDB_065,'')<>'' THEN 1 ELSE 0 END AS Homeless_Indicator,
 	   0 AS Homeless_Indicator,
-       s.IsSpedIntegrated AS IEP_Indicator,
+       case WHEN COALESCE(s.SnCode,'None') <> 'None' THEN 1  ELSE 0 END  AS IEP_Indicator,
 	   
 	   COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
 	   COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
@@ -173,11 +173,9 @@ SELECT
 	   ,case when s.sequenceno =  999999 AND s.withdate IS NULL THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else s.withdate END AS ValidTo
 	   ,0 IsCurrent
 	   --,@lineageKey AS [LineageKey]
---select distinct  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))
+--select distinct top 100 *
 FROM [BPSDW].[dbo].[student] s 
-     INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey
-	 LEFT JOIN [BPSDATA-03].[ExtractAspen].[dbo].[STUDENT] a_st  ON s.StudentNo = LEFT(LTRIM(a_st.STD_ID_LOCAL COLLATE SQL_Latin1_General_CP1_CI_AS ),6) 
-	                                                            AND CHARINDEX('-',a_st.STD_ID_LOCAL COLLATE SQL_Latin1_General_CP1_CI_AS,1) = 0 -- excluding ids with dashes in them
+     INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 WHERE NOT EXISTS(SELECT 1 
 					FROM LongitudinalPOC.[dbo].[DimStudent] ds 
 					WHERE CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentNo)) = ds._sourceKey
@@ -185,7 +183,6 @@ WHERE NOT EXISTS(SELECT 1
 	  AND s.schyear IN (2018,2017,2016)
 	  --AND s.StudentNo = '999453'
 ORDER BY s.StudentNo
-
 
 
 

@@ -33,6 +33,7 @@ END
 
 INSERT INTO LongitudinalPOC.[dbo].[DimSchool]
            ([_sourceKey]
+		   ,[DistrictSchoolCode]
 		   ,[StateSchoolCode]
 		   ,[UmbrellaSchoolCode]
            ,[ShortNameOfInstitution]
@@ -52,15 +53,16 @@ INSERT INTO LongitudinalPOC.[dbo].[DimSchool]
            ,[IsCurrent]
            ,[LineageKey])
 SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
-        eoic.IdentificationCode AS StateSchoolCode,
+        eoic_sch.IdentificationCode AS DistrictSchoolCode,
+		eoic.IdentificationCode AS StateSchoolCode,
         CASE
-		    WHEN s.SchoolId IN (1291, 1292, 1293, 1294) THEN '1290'
-			when s.SchoolId IN (1440,1441) THEN '1440' 
-			WHEN s.SchoolId IN (4192,4192) THEN '4192' 
-			WHEN s.SchoolId IN (4031,4033) THEN '4033' 
-			WHEN s.SchoolId IN (1990,1991) THEN '1990' 
-			WHEN s.SchoolId IN (1140,4391) THEN '1140' 
-			ELSE CAST(s.SchoolId AS NVARCHAR(50))
+		    WHEN eoic_sch.IdentificationCode IN (1291, 1292, 1293, 1294) THEN '1290'
+			when eoic_sch.IdentificationCode IN (1440,1441) THEN '1440' 
+			WHEN eoic_sch.IdentificationCode IN (4192,4192) THEN '4192' 
+			WHEN eoic_sch.IdentificationCode IN (4031,4033) THEN '4033' 
+			WHEN eoic_sch.IdentificationCode IN (1990,1991) THEN '1990' 
+			WHEN eoic_sch.IdentificationCode IN (1140,4391) THEN '1140' 
+			ELSE eoic_sch.IdentificationCode
 		END AS UmbrellaSchoolCode,
 		edorg.ShortNameOfInstitution, 
 		edorg.NameOfInstitution,
@@ -87,11 +89,19 @@ LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategoryType sct on 
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
                                                                                AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
+LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 
+                                                                               AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --state
+
+
+																			   
 WHERE NOT EXISTS(SELECT 1 
 					FROM LongitudinalPOC.[dbo].[DimSchool] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) = ds._sourceKey);
 
 --SELECT * FROM LongitudinalPOC.[dbo].[DimSchool]
+
+--SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode 
+
 
 
 
