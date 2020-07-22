@@ -90,7 +90,7 @@ LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.TitleIPartASchoolDesignati
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
                                                                                AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 
-                                                                               AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --state
+                                                                               AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --district code
 
 
 																			   
