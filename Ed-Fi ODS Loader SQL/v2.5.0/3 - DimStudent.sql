@@ -29,6 +29,34 @@ BEGIN
 	 WHERE TableName= 'dbo.DimStudent'
 END 
 
+;WITH StudentHomeRooomByYear AS
+(
+SELECT DISTINCT std_sa.StudentUSI, 
+                std_sa.SchoolYear, 
+				std_sa.SchoolId,  
+				std_sa.ClassroomIdentificationCode AS HomeRoom,
+				LongitudinalPOC.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher
+FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa 
+     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
+	                                                                                        AND std_sa.SchoolYear = staff_sa.SchoolYear
+	 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
+WHERE std_sa.HomeroomIndicator = 1
+     AND std_sa.SchoolYear IN (2019,2020)
+)
+
+/*
+
+--SELECT TOP 100  * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation where StudentUSI = 14803 and SchoolYear = 2019 
+
+UPDATE s 
+SET s.Homeroom = shrby.HomeRoom,
+    s.HomeroomTeacher = shrby.HomeRoomTeacher
+FROM LongitudinalPOC.[dbo].[DimStudent] s 
+     INNER JOIN LongitudinalPOC.[dbo].[DimSchool] sch ON  s.SchoolKey = sch.SchoolKey
+     LEFT JOIN StudentHomeRooomByYear shrby ON  s._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.StudentUSI) 
+	                                       AND  sch._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.SchoolId)
+										   AND s.EntrySchoolYear = shrby.SchoolYear
+*/
 
 INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
            ([_sourceKey]
@@ -191,6 +219,9 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 	INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
+	LEFT JOIN StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
+	                                       AND ssa.SchoolId = shrby.SchoolId
+										   AND ssa.SchoolYear = shrby.SchoolYear
     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
@@ -227,7 +258,7 @@ UPDATE LongitudinalPOC.[dbo].[Lineage]
 WHERE LineageKey = @lineageKey;
 
 
---SELECT * FROM  LongitudinalPOC.dbo.DimStudent
+--SELECT * FROM  LongitudinalPOC.dbo.DimStudent where HomeRoom is not null
 
 
 /*

@@ -75,7 +75,7 @@ RETURN
 );
 GO
 
-ALTER FUNCTION [dbo].[Func_GetHolidayFromDate]
+CREATE FUNCTION [dbo].[Func_GetHolidayFromDate]
 (
     @date  date
 )

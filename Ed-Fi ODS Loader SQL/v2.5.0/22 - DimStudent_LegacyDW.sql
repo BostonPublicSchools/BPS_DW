@@ -29,7 +29,22 @@ BEGIN
 	 WHERE TableName= 'dbo.DimStudent'
 END 
 
-
+;WITH HomelessStudentsByYear AS (
+--Sch year 2015:
+  SELECT studentno, 2016 AS schyear
+  FROM [RMUStudentBackup].[dbo].[Homeless2015Final] 
+  WHERE McKinneyVento = 'Y'
+  UNION ALL 
+--Sch year 2016:
+  SELECT studentno, 2017 AS schyear
+  FROM [RMUStudentBackup].[dbo].[Homeless2016Final] 
+  WHERE McKinneyVento = 'Y'  
+  UNION ALL
+--Sch year 2017:
+  SELECT studentno, 2018 AS schyear
+  FROM [RMUStudentBackup].[dbo].[Homeless2017Final] 
+  WHERE McKinneyVento = 'Y'  
+)
 INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
            ([_sourceKey]
            ,[PrimaryElectronicMailAddress]
@@ -148,7 +163,7 @@ SELECT
 	   CASE WHEN s.RacePrompt = 'Hispanic' THEN 1 ELSE 0 END AS EthnicityHispanicLatino_Indicator,
 	   
 	   0 AS Migrant_Indicator,
-	   --CASE WHEN a_st.STD_FIELDA_024 = 1 OR COALESCE(a_st.STD_FIELDB_065,'')<>'' THEN 1 ELSE 0 END AS Homeless_Indicator,
+	   CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,
 	   0 AS Homeless_Indicator,
        case WHEN COALESCE(s.SnCode,'None') <> 'None' THEN 1  ELSE 0 END  AS IEP_Indicator,
 	   
@@ -176,13 +191,14 @@ SELECT
 --select distinct top 100 *
 FROM [BPSDW].[dbo].[student] s 
      INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
-WHERE NOT EXISTS(SELECT 1 
-					FROM LongitudinalPOC.[dbo].[DimStudent] ds 
-					WHERE CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentNo)) = ds._sourceKey
-					AND s.schyear = ds.EntrySchoolYear)
-	  AND s.schyear IN (2018,2017,2016)
+	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
+	                                      and s.schyear = hsby.schyear
+WHERE s.schyear IN (2018,2017,2016)
 	  --AND s.StudentNo = '999453'
 ORDER BY s.StudentNo
+
+  
+
 
 
 
