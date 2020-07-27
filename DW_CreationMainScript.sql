@@ -1,4 +1,4 @@
-USE [TestDB]
+USE LongitudinalPOC
 GO
 
 DECLARE @dropExistingTables BIT = 1
