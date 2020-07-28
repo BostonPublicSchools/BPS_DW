@@ -1014,8 +1014,7 @@ SELECT StudentId,
 	   [In Attendance],
 	   [Tardy],
 	   [DistrictSchoolCode],
-	   [UmbrellaSchoolCode]
-	   
+	   [UmbrellaSchoolCode]	   
 FROM (
 		SELECT DISTINCT 
 		       ds.StudentUniqueId AS StudentId,
@@ -1106,7 +1105,9 @@ SELECT DISTINCT
 		fsct.EarnedCredits,
 		fsct.PossibleCredits,
 		fsct.FinalLetterGradeEarned,
-		fsct.FinalNumericGradeEarned
+		fsct.FinalNumericGradeEarned,
+		dsc.DistrictSchoolCode AS DistrictSchoolCode,
+		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode
 FROM dbo.FactStudentCourseTranscript fsct
 		INNER JOIN dbo.DimStudent ds ON fsct.StudentKey = ds.StudentKey
 		INNER JOIN dbo.DimTime dt ON fsct.TimeKey = dt.TimeKey	 
