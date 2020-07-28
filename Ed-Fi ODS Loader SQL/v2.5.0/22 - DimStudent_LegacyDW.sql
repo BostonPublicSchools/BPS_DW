@@ -45,65 +45,65 @@ END
   FROM [RMUStudentBackup].[dbo].[Homeless2017Final] 
   WHERE McKinneyVento = 'Y'  
 )
-INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
-           ([_sourceKey]
-           ,[PrimaryElectronicMailAddress]
-		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
-		   ,[PrimaryElectronicMailTypeDescriptor_Description]
-           ,[StudentUniqueId]
-           ,[StateId]
-           ,[SchoolKey]
-           ,[ShortNameOfInstitution]
-           ,[NameOfInstitution]
-           ,[GradeLevelDescriptor_CodeValue]
-           ,[GradeLevelDescriptor_Description]
-           ,[FirstName]
-           ,[MiddleInitial]
-           ,[MiddleName]
-           ,[LastSurname]
-           ,[FullName]
-           ,[BirthDate]
-           ,[StudentAge]
-           ,[GraduationSchoolYear]
-           ,[Homeroom]
-           ,[HomeroomTeacher]
-           ,[SexType_Code]
-           ,[SexType_Description]
-           ,[SexType_Male_Indicator]
-           ,[SexType_Female_Indicator]
-           ,[SexType_NotSelected_Indicator]
-           ,[RaceCode]
-           ,[RaceDescription]
-           ,[Race_AmericanIndianAlaskanNative_Indicator]
-           ,[Race_Asian_Indicator]
-           ,[Race_BlackAfricaAmerican_Indicator]
-           ,[Race_NativeHawaiianPacificIslander_Indicator]
-           ,[Race_White_Indicator]
-           ,[Race_MultiRace_Indicator]
-           ,[Race_ChooseNotRespond_Indicator]
-           ,[Race_Other_Indicator]
-           ,[EthnicityCode]
-           ,[EthnicityDescription]
-           ,[EthnicityHispanicLatino_Indicator]
-           ,[Migrant_Indicator]
-           ,[Homeless_Indicator]
-           ,[IEP_Indicator]
-           ,[LimitedEnglishProficiencyDescriptor_CodeValue]
-           ,[LimitedEnglishProficiencyDescriptor_Description]
-           ,[LimitedEnglishProficiency_EnglishLearner_Indicator]
-           ,[LimitedEnglishProficiency_Former_Indicator]
-           ,[LimitedEnglishProficiency_NotEnglisLearner_Indicator]
-           ,[EconomicDisadvantage_Indicator]
-           ,[EntryDate]
-           ,[EntrySchoolYear]
-           ,[EntryCode]
-           ,[ExitWithdrawDate]
-           ,[ExitWithdrawSchoolYear]
-           ,[ExitWithdrawCode]
-           ,[ValidFrom]
-           ,[ValidTo]
-           ,[IsCurrent]
-           ,[LineageKey])
+--INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
+--           ([_sourceKey]
+--           ,[PrimaryElectronicMailAddress]
+--		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+--		   ,[PrimaryElectronicMailTypeDescriptor_Description]
+--           ,[StudentUniqueId]
+--           ,[StateId]
+--           ,[SchoolKey]
+--           ,[ShortNameOfInstitution]
+--           ,[NameOfInstitution]
+--           ,[GradeLevelDescriptor_CodeValue]
+--           ,[GradeLevelDescriptor_Description]
+--           ,[FirstName]
+--           ,[MiddleInitial]
+--           ,[MiddleName]
+--           ,[LastSurname]
+--           ,[FullName]
+--           ,[BirthDate]
+--           ,[StudentAge]
+--           ,[GraduationSchoolYear]
+--           ,[Homeroom]
+--           ,[HomeroomTeacher]
+--           ,[SexType_Code]
+--           ,[SexType_Description]
+--           ,[SexType_Male_Indicator]
+--           ,[SexType_Female_Indicator]
+--           ,[SexType_NotSelected_Indicator]
+--           ,[RaceCode]
+--           ,[RaceDescription]
+--           ,[Race_AmericanIndianAlaskanNative_Indicator]
+--           ,[Race_Asian_Indicator]
+--           ,[Race_BlackAfricaAmerican_Indicator]
+--           ,[Race_NativeHawaiianPacificIslander_Indicator]
+--           ,[Race_White_Indicator]
+--           ,[Race_MultiRace_Indicator]
+--           ,[Race_ChooseNotRespond_Indicator]
+--           ,[Race_Other_Indicator]
+--           ,[EthnicityCode]
+--           ,[EthnicityDescription]
+--           ,[EthnicityHispanicLatino_Indicator]
+--           ,[Migrant_Indicator]
+--           ,[Homeless_Indicator]
+--           ,[IEP_Indicator]
+--           ,[LimitedEnglishProficiencyDescriptor_CodeValue]
+--           ,[LimitedEnglishProficiencyDescriptor_Description]
+--           ,[LimitedEnglishProficiency_EnglishLearner_Indicator]
+--           ,[LimitedEnglishProficiency_Former_Indicator]
+--           ,[LimitedEnglishProficiency_NotEnglisLearner_Indicator]
+--           ,[EconomicDisadvantage_Indicator]
+--           ,[EntryDate]
+--           ,[EntrySchoolYear]
+--           ,[EntryCode]
+--           ,[ExitWithdrawDate]
+--           ,[ExitWithdrawSchoolYear]
+--           ,[ExitWithdrawCode]
+--           ,[ValidFrom]
+--           ,[ValidTo]
+--           ,[IsCurrent]
+--           ,[LineageKey])
 
 SELECT 
        CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),s.StudentNo)) AS [_sourceKey],
@@ -174,14 +174,19 @@ SELECT
        CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
 	   CASE WHEN COALESCE(s.foodgroup,'None') <> 'None' THEN 1 ELSE 0 END AS EconomicDisadvantage_Indicator,
        
-	   --entry
-	   s.entdate AS EntryDate,
-	   s.schyear AS EntrySchoolYear, 
+	   --entry	   
+	   CASE WHEN MONTH(s.entdate) >= 7 THEN 
+	          DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
+	        ELSE 
+			  DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
+	   END AS EntryDate,
+
+	   s.schyear + 1 AS EntrySchoolYear, 
 	   COALESCE(s.entcode,'N/A') AS EntryCode,
        
 	   --exit
 	   case when s.sequenceno =  999999 AND s.withdate IS NULL THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else s.withdate END AS ExitWithdrawDate,
-	   s.schyear AS ExitWithdrawSchoolYear, 
+	   s.schyear + 1 AS ExitWithdrawSchoolYear, 
 	   COALESCE(s.withcode,'N/A') AS ExitWithdrawCode              
 
        ,s.entdate AS ValidFrom
@@ -189,12 +194,12 @@ SELECT
 	   ,0 IsCurrent
 	   --,@lineageKey AS [LineageKey]
 --select distinct top 100 *
-FROM [BPSDW].[dbo].[student] s 
+FROM [BPSDW].[dbo].[student] s --WHERE s.StudentNo = '236382'
      INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear
-WHERE s.schyear IN (2018,2017,2016)
-	  --AND s.StudentNo = '999453'
+WHERE s.schyear IN (2017,2016,2015)
+	  --AND s.StudentNo = '236382'
 ORDER BY s.StudentNo
 
   

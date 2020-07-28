@@ -1116,7 +1116,7 @@ GO
 
 CREATE VIEW dbo.View_StudentRoster
 AS(
-SELECT DISTINCT TOP 1000
+SELECT DISTINCT 
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
