@@ -1172,8 +1172,7 @@ SELECT DISTINCT
 		ds.ValidFrom,
 		ds.ValidTo,
 		ds.IsCurrent,
-		dsc.DistrictSchoolCode AS DistrictSchoolCode,
-		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode
+		dsc.DistrictSchoolCode AS DistrictSchoolCode
 		
 FROM dbo.DimStudent ds 		
      INNER JOIN dbo.DimSchool dsc ON ds.SchoolKey = dsc.SchoolKey
