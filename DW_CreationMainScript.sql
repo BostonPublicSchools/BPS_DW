@@ -976,7 +976,8 @@ FROM (
 		FROM dbo.FactStudentAssessmentScore fas 
 			 INNER JOIN dbo.DimStudent ds ON fas.StudentKey = ds.StudentKey
 			 INNER JOIN dbo.DimTime dt ON fas.TimeKey = dt.TimeKey	 
-			 INNER JOIN dbo.DimAssessment da ON fas.AssessmentKey = da.AssessmentKey		
+			 INNER JOIN dbo.DimAssessment da ON fas.AssessmentKey = da.AssessmentKey
+			 
 	) AS SourceTable 
 PIVOT 
    (
@@ -1003,6 +1004,8 @@ SELECT StudentId,
        StudentStateId, 
 	   FirstName, 
 	   LastName, 
+	   [DistrictSchoolCode],
+	   [UmbrellaSchoolCode],	   
 	   SchoolName, 
 	   AttedanceDate,
 
@@ -1012,9 +1015,8 @@ SELECT StudentId,
 	   [Unexcused Absence],
 	   [No Contact],
 	   [In Attendance],
-	   [Tardy],
-	   [DistrictSchoolCode],
-	   [UmbrellaSchoolCode]	   
+	   [Tardy]
+	   
 FROM (
 		SELECT DISTINCT 
 		       ds.StudentUniqueId AS StudentId,
@@ -1064,7 +1066,9 @@ SELECT DISTINCT
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
 		ds.LastSurname AS LastName,
-		dsc.NameOfInstitution AS SchoolName,
+		dsc.DistrictSchoolCode AS DistrictSchoolCode,
+		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode,
+		dsc.ShortNameOfInstitution AS SchoolName,
 		dt.SchoolDate AS IncidentDate, 		
 		ddi.IncidentTime,
 		ddi.IncidentDescription,
@@ -1073,9 +1077,8 @@ SELECT DISTINCT
 		ddi.DisciplineDescriptor_CodeValue AS IncidentAction ,
 		ddi.ReporterDescriptor_CodeValue AS IncidentReporter,
 		ddi.DisciplineDescriptor_ISS_Indicator AS IsISS,
-		ddi.DisciplineDescriptor_OSS_Indicator AS IsOSS,
-		dsc.DistrictSchoolCode AS DistrictSchoolCode,
-		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode
+		ddi.DisciplineDescriptor_OSS_Indicator AS IsOSS
+		
 FROM dbo.FactStudentDiscipline fsd 
 		INNER JOIN dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey
 		INNER JOIN dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 
@@ -1095,7 +1098,9 @@ SELECT DISTINCT
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
-		ds.LastSurname AS LastName,
+		ds.LastSurname AS LastName,		
+		dsc.DistrictSchoolCode AS DistrictSchoolCode,
+		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode,
 		dsc.NameOfInstitution AS SchoolName,
 		dc.CourseCode,
 		dc.CourseTitle,
@@ -1105,9 +1110,7 @@ SELECT DISTINCT
 		fsct.EarnedCredits,
 		fsct.PossibleCredits,
 		fsct.FinalLetterGradeEarned,
-		fsct.FinalNumericGradeEarned,
-		dsc.DistrictSchoolCode AS DistrictSchoolCode,
-		dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode
+		fsct.FinalNumericGradeEarned
 FROM dbo.FactStudentCourseTranscript fsct
 		INNER JOIN dbo.DimStudent ds ON fsct.StudentKey = ds.StudentKey
 		INNER JOIN dbo.DimTime dt ON fsct.TimeKey = dt.TimeKey	 
@@ -1136,9 +1139,11 @@ SELECT DISTINCT
 		ds.BirthDate,
 		ds.StudentAge,
 		ds.[GraduationSchoolYear],
-		dsc.NameOfInstitution AS SchoolName,
+		dsc.DistrictSchoolCode AS DistrictSchoolCode,
 		dsc.StateSchoolCode AS SchoolStateCode,
 		dsc.UmbrellaSchoolCode AS SchoolUmbrellaCode,
+		dsc.NameOfInstitution AS SchoolName,
+		
 		ds.Homeroom,
 		ds.HomeroomTeacher,
 		ds.SexType_Code AS Sex,
@@ -1171,8 +1176,8 @@ SELECT DISTINCT
 
 		ds.ValidFrom,
 		ds.ValidTo,
-		ds.IsCurrent,
-		dsc.DistrictSchoolCode AS DistrictSchoolCode
+		ds.IsCurrent
+		
 		
 FROM dbo.DimStudent ds 		
      INNER JOIN dbo.DimSchool dsc ON ds.SchoolKey = dsc.SchoolKey

@@ -154,8 +154,8 @@ SELECT
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
 
-	   ISNULL(rt.CodeValue,'N/A') AS RaceCode,
-	   ISNULL(rt.Description,'N/A') AS RaceDescription,
+	   COALESCE(rt.CodeValue,'N/A') AS RaceCode,
+	   COALESCE(rt.Description,'N/A') AS RaceDescription,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =1 THEN 1 ELSE 0 END AS Race_AmericanIndianAlaskanNative_Indicator,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =2 THEN 1 ELSE 0 END AS Race_Asian_Indicator,
 	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =3 THEN 1 ELSE 0 END AS Race_BlackAfricaAmerican_Indicator,
@@ -191,19 +191,19 @@ SELECT
 							 AND spa.IEPEndDate IS NULL
 				   ) THEN 1 ELSE 0 End AS IEP_Indicator,
 	   
-	   ISNULL(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
-	   ISNULL(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
-	   CASE WHEN ISNULL(lepd.CodeValue,'N/A') = 'L' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
-       CASE WHEN ISNULL(lepd.CodeValue,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
-       CASE WHEN ISNULL(lepd.CodeValue,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
+	   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
+	   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
+	   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'L' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
+       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
+       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
 
 
-	   ISNULL(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
+	   COALESCE(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
        
 	   --entry
 	   ssa.EntryDate,
 	   LongitudinalPOC.dbo.Func_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
-	   ISNULL(eglrt.CodeValue,'N/A') AS EntryCode,
+	   COALESCE(eglrt.CodeValue,'N/A') AS EntryCode,
        
 	   --exit
 	   ssa.ExitWithdrawDate,
