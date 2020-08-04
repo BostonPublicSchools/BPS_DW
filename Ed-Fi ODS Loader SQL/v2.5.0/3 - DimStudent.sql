@@ -42,6 +42,68 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa
 	 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
 WHERE std_sa.HomeroomIndicator = 1
      AND std_sa.SchoolYear IN (2019,2020)
+),
+StudentRaces AS
+(
+  SELECT DISTINCT 
+       s.StudentUSI, 
+	   COUNT(sr.StudentUSI) AS RaceCount,
+       STRING_AGG(rt.CodeValue,',') AS RaceCodes,
+	   STRING_AGG(rt.Description,',') AS RaceDescriptions,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 1) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_AmericanIndianAlaskanNative_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 2) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_Asian_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 3) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_BlackAfricaAmerican_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 5) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_NativeHawaiianPacificIslander_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 7) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_White_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 4) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_ChooseNotRespond_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 6) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_Other_Indicator      
+
+FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s 
+	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
+	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId
+GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
 )
 
 /*
@@ -55,7 +117,69 @@ FROM LongitudinalPOC.[dbo].[DimStudent] s
      INNER JOIN LongitudinalPOC.[dbo].[DimSchool] sch ON  s.SchoolKey = sch.SchoolKey
      LEFT JOIN StudentHomeRooomByYear shrby ON  s._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.StudentUSI) 
 	                                       AND  sch._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.SchoolId)
-										   AND s.EntrySchoolYear = shrby.SchoolYear
+
+SELECT DISTINCT 
+       s.StudentUSI, 
+	   COUNT(sr.StudentUSI) AS RaceCount,
+       STRING_AGG(rt.CodeValue,',') AS RaceCode,
+	   STRING_AGG(rt.Description,',') AS RaceDescriptions,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 1) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_AmericanIndianAlaskanNative_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 2) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_Asian_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 3) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_BlackAfricaAmerican_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 5) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_NativeHawaiianPacificIslander_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 7) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_White_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 4) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_ChooseNotRespond_Indicator,
+	   CASE WHEN EXISTS (SELECT 1 
+	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+						       WHERE s.StudentUSI = sr.StudentUSI
+							     AND sr.RaceTypeId = 6) THEN 1
+	   ELSE 
+	       0	             
+	   END AS Race_Other_Indicator      
+
+FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s 
+	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
+	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId
+GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
+ORDER BY s.StudentUSI
+SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace
+
 */
 
 INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
@@ -119,7 +243,7 @@ INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
            ,[LineageKey])
 
 SELECT 
-       'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) AS [_sourceKey],
+       CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) AS [_sourceKey],
 	   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
 	   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
 	   emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description],
@@ -153,17 +277,18 @@ SELECT
 	   CASE WHEN sex.CodeValue  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
+       
+	   sr.RaceCodes AS RaceCode,
+	   sr.RaceDescriptions AS RaceDescription,
+	   sr.Race_AmericanIndianAlaskanNative_Indicator,
+	   sr.Race_Asian_Indicator ,
 
-	   COALESCE(rt.CodeValue,'N/A') AS RaceCode,
-	   COALESCE(rt.Description,'N/A') AS RaceDescription,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =1 THEN 1 ELSE 0 END AS Race_AmericanIndianAlaskanNative_Indicator,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =2 THEN 1 ELSE 0 END AS Race_Asian_Indicator,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =3 THEN 1 ELSE 0 END AS Race_BlackAfricaAmerican_Indicator,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =5 THEN 1 ELSE 0 END AS Race_NativeHawaiianPacificIslander_Indicator,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =7 THEN 1 ELSE 0 END AS Race_White_Indicator,
-	   0 AS Race_MultiRace_Indicator, -- did not see this in populated template
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =4 THEN 1 ELSE 0 END AS Race_ChooseNotRespond_Indicator,
-	   CASE WHEN  sr.StudentUsi IS NOT NULL  AND sr.RaceTypeId =6 THEN 1 ELSE 0 END AS Race_Other_Indicator,
+	   sr.Race_BlackAfricaAmerican_Indicator,
+	   sr.Race_NativeHawaiianPacificIslander_Indicator,
+	   sr.Race_White_Indicator,
+	   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, -- did not see this in populated template. counting races to populate
+	   sr.Race_ChooseNotRespond_Indicator,
+	   sr.Race_Other_Indicator,
 
 	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
 	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
@@ -197,9 +322,8 @@ SELECT
        CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
        CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
 
-
 	   COALESCE(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
-       
+	   
 	   --entry
 	   ssa.EntryDate,
 	   LongitudinalPOC.dbo.Func_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
@@ -242,11 +366,11 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
 	LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
 	
     --races
-	LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUsi
-	LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	
+	LEFT JOIN StudentRaces sr ON s.StudentUSI = sr.StudentUsi
+	
 WHERE NOT EXISTS(SELECT 1 
 					FROM LongitudinalPOC.[dbo].[DimStudent] ds 
-					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StudentUSI) = ds._sourceKey)
+		 		 WHERE CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) = ds._sourceKey)
 	  AND ssa.SchoolYear IN (2019,2020)
 ORDER BY sic.IdentificationCode;
 

@@ -1,4 +1,4 @@
-USE LongitudinalPOC
+USE EdFiDW
 GO
 
 DECLARE @dropExistingTables BIT = 1
