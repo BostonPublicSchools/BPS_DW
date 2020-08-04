@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
 BEGIN
-    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
+    INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,7 +25,7 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM LongitudinalPOC.[dbo].[Lineage]	 
+	 FROM EdFiDW.[dbo].[Lineage]	 
 	 WHERE TableName= 'dbo.DimStudent'
 END 
 
@@ -45,7 +45,7 @@ END
   FROM [RMUStudentBackup].[dbo].[Homeless2017Final] 
   WHERE McKinneyVento = 'Y'  
 )
-INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
+INSERT INTO EdFiDW.[dbo].[DimStudent]
            ([_sourceKey]
            ,[PrimaryElectronicMailAddress]
 		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
@@ -124,7 +124,7 @@ SELECT
 	   LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
 	   s.MiddleName,	   
        s.LastName AS LastSurname,
-       LongitudinalPOC.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastName) AS FullName,
+       EdFiDW.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastName) AS FullName,
 	   s.DOB AS BirthDate,
        DATEDIFF(YEAR, s.DOB, GetDate()) AS StudentAge,
 	   s.YOG AS GraduationSchoolYear,
@@ -194,8 +194,8 @@ SELECT
 	   ,0 IsCurrent
 	   ,@lineageKey AS [LineageKey]
 --select distinct top 100 *
-FROM [BPSDW].[dbo].[student] s --WHERE s.StudentNo = '236382'
-     INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
+FROM [BPSGranary02].[BPSDW].[dbo].[student] s --WHERE s.StudentNo = '236382'
+     INNER JOIN EdFiDW.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear
 WHERE s.schyear IN (2017,2016,2015)
@@ -221,14 +221,14 @@ FROM [BPSDATA-03].[ExtractAspen].[dbo].[STUDENT] std
  */
 
 --updatng the lineage table
-UPDATE LongitudinalPOC.[dbo].[Lineage]
+UPDATE EdFiDW.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
 
 
---SELECT * FROM  LongitudinalPOC.dbo.DimStudent
+--SELECT * FROM  EdFiDW.dbo.DimStudent
 
 
 /*

@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimSchool')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimSchool')
 BEGIN
-    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
+    INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,13 +25,13 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM LongitudinalPOC.[dbo].[Lineage]
+	 FROM EdFiDW.[dbo].[Lineage]
 	 WHERE TableName= 'dbo.DimSchool'
 END 
 
 
 
-INSERT INTO LongitudinalPOC.[dbo].[DimSchool]
+INSERT INTO EdFiDW.[dbo].[DimSchool]
            ([_sourceKey]
 		   ,[StateSchoolCode]
 		   ,[UmbrellaSchoolCode]
@@ -80,15 +80,15 @@ SELECT DISTINCT
 	    0 AS IsCurrent,
 	    @lineageKey AS [LineageKey]
 --SELECT *
-FROM LongitudinalPOC.[Raw_LegacyDW].[SchoolData] sd
+FROM EdFiDW.[Raw_LegacyDW].[SchoolData] sd
 WHERE NOT EXISTS(SELECT 1 
-					FROM LongitudinalPOC.[dbo].[DimSchool] ds 
+					FROM EdFiDW.[dbo].[DimSchool] ds 
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),LTRIM(RTRIM(sd.sch))) = ds._sourceKey);
 						
---SELECT * FROM LongitudinalPOC.[dbo].[DimSchool] 
+--SELECT * FROM EdFiDW.[dbo].[DimSchool] 
 
 --updatng the lineage table
-UPDATE LongitudinalPOC.[dbo].[Lineage]
+UPDATE EdFiDW.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
@@ -108,7 +108,7 @@ SET  ds.StateSchoolCode = ISNULL(eoic.IdentificationCode,'N/A'),
 						ELSE CAST(s.SchoolId AS NVARCHAR(50))
 					END 
 --select *
-FROM LongitudinalPOC.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
+FROM EdFiDW.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
      INNER JOIN [EdFi_BPS_Staging_Ods].edfi.School s on ds._sourceKey = 'Ed-Fi|' + CAST(s.SchoolId AS NVARCHAR(50))
      LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50)) AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state 
 */
