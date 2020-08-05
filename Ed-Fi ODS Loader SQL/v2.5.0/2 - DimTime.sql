@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimTime')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimTime')
 BEGIN
-    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
+    INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,7 +25,7 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM LongitudinalPOC.[dbo].[Lineage]	 
+	 FROM EdFiDW.[dbo].[Lineage]	 
 	 WHERE TableName= 'dbo.DimTime'
 END 
 
@@ -108,9 +108,9 @@ AS (SELECT [SchoolDate] = TheDate,
            SchoolDate_Fomat1 = CONVERT(CHAR(10), TheDate, 101),
            SchoolDate_Fomat2 = CONVERT(CHAR(8), TheDate, 112),
            SchoolDate_Fomat3 = CONVERT(CHAR(10), TheDate, 120),
-           SchoolYear = LongitudinalPOC.dbo.Func_GetSchoolYear(TheDate),
-           SchoolYearDescription = CONVERT(NVARCHAR(MAX), LongitudinalPOC.dbo.Func_GetSchoolYear(TheDate) - 1) + ' - '
-                                   + CONVERT(NVARCHAR(MAX), LongitudinalPOC.dbo.Func_GetSchoolYear(TheDate)),
+           SchoolYear = EdFiDW.dbo.Func_GetSchoolYear(TheDate),
+           SchoolYearDescription = CONVERT(NVARCHAR(MAX), EdFiDW.dbo.Func_GetSchoolYear(TheDate) - 1) + ' - '
+                                   + CONVERT(NVARCHAR(MAX), EdFiDW.dbo.Func_GetSchoolYear(TheDate)),
            CalendarYear = TheYear,
            [DayOfMonth] = TheDay,
            DaySuffix = CONVERT(   CHAR(2),
@@ -181,9 +181,9 @@ AS (SELECT [SchoolDate] = TheDate,
                                                    0
                                            END
                                        ),
-           FederalHolidayName = LongitudinalPOC.[dbo].[Func_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
+           FederalHolidayName = EdFiDW.[dbo].[Func_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
            FederalHoliday_Indicator = (CASE
-											WHEN LongitudinalPOC.[dbo].[Func_GetHolidayFromDate](TheDate) = 'Non-Holiday' THEN
+											WHEN EdFiDW.[dbo].[Func_GetHolidayFromDate](TheDate) = 'Non-Holiday' THEN
 												0
 											ELSE
 												1
@@ -259,8 +259,8 @@ FROM timeDim
 ORDER BY [SchoolDate]
 OPTION (MAXRECURSION 0);
 
-;WITH EdFiSchools AS
-(
+--;WITH EdFiSchools AS
+--(
 	SELECT cd.Date as SchoolDate, 
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
@@ -268,7 +268,7 @@ OPTION (MAXRECURSION 0);
 		   td.Description TermDescriptorDescription,       
 		   cet.CodeValue CalendarEventTypeCodeValue,
 		   cet.Description CalendarEventTypeDescription, 
-	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear
+	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear into #EdFiSchools
 	FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
@@ -281,8 +281,8 @@ OPTION (MAXRECURSION 0);
 																		 AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
 	   -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
-)
-
+--)
+--SELECT * FROM EdFiSchools
 
 
 /*
@@ -295,7 +295,7 @@ SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor where namesp
 */
 
 
-INSERT INTO LongitudinalPOC.[dbo].[DimTime]
+INSERT INTO EdFiDW.[dbo].[DimTime]
            ([SchoolDate]
            ,[SchoolDate_MMYYYY]
            ,[SchoolDate_Fomat1]
@@ -387,10 +387,10 @@ select nst.[SchoolDate]
 	    ,CASE WHEN ds._sourceKey IS NOT NULL THEN ds.IsCurrent ELSE  1 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
-     LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
-	 left JOIN LongitudinalPOC.dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
+     LEFT JOIN #EdFiSchools es ON nst.SchoolDate = es.SchoolDate
+	 left JOIN EdFiDW.dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
 WHERE NOT EXISTS(SELECT 1 
-					FROM LongitudinalPOC.[dbo].[DimTime] dt 
+					FROM EdFiDW.[dbo].[DimTime] dt 
 					WHERE nst.[SchoolDate] = dt.[SchoolDate]
 					  AND (
 					          (ds.SchoolKey IS NULL AND dt.SchoolKey IS NULL) 
@@ -398,15 +398,17 @@ WHERE NOT EXISTS(SELECT 1
 					          (ds.SchoolKey = dt.SchoolKey) 
 						  )
 				  )
+DROP TABLE #EdFiSchools;
 	 --ORDER BY es.SchoolDate
  
---select * from LongitudinalPOC.[dbo].[DimTime]
+--select * from EdFiDW.[dbo].[DimTime]
 
 
  --updatng the lineage table
-UPDATE LongitudinalPOC.[dbo].[Lineage]
+UPDATE EdFiDW.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
+
 

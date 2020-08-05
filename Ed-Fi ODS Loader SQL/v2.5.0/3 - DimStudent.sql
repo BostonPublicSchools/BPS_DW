@@ -2,9 +2,9 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM LongitudinalPOC.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
 BEGIN
-    INSERT INTO LongitudinalPOC.[dbo].[Lineage]
+    INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
 	 [TableName], 
 	 [StartTime], 
@@ -25,27 +25,11 @@ END;
 ELSE
 BEGIN
      SELECT @lineageKey = LineageKey
-	 FROM LongitudinalPOC.[dbo].[Lineage]	 
+	 FROM EdFiDW.[dbo].[Lineage]	 
 	 WHERE TableName= 'dbo.DimStudent'
 END 
 
-;WITH StudentHomeRooomByYear AS
-(
-SELECT DISTINCT std_sa.StudentUSI, 
-                std_sa.SchoolYear, 
-				std_sa.SchoolId,  
-				std_sa.ClassroomIdentificationCode AS HomeRoom,
-				LongitudinalPOC.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher
-FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa 
-     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
-	                                                                                        AND std_sa.SchoolYear = staff_sa.SchoolYear
-	 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
-WHERE std_sa.HomeroomIndicator = 1
-     AND std_sa.SchoolYear IN (2019,2020)
-),
-StudentRaces AS
-(
-  SELECT DISTINCT 
+SELECT DISTINCT 
        s.StudentUSI, 
 	   COUNT(sr.StudentUSI) AS RaceCount,
        STRING_AGG(rt.CodeValue,',') AS RaceCodes,
@@ -98,91 +82,30 @@ StudentRaces AS
 							     AND sr.RaceTypeId = 6) THEN 1
 	   ELSE 
 	       0	             
-	   END AS Race_Other_Indicator      
+	   END AS Race_Other_Indicator into #StudentRaces    
 
 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s 
 	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
 	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId
 GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
-)
 
-/*
 
---SELECT TOP 100  * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation where StudentUSI = 14803 and SchoolYear = 2019 
+--;WITH StudentHomeRooomByYear AS
+--(
+SELECT DISTINCT std_sa.StudentUSI, 
+                std_sa.SchoolYear, 
+				std_sa.SchoolId,  
+				std_sa.ClassroomIdentificationCode AS HomeRoom,
+				EdFiDW.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher INTO #StudentHomeRooomByYear
+FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa 
+     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
+	                                                                                        AND std_sa.SchoolYear = staff_sa.SchoolYear
+	 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
+WHERE std_sa.HomeroomIndicator = 1
+     AND std_sa.SchoolYear IN (2019,2020)
+--)
 
-UPDATE s 
-SET s.Homeroom = shrby.HomeRoom,
-    s.HomeroomTeacher = shrby.HomeRoomTeacher
-FROM LongitudinalPOC.[dbo].[DimStudent] s 
-     INNER JOIN LongitudinalPOC.[dbo].[DimSchool] sch ON  s.SchoolKey = sch.SchoolKey
-     LEFT JOIN StudentHomeRooomByYear shrby ON  s._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.StudentUSI) 
-	                                       AND  sch._sourceKey = 'Ed-Fi|' + Convert(NVARCHAR(MAX),shrby.SchoolId)
-
-SELECT DISTINCT 
-       s.StudentUSI, 
-	   COUNT(sr.StudentUSI) AS RaceCount,
-       STRING_AGG(rt.CodeValue,',') AS RaceCode,
-	   STRING_AGG(rt.Description,',') AS RaceDescriptions,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 1) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_AmericanIndianAlaskanNative_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 2) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_Asian_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 3) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_BlackAfricaAmerican_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 5) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_NativeHawaiianPacificIslander_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 7) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_White_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 4) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_ChooseNotRespond_Indicator,
-	   CASE WHEN EXISTS (SELECT 1 
-	                     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-						       WHERE s.StudentUSI = sr.StudentUSI
-							     AND sr.RaceTypeId = 6) THEN 1
-	   ELSE 
-	       0	             
-	   END AS Race_Other_Indicator      
-
-FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s 
-	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
-	  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId
-GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
-ORDER BY s.StudentUSI
-SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace
-
-*/
-
-INSERT INTO LongitudinalPOC.[dbo].[DimStudent]
+INSERT INTO EdFiDW.[dbo].[DimStudent]
            ([_sourceKey]
            ,[PrimaryElectronicMailAddress]
 		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
@@ -260,7 +183,7 @@ SELECT
 	   LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
 	   s.MiddleName,	   
        s.LastSurname,
-       LongitudinalPOC.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
+       EdFiDW.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
 	   s.BirthDate,
        DATEDIFF(YEAR, s.BirthDate, GetDate()) AS StudentAge,
 	   ssa.GraduationSchoolYear,
@@ -278,8 +201,8 @@ SELECT
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
        
-	   sr.RaceCodes AS RaceCode,
-	   sr.RaceDescriptions AS RaceDescription,
+	   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,
+	   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
 	   sr.Race_AmericanIndianAlaskanNative_Indicator,
 	   sr.Race_Asian_Indicator ,
 
@@ -326,12 +249,12 @@ SELECT
 	   
 	   --entry
 	   ssa.EntryDate,
-	   LongitudinalPOC.dbo.Func_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
+	   EdFiDW.dbo.Func_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
 	   COALESCE(eglrt.CodeValue,'N/A') AS EntryCode,
        
 	   --exit
 	   ssa.ExitWithdrawDate,
-	   LongitudinalPOC.dbo.Func_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
+	   EdFiDW.dbo.Func_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
 	   ewt.CodeValue ExitWithdrawCode              
 
        ,ssa.EntryDate AS ValidFrom
@@ -341,9 +264,9 @@ SELECT
 --select *  
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
-	INNER JOIN LongitudinalPOC.dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
+	INNER JOIN EdFiDW.dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
-	LEFT JOIN StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
+	LEFT JOIN #StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
 	                                       AND ssa.SchoolId = shrby.SchoolId
 										   AND ssa.SchoolYear = shrby.SchoolYear
     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
@@ -366,23 +289,24 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
 	LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
 	
     --races
-	LEFT JOIN StudentRaces sr ON s.StudentUSI = sr.StudentUsi
+	LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUsi
 	
 WHERE NOT EXISTS(SELECT 1 
-					FROM LongitudinalPOC.[dbo].[DimStudent] ds 
+					FROM EdFiDW.[dbo].[DimStudent] ds 
 		 		 WHERE CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) = ds._sourceKey)
-	  AND ssa.SchoolYear IN (2019,2020)
-ORDER BY sic.IdentificationCode;
+	  AND ssa.SchoolYear IN (2019,2020);
+--ORDER BY sic.IdentificationCode;
 
+DROP TABLE #StudentRaces, #StudentHomeRooomByYear;
 --updatng the lineage table
-UPDATE LongitudinalPOC.[dbo].[Lineage]
+UPDATE EdFiDW.[dbo].[Lineage]
   SET 
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
 
 
---SELECT * FROM  LongitudinalPOC.dbo.DimStudent where HomeRoom is not null
+--SELECT * FROM  EdFiDW.dbo.DimStudent where HomeRoom is not null
 
 
 /*

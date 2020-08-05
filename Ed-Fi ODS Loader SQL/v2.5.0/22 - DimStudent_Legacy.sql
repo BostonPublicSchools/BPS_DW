@@ -32,17 +32,17 @@ END
 ;WITH HomelessStudentsByYear AS (
 --Sch year 2015:
   SELECT studentno, 2016 AS schyear
-  FROM [RMUStudentBackup].[dbo].[Homeless2015Final] 
+  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2015Final] 
   WHERE McKinneyVento = 'Y'
   UNION ALL 
 --Sch year 2016:
   SELECT studentno, 2017 AS schyear
-  FROM [RMUStudentBackup].[dbo].[Homeless2016Final] 
+  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2016Final] 
   WHERE McKinneyVento = 'Y'  
   UNION ALL
 --Sch year 2017:
   SELECT studentno, 2018 AS schyear
-  FROM [RMUStudentBackup].[dbo].[Homeless2017Final] 
+  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2017Final] 
   WHERE McKinneyVento = 'Y'  
 )
 INSERT INTO EdFiDW.[dbo].[DimStudent]
@@ -163,8 +163,7 @@ SELECT
 	   CASE WHEN s.RacePrompt = 'Hispanic' THEN 1 ELSE 0 END AS EthnicityHispanicLatino_Indicator,
 	   
 	   0 AS Migrant_Indicator,
-	   CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,
-	   0 AS Homeless_Indicator,
+	   CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,	   
        case WHEN COALESCE(s.SnCode,'None') <> 'None' THEN 1  ELSE 0 END  AS IEP_Indicator,
 	   
 	   COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
@@ -193,8 +192,8 @@ SELECT
 	   ,case when s.sequenceno =  999999 AND s.withdate IS NULL THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else s.withdate END AS ValidTo
 	   ,0 IsCurrent
 	   ,@lineageKey AS [LineageKey]
---select distinct top 100 *
-FROM [BPSGranary02].[BPSDW].[dbo].[student] s --WHERE s.StudentNo = '236382'
+--select distinct top 1000 *
+FROM [BPSGranary02].[BPSDW].[dbo].[student] s ORDER BY s.studentno WHERE s.StudentNo = '325467'
      INNER JOIN EdFiDW.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear

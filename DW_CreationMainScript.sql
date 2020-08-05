@@ -406,8 +406,8 @@ CREATE TABLE dbo.DimStudent
 	[SexType_Female_Indicator] [bit] NOT NULL,
 	[SexType_NotSelected_Indicator] [bit] NOT NULL,
 	
-	[RaceCode] [nvarchar](100) NOT NULL,
-	[RaceDescription] [nvarchar](100) NOT NULL,
+	[RaceCode] [nvarchar](1000) NOT NULL,
+	[RaceDescription] [nvarchar](1000) NOT NULL,
 	[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
 	[Race_Asian_Indicator] [bit] NOT NULL,
 	[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
@@ -1469,7 +1469,7 @@ BEGIN
 	DECLARE @StartLoad datetime = SYSDATETIME();
 
 	
-	INSERT INTO LongitudinalPOC.[dbo].[Lineage](
+	INSERT INTO EdFiDW.[dbo].[Lineage](
 		 [TableName]
 		,StartTime
 		,EndTime
@@ -1487,7 +1487,7 @@ BEGIN
 	-- If we're doing an initial load, remove the date of the most recent load for this table
 	IF (@LoadType = 'F')
 		BEGIN
-			UPDATE LongitudinalPOC.[dbo].[IncrementalLoads]
+			UPDATE EdFiDW.[dbo].[IncrementalLoads]
 			SET LoadDate = '1753-01-01'
 			WHERE TableName = @TableName
 
@@ -1497,7 +1497,7 @@ BEGIN
 
 	-- Select the key of the previously inserted row
 	SELECT MAX([LineageKey]) AS LineageKey
-	FROM LongitudinalPOC.dbo.[Lineage]
+	FROM EdFiDW.dbo.[Lineage]
 	WHERE 
 		[TableName] = @TableName
 		AND StartTime = @StartLoad
@@ -1535,14 +1535,14 @@ BEGIN
 	
     -- If the table exists, but was never loaded before, there won't have a record for it
 	-- A record is created for the @TableName with the minimum possible date in the LoadDate column
-	IF NOT EXISTS (SELECT 1 FROM LongitudinalPOC.[dbo].[IncrementalLoads] WHERE TableName = @TableName)
-		INSERT INTO LongitudinalPOC.[dbo].[IncrementalLoads](TableName,LoadDate)
+	IF NOT EXISTS (SELECT 1 FROM EdFiDW.[dbo].[IncrementalLoads] WHERE TableName = @TableName)
+		INSERT INTO EdFiDW.[dbo].[IncrementalLoads](TableName,LoadDate)
 		SELECT @TableName, '1753-01-01'
 
     -- Select the LoadDate for the @TableName
 	SELECT 
 		[LoadDate] AS [LoadDate]
-    FROM LongitudinalPOC.[dbo].[IncrementalLoads]
+    FROM EdFiDW.[dbo].[IncrementalLoads]
     WHERE 
 		TableName = @TableName;
 
