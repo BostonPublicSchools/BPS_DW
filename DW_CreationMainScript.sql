@@ -546,7 +546,7 @@ CREATE TABLE dbo.DimDisciplineIncident
   SchoolYear INT NOT NULL,
   IncidentDate DATE NOT NULL,   
   IncidentTime TIME(7) NOT NULL,   
-  [IncidentDescription] nvarchar(4000) NULL ,
+  [IncidentDescription] nvarchar(MAX) NULL ,
   [BehaviorDescriptor_CodeValue] nvarchar(50) not null, -- IncidentType: Weapons Possession (Firearms and Other Weapons), Drugs, Abuse Of Volatile Chemical,School Code of Conduct,  etc
   [BehaviorDescriptor_Description] nvarchar(1024) not null,
 

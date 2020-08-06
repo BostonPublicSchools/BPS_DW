@@ -80,7 +80,7 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE GETDATE() END AS ValidTo,
 	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent,
 	    @lineageKey AS [LineageKey]
---SELECT distinct sct.CodeValue
+--SELECT distinct *
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.OperationalStatusType ost ON edorg.OperationalStatusTypeId = ost.OperationalStatusTypeId
@@ -88,11 +88,9 @@ LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategory sc on s.Sch
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
-                                                                               AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
+                                                                               AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state code
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 
                                                                                AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --district code
-
-
 																			   
 WHERE NOT EXISTS(SELECT 1 
 					FROM EdFiDW.[dbo].[DimSchool] ds 

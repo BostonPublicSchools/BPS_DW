@@ -184,16 +184,16 @@ SELECT
 	   COALESCE(s.entcode,'N/A') AS EntryCode,
        
 	   --exit
-	   case when s.sequenceno =  999999 AND s.withdate IS NULL THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else s.withdate END AS ExitWithdrawDate,
+	   case when s.schyearsequenceno =  999999  THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else COALESCE(s.withdate,'6/30/' + CAST(s.schyear AS NVARCHAR(max))) END AS ExitWithdrawDate,
 	   s.schyear + 1 AS ExitWithdrawSchoolYear, 
 	   COALESCE(s.withcode,'N/A') AS ExitWithdrawCode              
 
        ,s.entdate AS ValidFrom
-	   ,case when s.sequenceno =  999999 AND s.withdate IS NULL THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else s.withdate END AS ValidTo
+	   ,case when s.schyearsequenceno =  999999 THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) else COALESCE(s.withdate,'6/30/' + CAST(s.schyear AS NVARCHAR(max))) END AS ValidTo
 	   ,0 IsCurrent
 	   ,@lineageKey AS [LineageKey]
 --select distinct top 1000 *
-FROM [BPSGranary02].[BPSDW].[dbo].[student] s ORDER BY s.studentno WHERE s.StudentNo = '325467'
+FROM [BPSGranary02].[BPSDW].[dbo].[student] s -- WHERE schyear IN (2017,2016,2015) ORDER BY s.StudentNo
      INNER JOIN EdFiDW.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear
@@ -225,6 +225,7 @@ UPDATE EdFiDW.[dbo].[Lineage]
       EndTime = GETDATE(), 
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
+
 
 
 --SELECT * FROM  EdFiDW.dbo.DimStudent
