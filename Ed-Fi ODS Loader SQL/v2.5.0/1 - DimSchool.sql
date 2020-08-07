@@ -76,8 +76,8 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		CASE WHEN tIt.CodeValue NOT IN ('Not designated as a Title I Part A school','N/A') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator,
 		ISNULL(ost.CodeValue,'N/A') AS OperationalStatusTypeDescriptor_CodeValue,	
 		ISNULL(ost.[Description],'N/A') AS OperationalStatusTypeDescriptor_Description,
-	    GETDATE() AS ValidFrom,
-	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE GETDATE() END AS ValidTo,
+	    '07/01/2018' AS ValidFrom,
+	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE edorg.LastModifiedDate END AS ValidTo,
 	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent,
 	    @lineageKey AS [LineageKey]
 --SELECT distinct *
@@ -98,9 +98,6 @@ WHERE NOT EXISTS(SELECT 1
 
 --SELECT * FROM EdFiDW.[dbo].[DimSchool]
 
---SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode 
-
-
 
 
 --updatng the lineage table
@@ -110,30 +107,6 @@ UPDATE EdFiDW.[dbo].[Lineage]
       STATUS = 'S'  -- Success
 WHERE LineageKey = @lineageKey;
 
-
-/*
-
-UPDATE ds 
-SET  ds.StateSchoolCode = ISNULL(eoic.IdentificationCode,'N/A'),
-     ds.UmbrellaSchoolCode = CASE
-						WHEN s.SchoolId IN (1291, 1292, 1293, 1294) THEN '1290'
-						when s.SchoolId IN (1440,1441) THEN '1440' 
-						WHEN s.SchoolId IN (4192,4192) THEN '4192' 
-						WHEN s.SchoolId IN (4031,4033) THEN '4033' 
-						WHEN s.SchoolId IN (1990,1991) THEN '1990' 
-						WHEN s.SchoolId IN (1140,4391) THEN '1140' 
-						ELSE CAST(s.SchoolId AS NVARCHAR(50))
-					END 
---select *
-FROM EdFiDW.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
-     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s on ds._sourceKey = 'Ed-Fi|' + CAST(s.SchoolId AS NVARCHAR(50))
-     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50)) AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state
-	 
-
-
-*/
-
-	
 
 
 

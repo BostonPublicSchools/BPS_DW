@@ -1053,10 +1053,37 @@ PIVOT
 GO
 
 
+--attendance by day
+PRINT 'creating view :  View_StudentAttendance_ADA'
+GO
+
+/*
+CREATE VIEW dbo.View_StudentAttendance_ADA
+(
+--StudentId, 
+--StudentStateId, 
+--FirstName, 
+--LastName, 
+--DistrictSchoolCode],
+--UmbrellaSchoolCode],	   
+--SchoolName, 
+--School Year
+--Student ID 
+--Number of Days Present
+--Number of Days Absent
+--Number of Days Absent (Unexcused)
+--Number of Days Membership (Days Present + Days Absent)
+--Average Daily Attendance-ADA (Days Present / Days Membership)
+
+);
+GO
+*/
+
 
 --behavior incidents
 PRINT 'creating view :  View_StudentDiscipline'
 GO
+
 
 
 CREATE VIEW dbo.View_StudentDiscipline
@@ -1105,7 +1132,7 @@ SELECT DISTINCT
 		dc.CourseCode,
 		dc.CourseTitle,
 		dc.CourseLevelCharacteristicTypeDescriptor_CodeValue AS CourseType,
-		dc.SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue AS MassCourseType,
+		dc.SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue AS MassCore,
 		dt.SchoolTermDescriptor_CodeValue AS Term, 		
 		fsct.EarnedCredits,
 		fsct.PossibleCredits,
