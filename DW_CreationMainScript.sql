@@ -195,6 +195,12 @@ BEGIN
 
    IF exists (select 1
              FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAttendance_ADA' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAttendance_ADA; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentDiscipline' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP VIEW dbo.View_StudentDiscipline; 
@@ -946,6 +952,7 @@ PRINT 'creating view :  View_StudentAssessmentScores'
 GO
 
 CREATE VIEW dbo.View_StudentAssessmentScores
+WITH SCHEMABINDING
 AS(
 SELECT StudentId, 
        StudentStateId, 
@@ -998,7 +1005,9 @@ PRINT 'creating view :  View_StudentAttendanceByDay'
 GO
 
 
+
 CREATE VIEW dbo.View_StudentAttendanceByDay
+WITH SCHEMABINDING
 AS(
 SELECT StudentId, 
        StudentStateId, 
@@ -1008,7 +1017,7 @@ SELECT StudentId,
 	   [UmbrellaSchoolCode],	   
 	   SchoolName, 
 	   AttedanceDate,
-
+	   SchoolYear,
 	   --pivoted from row values	  
 	   [Early departure],
 	   [Excused Absence],
@@ -1025,6 +1034,7 @@ FROM (
 			   ds.LastSurname AS LastName,
 			   dsc.NameOfInstitution AS SchoolName,
 			   dt.SchoolDate AS AttedanceDate, 		
+			   dt.SchoolYear,
 			   dact.AttendanceEventCategoryDescriptor_CodeValue AS AttendanceType,
 		       dsc.DistrictSchoolCode AS DistrictSchoolCode,
 		       dsc.UmbrellaSchoolCode AS UmbrellaSchoolCode			 			 			   
@@ -1033,8 +1043,9 @@ FROM (
 			 INNER JOIN dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 
 			 INNER JOIN dbo.DimSchool dsc ON fsabd.SchoolKey = dsc.SchoolKey	 
 			 INNER JOIN dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
-	    WHERE ds.StudentUniqueId = 363896
-		--AND dt.SchoolDate = '2019-09-10'
+	    WHERE 1=1 
+		AND ds.StudentUniqueId = 363896
+		--AND dt.SchoolDate = '2018-10-26'
 
 		
 	) AS SourceTable 
@@ -1057,36 +1068,35 @@ GO
 PRINT 'creating view :  View_StudentAttendance_ADA'
 GO
 
-/*
 CREATE VIEW dbo.View_StudentAttendance_ADA
-(
---StudentId, 
---StudentStateId, 
---FirstName, 
---LastName, 
---DistrictSchoolCode],
---UmbrellaSchoolCode],	   
---SchoolName, 
---School Year
---Student ID 
---Number of Days Present
---Number of Days Absent
---Number of Days Absent (Unexcused)
---Number of Days Membership (Days Present + Days Absent)
---Average Daily Attendance-ADA (Days Present / Days Membership)
-
+AS (
+	 SELECT DISTINCT 
+		   v_sabd.StudentId, 
+		   v_sabd.StudentStateId, 
+		   v_sabd.FirstName, 
+		   v_sabd.LastName, 
+		   v_sabd.[DistrictSchoolCode],
+		   v_sabd.[UmbrellaSchoolCode],	   
+		   v_sabd.SchoolName, 	   
+		   v_sabd.SchoolYear,	   
+		   SUM(v_sabd.[In Attendance]) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysPresent,
+		   SUM(CASE WHEN v_sabd.[In Attendance] = 1 THEN 0 ELSE 1 end) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysAbsent,
+		   SUM(v_sabd.[Unexcused Absence]) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysAbsentUnexcused,
+		   COUNT(*) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysMembership,
+		   SUM(v_sabd.[In Attendance]) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear) / CONVERT(Float,COUNT(*) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear)) * 100 AS ADA
+	--select *
+	FROM dbo.View_StudentAttendanceByDay v_sabd
 );
 GO
-*/
+
 
 
 --behavior incidents
 PRINT 'creating view :  View_StudentDiscipline'
 GO
 
-
-
 CREATE VIEW dbo.View_StudentDiscipline
+WITH SCHEMABINDING
 AS(
 SELECT DISTINCT 
 		ds.StudentUniqueId AS StudentId,
@@ -1120,6 +1130,7 @@ GO
 
 
 CREATE VIEW dbo.View_StudentCourseTranscript
+WITH SCHEMABINDING
 AS(
 SELECT DISTINCT 
 		ds.StudentUniqueId AS StudentId,
@@ -1152,6 +1163,7 @@ GO
 
 
 CREATE VIEW dbo.View_StudentRoster
+WITH SCHEMABINDING
 AS(
 SELECT DISTINCT 
 		ds.StudentUniqueId AS StudentId,

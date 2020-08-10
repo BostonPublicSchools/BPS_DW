@@ -146,21 +146,33 @@ SELECT
 	   CASE WHEN s.Sex = 'F' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN s.Sex not in ( 'M','F') THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
 
-	   COALESCE(s.RacePrompt,'N/A') AS RaceCode,
-	   COALESCE(s.RacePrompt,'N/A') AS RaceDescription,	   
+	   CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+	        WHEN sdir.IsAsian = 1 THEN 'Asian'
+			WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+			WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+			WHEN sdir.IsWhite = 1 THEN 'White'
+			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+	   END AS RaceCode,
+	    CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+	        WHEN sdir.IsAsian = 1 THEN 'Asian'
+			WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+			WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+			WHEN sdir.IsWhite = 1 THEN 'White'
+			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+	   END AS RaceDescription,
 
-	   CASE WHEN s.RacePrompt IN ('Nat. Amer.','Native American') THEN 1 ELSE 0 END AS Race_AmericanIndianAlaskanNative_Indicator,
-	   CASE WHEN s.RacePrompt = 'Asian' THEN 1 ELSE 0 END AS Race_Asian_Indicator,
-	   CASE WHEN s.RacePrompt = 'Black' THEN 1 ELSE 0 END AS Race_BlackAfricaAmerican_Indicator,
-	   0 AS Race_NativeHawaiianPacificIslander_Indicator,
-	   CASE WHEN  s.RacePrompt = 'White' THEN 1 ELSE 0 END AS Race_White_Indicator,
-	   CASE WHEN  s.RacePrompt = 'Mixed or Other' THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, -- did not see this in populated template
+	   sdir.IsNatAmer AS Race_AmericanIndianAlaskanNative_Indicator,
+	   sdir.IsAsian AS Race_Asian_Indicator,
+	   sdir.IsBlack AS Race_BlackAfricaAmerican_Indicator,
+	   sdir.IsPacIsland AS Race_NativeHawaiianPacificIslander_Indicator,
+	   sdir.IsWhite AS Race_White_Indicator,
+	   0 AS Race_MultiRace_Indicator, 
 	   0 AS Race_ChooseNotRespond_Indicator,
-	   CASE WHEN  s.RacePrompt = 'Other' THEN 1 ELSE 0 END AS Race_Other_Indicator,
+	   0 AS Race_Other_Indicator,
 
-	   CASE WHEN s.RacePrompt = 'Hispanic' THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
-	   CASE WHEN s.RacePrompt = 'Hispanic' THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
-	   CASE WHEN s.RacePrompt = 'Hispanic' THEN 1 ELSE 0 END AS EthnicityHispanicLatino_Indicator,
+	   CASE WHEN sdir.IsHispanic = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
+	   CASE WHEN sdir.IsHispanic = 1 THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
+	   sdir.IsHispanic AS EthnicityHispanicLatino_Indicator,
 	   
 	   0 AS Migrant_Indicator,
 	   CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,	   
@@ -195,13 +207,15 @@ SELECT
 	   ,0 IsCurrent
 	   ,@lineageKey AS [LineageKey]
 --select distinct top 1000 *
-FROM [BPSGranary02].[BPSDW].[dbo].[student] s  --WHERE schyear IN (2017,2016,2015) AND s.StudentNo = '210191' ORDER BY s.StudentNo, s.entdate
+FROM [BPSGranary02].[BPSDW].[dbo].[student] s 
+    --WHERE schyear IN (2017,2016,2015) AND s.StudentNo = '210191' ORDER BY s.StudentNo, s.entdate
+	 INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[studentdir] sdir ON s.StudentNo = sdir.studentno
      INNER JOIN EdFiDW.dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear
 WHERE s.schyear IN (2017,2016,2015)
 	  --AND s.StudentNo = '236382'
-ORDER BY s.StudentNo
+ORDER BY s.StudentNo;
 
   
 
