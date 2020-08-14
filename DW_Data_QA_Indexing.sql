@@ -1,5 +1,5 @@
-/*
 
+/*
 ---------------------------------------------------------------------------------------------------------------------
 --******************************* INDEXING **************************************************************************
 ---------------------------------------------------------------------------------------------------------------------
@@ -24,6 +24,7 @@ INCLUDE ( ValidTo, AssessmentKey);
 CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex
   ON EdFiDW.dbo.DimCourse(_sourceKey, ValidFrom)
 INCLUDE ( ValidTo, CourseKey);
+
 
 --Facts Tables - Using ColumnStore Indexes
 CREATE COLUMNSTORE INDEX CSI_FactStudentAttendanceByDay
@@ -66,8 +67,10 @@ CREATE COLUMNSTORE INDEX CSI_FactStudentCourseTranscript
   ,[FinalNumericGradeEarned]
   ,[LineageKey])
 
+DROP INDEX CSI_FactStudentAttendanceByDay
+  ON EdFiDW.dbo.FactStudentAttendanceByDay
 
-*/
+  */
 
 ---------------------------------------------------------------------------------------------------------------------
 --******************************* Starting Data Q/A *****************************************************************

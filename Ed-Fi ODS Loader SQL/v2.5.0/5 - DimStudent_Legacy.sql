@@ -74,6 +74,7 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[SexType_NotSelected_Indicator]
            ,[RaceCode]
            ,[RaceDescription]
+           ,[StateRaceCode]		   
            ,[Race_AmericanIndianAlaskanNative_Indicator]
            ,[Race_Asian_Indicator]
            ,[Race_BlackAfricaAmerican_Indicator]
@@ -162,7 +163,14 @@ SELECT
 			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
 			ELSE 'Choose Not Respond'
 	   END AS RaceDescription,
-	    
+	   CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+	        WHEN sdir.IsAsian = 1 THEN 'Asian'
+			WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+			WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+			WHEN sdir.IsWhite = 1 THEN 'White'
+			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+			ELSE 'Choose Not Respond'
+	   END AS StateRaceCode,
 	   sdir.IsNatAmer AS Race_AmericanIndianAlaskanNative_Indicator,
 	   sdir.IsAsian AS Race_Asian_Indicator,
 	   sdir.IsBlack AS Race_BlackAfricaAmerican_Indicator,

@@ -46,16 +46,17 @@ BEGIN
 
    IF exists (select 1
              FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentAttendanceByDay; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentAttendance_ADA' 
 			   AND TABLE_SCHEMA = 'dbo')
       DROP VIEW dbo.View_StudentAttendance_ADA; 
 
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAttendanceByDay; 
+
+  
    IF exists (select 1
              FROM INFORMATION_SCHEMA.VIEWS
              WHERE TABLE_NAME = 'View_StudentDiscipline' 
@@ -415,6 +416,7 @@ CREATE TABLE dbo.DimStudent
 	
 	[RaceCode] [nvarchar](1000) NOT NULL,
 	[RaceDescription] [nvarchar](1000) NOT NULL,
+	[StateRaceCode] [nvarchar](1000) NOT NULL,
 	[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
 	[Race_Asian_Indicator] [bit] NOT NULL,
 	[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
@@ -1001,7 +1003,11 @@ PIVOT
    ) AS PivotTable
 );
 GO
-
+/*
+CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentAssessmentScores
+  ON dbo.View_StudentAssessmentScores (StudentId, AssessmentIdentifier, AssessmentDate)
+GO
+*/
 --attendance by day
 PRINT 'creating view :  View_StudentAttendanceByDay'
 GO
@@ -1071,6 +1077,7 @@ PRINT 'creating view :  View_StudentAttendance_ADA'
 GO
 
 CREATE VIEW dbo.View_StudentAttendance_ADA
+WITH SCHEMABINDING
 AS (
 	 SELECT DISTINCT 
 		   v_sabd.StudentId, 
@@ -1100,7 +1107,7 @@ GO
 CREATE VIEW dbo.View_StudentDiscipline
 WITH SCHEMABINDING
 AS(
-SELECT DISTINCT 
+SELECT  ds.StudentKey,
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
@@ -1116,8 +1123,7 @@ SELECT DISTINCT
 		ddi.DisciplineDescriptor_CodeValue AS IncidentAction ,
 		ddi.ReporterDescriptor_CodeValue AS IncidentReporter,
 		ddi.DisciplineDescriptor_ISS_Indicator AS IsISS,
-		ddi.DisciplineDescriptor_OSS_Indicator AS IsOSS
-		
+		ddi.DisciplineDescriptor_OSS_Indicator AS IsOSS		
 FROM dbo.FactStudentDiscipline fsd 
 		INNER JOIN dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey
 		INNER JOIN dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 
@@ -1125,6 +1131,12 @@ FROM dbo.FactStudentDiscipline fsd
 		INNER JOIN dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey		
 );
 GO
+
+/*
+CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentDiscipline
+  ON dbo.View_StudentDiscipline (StudentKey, DistrictSchoolCode, IncidentDate, IncidentTime)
+GO
+*/
 
 --behavior incidents
 PRINT 'creating view :  View_StudentCourseTranscript'
@@ -1134,7 +1146,7 @@ GO
 CREATE VIEW dbo.View_StudentCourseTranscript
 WITH SCHEMABINDING
 AS(
-SELECT DISTINCT 
+SELECT  ds.StudentKey,
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
@@ -1164,10 +1176,12 @@ PRINT 'creating view :  View_StudentRoster'
 GO
 
 
+
 CREATE VIEW dbo.View_StudentRoster
 WITH SCHEMABINDING
 AS(
-SELECT DISTINCT 
+SELECT  
+		ds.StudentKey AS StudentKey,
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
@@ -1214,6 +1228,13 @@ SELECT DISTINCT
 		ds.[LimitedEnglishProficiency_NotEnglisLearner_Indicator],
 		ds.[EconomicDisadvantage_Indicator],
 
+		ds.EntryDate,
+		ds.EntrySchoolYear,
+		ds.EntryCode,
+
+		ds.ExitWithdrawDate,
+		ds.ExitWithdrawSchoolYear,
+		ds.ExitWithdrawCode,
 
 		ds.ValidFrom,
 		ds.ValidTo,
@@ -1226,7 +1247,9 @@ FROM dbo.DimStudent ds
 );
 
 GO
-
+CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentRoster
+  ON dbo.View_StudentRoster (StudentKey)
+GO
 
 --ETL Related Objects
 ------------------------------------------------------------------------------

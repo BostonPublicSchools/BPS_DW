@@ -134,6 +134,7 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[SexType_NotSelected_Indicator]
            ,[RaceCode]
            ,[RaceDescription]
+		   ,[StateRaceCode]
            ,[Race_AmericanIndianAlaskanNative_Indicator]
            ,[Race_Asian_Indicator]
            ,[Race_BlackAfricaAmerican_Indicator]
@@ -201,8 +202,12 @@ SELECT
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, 
        
-	   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,
+	   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,	   
 	   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
+	   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 'Multirace' 
+	        WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx'
+		    ELSE COALESCE(sr.RaceCodes,'N/A')
+	   END AS StateRaceCode,
 	   sr.Race_AmericanIndianAlaskanNative_Indicator,
 	   sr.Race_Asian_Indicator ,
 
@@ -213,8 +218,8 @@ SELECT
 	   sr.Race_ChooseNotRespond_Indicator,
 	   sr.Race_Other_Indicator,
 
-	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
-	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
+	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'L' ELSE 'Non-L' END  AS EthnicityCode,
+	   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx' ELSE 'Non Latinx' END  AS EthnicityDescription,
 	   s.HispanicLatinoEthnicity AS EthnicityHispanicLatino_Indicator,
 
 	   CASE WHEN EXISTS (
