@@ -2,7 +2,7 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimStudent')
 BEGIN
     INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
@@ -152,6 +152,7 @@ SELECT
 			WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
 			WHEN sdir.IsWhite = 1 THEN 'White'
 			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+			ELSE 'Choose Not Respond'
 	   END AS RaceCode,
 	    CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
 	        WHEN sdir.IsAsian = 1 THEN 'Asian'
@@ -159,15 +160,23 @@ SELECT
 			WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
 			WHEN sdir.IsWhite = 1 THEN 'White'
 			WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+			ELSE 'Choose Not Respond'
 	   END AS RaceDescription,
-
+	    
 	   sdir.IsNatAmer AS Race_AmericanIndianAlaskanNative_Indicator,
 	   sdir.IsAsian AS Race_Asian_Indicator,
 	   sdir.IsBlack AS Race_BlackAfricaAmerican_Indicator,
 	   sdir.IsPacIsland AS Race_NativeHawaiianPacificIslander_Indicator,
 	   sdir.IsWhite AS Race_White_Indicator,
 	   0 AS Race_MultiRace_Indicator, 
-	   0 AS Race_ChooseNotRespond_Indicator,
+	   CASE WHEN sdir.IsNatAmer = 0 AND
+	             sdir.IsAsian = 0 AND 
+			     sdir.IsBlack = 0 AND 
+			     sdir.IsPacIsland = 0 AND
+			     sdir.IsWhite = 0 AND 
+			     sdir.IsHispanic = 0 THEN 1 
+				 ELSE 0
+	   END AS Race_ChooseNotRespond_Indicator,
 	   0 AS Race_Other_Indicator,
 
 	   CASE WHEN sdir.IsHispanic = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
@@ -214,13 +223,11 @@ FROM [BPSGranary02].[BPSDW].[dbo].[student] s
 	 LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
 	                                      and s.schyear = hsby.schyear
 WHERE s.schyear IN (2017,2016,2015)
-	  --AND s.StudentNo = '236382'
+	  and s.sch between '1000' and '4700'
 ORDER BY s.StudentNo;
 
   
-
-
-
+  
 
 /*
 SELECT std.STD_FIELDA_024 [McKinney_Act], 
@@ -276,6 +283,18 @@ SELECT *
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType;
 
 select * from [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentElectronicMail
+
+select sdir.*
+FROM [BPSGranary02].[BPSDW].[dbo].[student] s     
+	 INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[studentdir] sdir ON s.StudentNo = sdir.studentno
+	 WHERE s.schyear IN (2017,2016,2015)
+	  and s.sch between '1000' and '4700'
+	  AND sdir.IsAsian = 0  
+	  AND sdir.IsBlack = 0 
+	  AND sdir.IsPacIsland = 0 
+	  AND sdir.IsWhite = 0   
+	  AND sdir.IsHispanic = 0 
+	  AND sdir.IsNatAmer = 0
 
 
 */

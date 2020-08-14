@@ -2,7 +2,7 @@ DECLARE @lineageKey INT;
 
 --inserting into lineage first
 --select * from [Lineage]
-IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimeStudent')
+IF NOT EXISTS(SELECT 1 FROM EdFiDW.[dbo].[Lineage] WHERE TableName= 'dbo.DimStudent')
 BEGIN
     INSERT INTO EdFiDW.[dbo].[Lineage]
 	(
@@ -96,7 +96,7 @@ SELECT DISTINCT std_sa.StudentUSI,
                 std_sa.SchoolYear, 
 				std_sa.SchoolId,  
 				std_sa.ClassroomIdentificationCode AS HomeRoom,
-				EdFiDW.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher INTO 
+				EdFiDW.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher  
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa 
      INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
 	                                                                                        AND std_sa.SchoolYear = staff_sa.SchoolYear
@@ -199,7 +199,7 @@ SELECT
 	   sex.Description AS SexType_Description,
 	   CASE WHEN sex.CodeValue  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
 	   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
-	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
+	   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, 
        
 	   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,
 	   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
@@ -209,7 +209,7 @@ SELECT
 	   sr.Race_BlackAfricaAmerican_Indicator,
 	   sr.Race_NativeHawaiianPacificIslander_Indicator,
 	   sr.Race_White_Indicator,
-	   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, -- did not see this in populated template. counting races to populate
+	   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, 
 	   sr.Race_ChooseNotRespond_Indicator,
 	   sr.Race_Other_Indicator,
 
@@ -232,18 +232,18 @@ SELECT
 							 AND spa.EndDate IS NULL
 				   ) THEN 1 ELSE 0 End AS Homeless_Indicator,
         CASE WHEN EXISTS (
-					   SELECT *
+					   SELECT 1
 					   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociation spa
-					   WHERE CHARINDEX('IEP', spa.ProgramName,1) > 1 -- Will it have a name?
+					   WHERE CHARINDEX('IEP', spa.ProgramName,1) > 1
 							 AND spa.StudentUSI = s.StudentUSI
 							 AND spa.IEPEndDate IS NULL
 				   ) THEN 1 ELSE 0 End AS IEP_Indicator,
 	   
 	   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
 	   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
-	   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'L' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
-       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
-       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
+	   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
+       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Formerly Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
+       CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'NotLimited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
 
 	   COALESCE(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
 	   
@@ -297,7 +297,8 @@ WHERE NOT EXISTS(SELECT 1
 	  AND ssa.SchoolYear IN (2019,2020);
 
 
-DROP TABLE #StudentRaces, #StudentHomeRooomByYear;
+DROP TABLE #StudentRaces; --, #StudentHomeRooomByYear;
+
 --updatng the lineage table
 UPDATE EdFiDW.[dbo].[Lineage]
   SET 
@@ -306,5 +307,5 @@ UPDATE EdFiDW.[dbo].[Lineage]
 WHERE LineageKey = @lineageKey;
 
 
---SELECT * FROM  EdFiDW.dbo.DimStudent where HomeRoom is not null
+
 

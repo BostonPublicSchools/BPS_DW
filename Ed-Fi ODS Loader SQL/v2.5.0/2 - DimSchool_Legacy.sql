@@ -113,5 +113,3 @@ FROM EdFiDW.dbo.DimSchool ds --WHERE UmbrellaSchoolCode = 1290
      LEFT JOIN [EdFi_BPS_Staging_Ods].edfi.EducationOrganizationIdentificationCode eoic on ds._sourceKey = 'Ed-Fi|' + CAST(eoic.EducationOrganizationId AS NVARCHAR(50)) AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state 
 */
 
-	
-

@@ -72,13 +72,13 @@ SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 	    CASE  WHEN sct.CodeValue  IN ('High School') THEN 1 ELSE 0 END  [SchoolCategoryType_HighSchool_Indicator],
 	    CASE  WHEN sct.CodeValue  NOT IN ('Elementary School','Middle School','High School') THEN 1 ELSE 0 END  [SchoolCategoryType_Combined_Indicator],
 		0  [SchoolCategoryType_Other_Indicator],
-		ISNULL(tIt.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue,
+		COALESCE(tIt.CodeValue,'N/A') AS TitleIPartASchoolDesignationTypeCodeValue,
 		CASE WHEN tIt.CodeValue NOT IN ('Not designated as a Title I Part A school','N/A') THEN 1 ELSE 0 END AS TitleIPartASchoolDesignation_Indicator,
-		ISNULL(ost.CodeValue,'N/A') AS OperationalStatusTypeDescriptor_CodeValue,	
-		ISNULL(ost.[Description],'N/A') AS OperationalStatusTypeDescriptor_Description,
-	    '07/01/2018' AS ValidFrom,
-	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE edorg.LastModifiedDate END AS ValidTo,
-	    CASE WHEN ISNULL(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent,
+		COALESCE(ost.CodeValue,'N/A') AS OperationalStatusTypeDescriptor_CodeValue,	
+		COALESCE(ost.[Description],'N/A') AS OperationalStatusTypeDescriptor_Description,
+	    '07/01/2015' AS ValidFrom,
+	    CASE WHEN COALESCE(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN '12/31/9999' ELSE edorg.LastModifiedDate END AS ValidTo,
+	    CASE WHEN COALESCE(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent,
 	    @lineageKey AS [LineageKey]
 --SELECT distinct *
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
@@ -92,12 +92,8 @@ LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdent
 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 
                                                                                AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --district code
 																			   
-WHERE NOT EXISTS(SELECT 1 
-					FROM EdFiDW.[dbo].[DimSchool] ds 
-					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) = ds._sourceKey);
 
 --SELECT * FROM EdFiDW.[dbo].[DimSchool]
-
 
 
 --updatng the lineage table

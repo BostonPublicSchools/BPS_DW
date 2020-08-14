@@ -37,6 +37,42 @@ BEGIN
             END 
   
   ---------------------------------------------------------------
+  --views - dropping views first as they are schemabound
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAssessmentScores' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAssessmentScores; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAttendanceByDay; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentAttendance_ADA' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentAttendance_ADA; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentDiscipline' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentDiscipline; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentCourseTranscript' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentCourseTranscript; 
+
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.VIEWS
+             WHERE TABLE_NAME = 'View_StudentRoster' 
+			   AND TABLE_SCHEMA = 'dbo')
+      DROP VIEW dbo.View_StudentRoster; 
 
   --fact tables
   if exists (select 1
@@ -180,42 +216,7 @@ BEGIN
 				AND TABLE_SCHEMA = 'dbo')
 		DROP TABLE dbo.IncrementalLoads; 
 		    
-   --views
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentAssessmentScores' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentAssessmentScores; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentAttendanceByDay' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentAttendanceByDay; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentAttendance_ADA' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentAttendance_ADA; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentDiscipline' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentDiscipline; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentCourseTranscript' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentCourseTranscript; 
-
-   IF exists (select 1
-             FROM INFORMATION_SCHEMA.VIEWS
-             WHERE TABLE_NAME = 'View_StudentRoster' 
-			   AND TABLE_SCHEMA = 'dbo')
-      DROP VIEW dbo.View_StudentRoster; 
+   
 
 
 END;
@@ -917,6 +918,7 @@ CREATE TABLE dbo.DimCourse
     CONSTRAINT FK_DimCourse_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.Lineage([LineageKey])
 );
 
+
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'FactStudentCourseTranscript' 
@@ -934,7 +936,7 @@ CREATE TABLE dbo.FactStudentCourseTranscript
     
   [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_FactStudentCourseTranscript PRIMARY KEY (StudentKey ASC, TimeKey ASC, CourseKey ASC),
+  CONSTRAINT PK_FactStudentCourseTranscript PRIMARY KEY (StudentKey ASC, TimeKey ASC, CourseKey ASC, SchoolKey ASC),
   CONSTRAINT FK_FactStudentCourseTranscript_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
   CONSTRAINT FK_FactStudentCourseTranscript_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
   CONSTRAINT FK_FactStudentCourseTranscript_CourseKey FOREIGN KEY (CourseKey) REFERENCES dbo.DimCourse(CourseKey) ,
@@ -1044,7 +1046,7 @@ FROM (
 			 INNER JOIN dbo.DimSchool dsc ON fsabd.SchoolKey = dsc.SchoolKey	 
 			 INNER JOIN dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
 	    WHERE 1=1 
-		AND ds.StudentUniqueId = 363896
+		--AND ds.StudentUniqueId = 363896
 		--AND dt.SchoolDate = '2018-10-26'
 
 		
