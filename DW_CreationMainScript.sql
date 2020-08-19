@@ -959,7 +959,7 @@ CREATE VIEW dbo.View_StudentAssessmentScores
 WITH SCHEMABINDING
 AS(
 SELECT StudentId, 
-       StudentStateId, 
+       SASID, 
 	   FirstName, 
 	   LastName, 
 	   AssessmentIdentifier, 
@@ -976,7 +976,7 @@ SELECT StudentId,
 	   [Scale score] AS ScaleScore
 FROM (
 		SELECT ds.StudentUniqueId AS StudentId,
-			   ds.StateId AS StudentStateId,
+			   ds.StateId AS SASID,
 			   ds.FirstName,
 			   ds.LastSurname AS LastName,
 			   da.AssessmentIdentifier,
@@ -1183,7 +1183,7 @@ AS(
 SELECT  
 		ds.StudentKey AS StudentKey,
 		ds.StudentUniqueId AS StudentId,
-		ds.StateId AS StudentStateId,
+		ds.StateId AS SASID,
 		ds.FirstName,
 		ds.MiddleName,
 		ds.MiddleInitial,
