@@ -259,8 +259,8 @@ FROM timeDim
 ORDER BY [SchoolDate]
 OPTION (MAXRECURSION 0);
 
---;WITH EdFiSchools AS
---(
+;WITH EdFiSchools AS
+(
 	SELECT cd.Date as SchoolDate, 
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
@@ -268,7 +268,7 @@ OPTION (MAXRECURSION 0);
 		   td.Description TermDescriptorDescription,       
 		   cet.CodeValue CalendarEventTypeCodeValue,
 		   cet.Description CalendarEventTypeDescription, 
-	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear into #EdFiSchools
+	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear 
 	FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
@@ -281,8 +281,8 @@ OPTION (MAXRECURSION 0);
 																		 AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
 	   -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
---)
---SELECT * FROM EdFiSchools
+)
+
 
 
 /*
@@ -387,21 +387,9 @@ select nst.[SchoolDate]
 	    ,CASE WHEN ds._sourceKey IS NOT NULL THEN ds.IsCurrent ELSE  1 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
-     LEFT JOIN #EdFiSchools es ON nst.SchoolDate = es.SchoolDate
+     LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
 	 left JOIN EdFiDW.dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
-WHERE NOT EXISTS(SELECT 1 
-					FROM EdFiDW.[dbo].[DimTime] dt 
-					WHERE nst.[SchoolDate] = dt.[SchoolDate]
-					  AND (
-					          (ds.SchoolKey IS NULL AND dt.SchoolKey IS NULL) 
-						    OR  
-					          (ds.SchoolKey = dt.SchoolKey) 
-						  )
-				  )
-DROP TABLE #EdFiSchools;
-	 --ORDER BY es.SchoolDate
- 
---select * from EdFiDW.[dbo].[DimTime]
+
 
 
  --updatng the lineage table
