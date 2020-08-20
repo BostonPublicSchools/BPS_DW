@@ -25,6 +25,8 @@ CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex
   ON EdFiDW.dbo.DimCourse(_sourceKey, ValidFrom)
 INCLUDE ( ValidTo, CourseKey);
 
+--DROP INDEX CSI_FactStudentAttendanceByDay
+ -- ON EdFiDW.dbo.FactStudentAttendanceByDay
 
 --Facts Tables - Using ColumnStore Indexes
 CREATE COLUMNSTORE INDEX CSI_FactStudentAttendanceByDay
@@ -67,15 +69,14 @@ CREATE COLUMNSTORE INDEX CSI_FactStudentCourseTranscript
   ,[FinalNumericGradeEarned]
   ,[LineageKey])
 
-DROP INDEX CSI_FactStudentAttendanceByDay
-  ON EdFiDW.dbo.FactStudentAttendanceByDay
+
 
   */
 
 ---------------------------------------------------------------------------------------------------------------------
 --******************************* Starting Data Q/A *****************************************************************
 ---------------------------------------------------------------------------------------------------------------------
-SELECT 'Starting data quality process.............'
+SELECT 'Starting data quality process (Dimension - Overall Counts).............'
 UNION ALL
 
 
@@ -533,7 +534,7 @@ SELECT CONCAT('     Analyzing: Total LEP English Learner. => Source: Ed-Fi ODS =
 				   (SELECT COUNT(DISTINCT StudentUniqueId)
 					FROM EdFiDW.[dbo].[DimStudent] 
 					WHERE CHARINDEX('Ed-Fi',_sourceKey,1) > 0
-					   AND LimitedEnglishProficiency_EnglishLearner_Indicator = 1),
+					   AND English_Learner_Indicator = 1),
 				   '  ',
 				   'Records in source system:',
 				   (
@@ -556,7 +557,7 @@ SELECT CONCAT('     Analyzing: Total LEP Former. => Source: Ed-Fi ODS => ',
 				   (SELECT COUNT(DISTINCT StudentUniqueId)
 					FROM EdFiDW.[dbo].[DimStudent] 
 					WHERE CHARINDEX('Ed-Fi',_sourceKey,1) > 0
-					   AND LimitedEnglishProficiency_Former_Indicator = 1),
+					   AND Former_English_Learner_Indicator = 1),
 				   '  ',
 				   'Records in source system:',
 				   (
@@ -579,7 +580,7 @@ SELECT CONCAT('     Analyzing: Total LEP Not EnglisLearner. => Source: Ed-Fi ODS
 				   (SELECT COUNT(DISTINCT StudentUniqueId)
 					FROM EdFiDW.[dbo].[DimStudent] 
 					WHERE CHARINDEX('Ed-Fi',_sourceKey,1) > 0
-					   AND LimitedEnglishProficiency_NotEnglisLearner_Indicator = 1),
+					   AND Never_English_Learner_Indicator = 1),
 				   '  ',
 				   'Records in source system:',
 				   (
@@ -1020,37 +1021,566 @@ SELECT CONCAT('     Analyzing: Total GPA Applicability Types. => Source: Ed-Fi O
 	        )
 
 
-/*
---FactStudentAttendanceByDay
-------------------------------------------------------------------------------------------
 UNION ALL
 SELECT ' --------------------------------------------------------------------------------------------------------------------------------------'
 UNION ALL
-SELECT ' Entity being analyzed: [FactStudentAttendanceByDay]'
+SELECT 'Starting data quality process (Fact Tables - Specific Students).............'
 UNION ALL
-----Total
-SELECT CONCAT('     Analyzing: Total Attendance Events (Including In Attendance). => Source: Ed-Fi ODS => ',
+SELECT ' --------------------------------------------------------------------------------------------------------------------------------------'
+UNION ALL
+SELECT ' Entity being analyzed: FactStudentAttendanceByDay'
+UNION ALL
+----Total Unexcused Absence
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341888
+SELECT CONCAT('     Analyzing: Rafael Ruiz.  Student Number: 341888 - Unexcused Absences => Source: Ed-Fi ODS => ',
 			   'Records in entity:',
 			   (
-			    SELECT COUNT(DISTINCT ds._sourceKey)
-				FROM EdFiDW.[dbo].[FactStudentAttendanceByDay]  fsabd 
-				     INNER JOIN EdFiDW.[dbo].DimStudent ds ON fsabd .StudentKey = ds.StudentKey
-					 INNER JOIN EdFiDW.[dbo].DimTime dt ON fsabd.TimeKey = dt.TimeKey
-				WHERE CHARINDEX('Ed-Fi',fsabd._sourceKey,1) > 0
-				AND EXISTS (SELECT 1  
-				            FROM EdFiDW.[dbo].DimAttendanceEventCategory daec
-							WHERE fsabd.AttendanceEventCategoryKey = daec.AttendanceEventCategoryKey
-							  AND daec.InAttendance_Indicator = 1)
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|1'
+				   AND dact.UnexcusedAbsence_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
 			   ),
 			   '  ',
-			   'Records in source system:',
+			   'Records in source system:', 
 			   (
-			    SELECT COUNT(DISTINCT d.DescriptorId) 
-				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d			     
-				WHERE d.Namespace IN ('http://ed-fi.org/Descriptor/AttendanceEventCategoryDescriptor.xml',
-				                      'http://ed-fi.org/Descriptor/Follett/Aspen/AttendanceEventCategoryDescriptor.xml')
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 1   
+				   AND d.CodeValue = 'Unexcused Absence'
 			   )
 	        )
-SELECT * FROM EdFiDW.[dbo].[FactStudentAttendanceByDay]
-SELECT * FROM EdFiDW.[dbo].DimTime
-*/
+UNION ALL
+----Total Excused Absence
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341888
+SELECT CONCAT('     Analyzing: Rafael Ruiz.  Student Number: 341888 - Excused Absence => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|1'
+				   AND dact.ExcusedAbsence_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 1   
+				   AND d.CodeValue = 'Excused Absence'
+			   )
+	        )
+UNION ALL
+----Total Early departure
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341888
+SELECT CONCAT('     Analyzing: Rafael Ruiz.  Student Number: 341888 - Early departure => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|1'
+				   AND dact.EarlyDeparture_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 1   
+				   AND d.CodeValue = 'Early departure'
+			   )
+	        )
+UNION ALL
+----Total Tardy
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341888
+SELECT CONCAT('     Analyzing: Rafael Ruiz.  Student Number: 341888 - Tardy => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+						     INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|1'
+				   AND dact.Tardy_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+					
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 1   
+				   AND d.CodeValue = 'Tardy'
+			   )
+	        )
+UNION ALL
+----Total In Attendance
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341888
+SELECT CONCAT('     Analyzing: Rafael Ruiz.  Student Number: 341888 - In Attendance => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+						     INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|1'
+				  AND dact.InAttendance_Indicator = 1
+				  -- AND dact.AttendanceEventCategoryDescriptor_CodeValue = 'In Attendance'
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT cda.Date)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 					 
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda ON ssa.SchoolId = cda.SchoolId 														   
+					                                                                      
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce ON cda.Date=cdce.Date 
+																						 AND cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce ON cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+					 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae ON ssa.StudentUSI = ssae.StudentUSI
+					                                                                                  AND ssa.SchoolId = ssae.SchoolId
+																									  AND cda.Date = ssae.EventDate
+					 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssa.StudentUSI = 1   
+				   AND (ssae.StudentUSI IS NULL 
+				     OR COALESCE(d.CodeValue,'In Attendance') in ('In Attendance','Tardy','Early departure'))			    				   
+				   
+			   )
+	        )
+
+UNION ALL
+SELECT ' --------------------------------------------------------------------------------------------------------------------------------------'
+UNION ALL
+----Total Unexcused Absence
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341889
+SELECT CONCAT('     Analyzing: Anna Perez.  Student Number: 341889 - Unexcused Absences => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|2'
+				   AND dact.UnexcusedAbsence_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 2  
+				   AND d.CodeValue = 'Unexcused Absence'
+			   )
+	        )
+UNION ALL
+----Total Excused Absence
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341889
+SELECT CONCAT('     Analyzing: Anna Perez.  Student Number: 341889 - Excused Absence => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|2'
+				   AND dact.ExcusedAbsence_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 2  
+				   AND d.CodeValue = 'Excused Absence'
+			   )
+	        )
+UNION ALL
+----Total Early departure
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341889
+SELECT CONCAT('     Analyzing: Anna Perez.  Student Number: 341889 - Early departure => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|2'
+				   AND dact.EarlyDeparture_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 2  
+				   AND d.CodeValue = 'Early departure'
+			   )
+	        )
+UNION ALL
+----Total Tardy
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341889
+SELECT CONCAT('     Analyzing: Anna Perez.  Student Number: 341889 - Tardy => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+						     INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|2'
+				   AND dact.Tardy_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT ssae.EventDate)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON ssae.StudentUSI = ssa.StudentUSI
+					                                                                                   AND ssae.SchoolId = ssa.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+					                                                                       AND ssae.EventDate = cda.Date
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																						 and cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+					
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssae.StudentUSI = 2  
+				   AND d.CodeValue = 'Tardy'
+			   )
+	        )
+UNION ALL
+----Total In Attendance
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 341889
+SELECT CONCAT('     Analyzing: Anna Perez.  Student Number: 341889 - In Attendance => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT dt.SchoolDate)
+				 FROM EdFiDW.dbo.[FactStudentAttendanceByDay] fsabd 
+						     INNER JOIN EdFiDW.dbo.DimStudent ds ON fsabd.StudentKey = ds.StudentKey
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsabd.TimeKey = dt.TimeKey	 							 
+							 INNER JOIN EdFiDW.dbo.DimAttendanceEventCategory dact ON fsabd.AttendanceEventCategoryKey = dact.AttendanceEventCategoryKey		
+				 WHERE ds._sourceKey = 'Ed-Fi|2'
+				  AND dact.InAttendance_Indicator = 1
+				  -- AND dact.AttendanceEventCategoryDescriptor_CodeValue = 'In Attendance'
+				   AND dt.SchoolYear IN (2019,2020)
+				   
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (
+			    SELECT  COUNT(DISTINCT cda.Date)	
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 					 
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda ON ssa.SchoolId = cda.SchoolId 														   
+					                                                                      
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce ON cda.Date=cdce.Date 
+																						 AND cda.SchoolId=cdce.SchoolId
+					 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce ON cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+																				  AND d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+					 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae ON ssa.StudentUSI = ssae.StudentUSI
+					                                                                                  AND ssa.SchoolId = ssae.SchoolId
+																									  AND cda.Date = ssae.EventDate
+					 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d ON ssae.AttendanceEventCategoryDescriptorId = d.DescriptorId   
+				WHERE cdce.Date >= ssa.EntryDate 
+				   AND cdce.Date <= GETDATE()
+				   AND (
+						 (ssa.ExitWithdrawDate is null) 
+						  OR
+						 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
+					   )
+				   AND ssa.SchoolYear IN (2019,2020)
+				   AND ssa.StudentUSI = 2  
+				   AND (ssae.StudentUSI IS NULL 
+				     OR COALESCE(d.CodeValue,'In Attendance') in ('In Attendance','Tardy','Early departure'))			    				   
+				   
+			   )
+	        )
+UNION ALL
+SELECT ' --------------------------------------------------------------------------------------------------------------------------------------'
+UNION ALL
+SELECT ' Entity being analyzed: FactStudentDiscipline'
+UNION ALL
+----Total ISS
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 379109
+SELECT CONCAT('     Analyzing: Estenli Tolentino.  Student Number: 379109 - ISS => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT ddi._sourceKey)
+				 FROM EdFiDW.dbo.FactStudentDiscipline fsd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey							 
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 	
+							 INNER JOIN EdFiDW.dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey				
+				 WHERE ds._sourceKey = 'Ed-Fi|17052'
+				   AND ddi.DisciplineDescriptor_ISS_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (    
+			         SELECT COUNT(DISTINCT di.IncidentIdentifier)
+			         FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
+                           INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentDisciplineIncidentAssociation sdia ON di.IncidentIdentifier = sdia.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDisciplineIncident dadi ON di.IncidentIdentifier = dadi.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDiscipline dad ON dadi.DisciplineActionIdentifier = dad.DisciplineActionIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dia ON dad.DisciplineDescriptorId   = d_dia.DescriptorId
+					 WHERE  sdia.StudentUSI = 17052
+					 AND TRY_CAST(di.IncidentDate AS DATETIME)  > '2018-07-01'
+					 AND COALESCE(d_dia.CodeValue,'N/A') IN ('In School Suspension','In-School Suspension')
+			   )
+	        )
+UNION ALL
+----Total OSS
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 379109
+SELECT CONCAT('     Analyzing: Estenli Tolentino.  Student Number: 379109 - OSS => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			     SELECT count (DISTINCT ddi._sourceKey)
+				 FROM EdFiDW.dbo.FactStudentDiscipline fsd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey							 
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 	
+							 INNER JOIN EdFiDW.dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey				
+				 WHERE ds._sourceKey = 'Ed-Fi|17052'
+				   AND ddi.DisciplineDescriptor_OSS_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (    
+			         SELECT COUNT(DISTINCT di.IncidentIdentifier)
+			         FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
+                           INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentDisciplineIncidentAssociation sdia ON di.IncidentIdentifier = sdia.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDisciplineIncident dadi ON di.IncidentIdentifier = dadi.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDiscipline dad ON dadi.DisciplineActionIdentifier = dad.DisciplineActionIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dia ON dad.DisciplineDescriptorId   = d_dia.DescriptorId
+					 WHERE  sdia.StudentUSI = 17052
+					 AND TRY_CAST(di.IncidentDate AS DATETIME)  > '2018-07-01'
+					 AND COALESCE(d_dia.CodeValue,'N/A') IN ('Out of School Suspension','Out-Of-School Suspension') 
+			   )
+	        )
+
+UNION ALL
+SELECT ' --------------------------------------------------------------------------------------------------------------------------------------'
+UNION ALL
+----Total ISS
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 429597
+SELECT CONCAT('     Analyzing: Wilder Munoz Arias  Student Number: 429597 - ISS => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			      SELECT count (DISTINCT ddi._sourceKey)
+				 FROM EdFiDW.dbo.FactStudentDiscipline fsd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey							 
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 	
+							 INNER JOIN EdFiDW.dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey				
+				 WHERE ds._sourceKey = 'Ed-Fi|101091'
+				   AND ddi.DisciplineDescriptor_ISS_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (    
+			         SELECT COUNT(DISTINCT di.IncidentIdentifier)
+			         FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
+                           INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentDisciplineIncidentAssociation sdia ON di.IncidentIdentifier = sdia.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDisciplineIncident dadi ON di.IncidentIdentifier = dadi.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDiscipline dad ON dadi.DisciplineActionIdentifier = dad.DisciplineActionIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dia ON dad.DisciplineDescriptorId   = d_dia.DescriptorId
+					 WHERE  sdia.StudentUSI = 101091
+					 AND TRY_CAST(di.IncidentDate AS DATETIME)  > '2018-07-01'
+					 AND COALESCE(d_dia.CodeValue,'N/A') IN ('In School Suspension','In-School Suspension')
+			   )
+	        )
+UNION ALL
+----Total OSS
+--SELECT StudentUSI FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student WHERE StudentUniqueId = 429597
+SELECT CONCAT('     Analyzing: Wilder Munoz Arias  Student Number: 429597 - OSS => Source: Ed-Fi ODS => ',
+			   'Records in entity:',
+			   (
+			      SELECT count (DISTINCT ddi._sourceKey)
+				 FROM EdFiDW.dbo.FactStudentDiscipline fsd 
+							 INNER JOIN EdFiDW.dbo.DimStudent ds ON fsd.StudentKey = ds.StudentKey							 
+							 INNER JOIN EdFiDW.dbo.DimTime dt ON fsd.TimeKey = dt.TimeKey	 	
+							 INNER JOIN EdFiDW.dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey				
+				 WHERE ds._sourceKey = 'Ed-Fi|101091'
+				   AND ddi.DisciplineDescriptor_OSS_Indicator = 1
+				   AND dt.SchoolYear IN (2019,2020)
+			   ),
+			   '  ',
+			   'Records in source system:', 
+			   (    
+			         SELECT COUNT(DISTINCT di.IncidentIdentifier)
+			         FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
+                           INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentDisciplineIncidentAssociation sdia ON di.IncidentIdentifier = sdia.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDisciplineIncident dadi ON di.IncidentIdentifier = dadi.IncidentIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDiscipline dad ON dadi.DisciplineActionIdentifier = dad.DisciplineActionIdentifier
+						   INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dia ON dad.DisciplineDescriptorId   = d_dia.DescriptorId
+					 WHERE  sdia.StudentUSI = 101091
+					 AND TRY_CAST(di.IncidentDate AS DATETIME)  > '2018-07-01'
+					 AND COALESCE(d_dia.CodeValue,'N/A') IN ('Out of School Suspension','Out-Of-School Suspension') 
+			   )
+	        )
+			
