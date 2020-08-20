@@ -1207,7 +1207,7 @@ SELECT
 	    ds.[SexType_NotSelected_Indicator],
 
 
-		ds.RaceCode AS Race,
+		ds.StateRaceCode AS StateRace,
 		ds.Race_AmericanIndianAlaskanNative_Indicator,
 		ds.Race_Asian_Indicator,
 		ds.Race_BlackAfricaAmerican_Indicator,
