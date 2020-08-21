@@ -70,6 +70,33 @@ CREATE COLUMNSTORE INDEX CSI_FactStudentCourseTranscript
   ,[LineageKey])
 
 
+CREATE COLUMNSTORE INDEX CSI_Derived_StudentAttendanceByDay
+  ON EdFiDW.Derived.StudentAttendanceByDay
+  ([StudentKey]
+	,[TimeKey]
+	,[SchoolKey]
+	,[EarlyDeparture]
+	,[ExcusedAbsence]
+	,[UnexcusedAbsence]
+	,[NoContact]
+	,[InAttendance]
+	,[Tardy])
+	
+CREATE COLUMNSTORE INDEX CSI_Derived_StudentAssessmentScore
+  ON EdFiDW.Derived.StudentAssessmentScore
+  ([StudentKey]
+      ,[TimeKey]
+      ,[AssessmentKey]
+      ,[AchievementProficiencyLevel]
+      ,[CompositeRating]
+      ,[CompositeScore]
+      ,[PercentileRank]
+      ,[ProficiencyLevel]
+      ,[PromotionScore]
+      ,[RawScore]
+      ,[ScaleScore])
+
+
 
   */
 
