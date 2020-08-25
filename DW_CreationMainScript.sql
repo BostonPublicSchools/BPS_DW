@@ -415,7 +415,7 @@ CREATE TABLE dbo.DimStudent
 	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
 	[NameOfInstitution] [nvarchar](500) NOT NULL,
 	[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
-	[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,
+	[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,	
 	
 	[FirstName] [nvarchar](100) NOT NULL,
 	[MiddleInitial] [char](1) NULL,
@@ -1198,6 +1198,7 @@ GO
 
 
 
+
 CREATE VIEW dbo.View_StudentRoster
 WITH SCHEMABINDING
 AS(
@@ -1211,7 +1212,23 @@ SELECT
 		ds.FullName,
 		ds.LastSurname AS LastName,
 		ds.PrimaryElectronicMailAddress AS StudentEmail,
-		ds.GradeLevelDescriptor_CodeValue AS GradeLevel,
+		case ds.GradeLevelDescriptor_CodeValue 
+			when 'Eighth grade' then 	'08'
+			when 'Eleventh grade' then 	'11'
+			when 'Fifth grade' then 	'05'
+			when 'First grade' then 	'01'
+			when 'Fourth grade' then 	'04'
+			when 'Kindergarten'  then 'K'
+			when 'Ninth grade' then 	'09'
+			when 'Preschool/Prekindergarten' then 'PK'
+			when 'Second grade' then 	'02'
+			when 'Seventh grade' then 	'07'
+			when 'Sixth grade' then 	'06'
+			when 'Tenth grade' then 	'10'
+			when 'Third grade' then 	'03'
+			when 'Twelfth grade' then 	'12'
+			ELSE 'N/A'
+		end  AS GradeLevel,
 		ds.BirthDate,
 		ds.StudentAge,
 		ds.[GraduationSchoolYear],
