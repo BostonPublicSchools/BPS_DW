@@ -52,7 +52,8 @@ INSERT INTO EdFiDW.[dbo].[DimSchool]
            ,[ValidTo]
            ,[IsCurrent]
            ,[LineageKey])
-SELECT 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
+SELECT  DISTINCT 
+       'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
         eoic_sch.IdentificationCode AS DistrictSchoolCode,
 		eoic.IdentificationCode AS StateSchoolCode,
         CASE

@@ -89,11 +89,11 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[Migrant_Indicator]
            ,[Homeless_Indicator]
            ,[IEP_Indicator]
-           ,[LimitedEnglishProficiencyDescriptor_CodeValue]
-           ,[LimitedEnglishProficiencyDescriptor_Description]
-           ,[LimitedEnglishProficiency_EnglishLearner_Indicator]
-           ,[LimitedEnglishProficiency_Former_Indicator]
-           ,[LimitedEnglishProficiency_NotEnglisLearner_Indicator]
+           ,[English_Learner_Code_Value]
+           ,[English_Learner_Description]
+           ,[English_Learner_Indicator]
+           ,[Former_English_Learner_Indicator]
+           ,[Never_English_Learner_Indicator]
            ,[EconomicDisadvantage_Indicator]
            ,[EntryDate]
            ,[EntrySchoolYear]
@@ -106,7 +106,7 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[IsCurrent]
            ,[LineageKey])
 
-SELECT 
+SELECT distinct
        CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),s.StudentNo)) AS [_sourceKey],
 	   null AS [PrimaryElectronicMailAddress],
 	   null AS [PrimaryElectronicMailTypeDescriptor_CodeValue],

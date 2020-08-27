@@ -259,16 +259,17 @@ FROM timeDim
 ORDER BY [SchoolDate]
 OPTION (MAXRECURSION 0);
 
-;WITH EdFiSchools AS
-(
-	SELECT cd.Date as SchoolDate, 
+--;WITH EdFiSchools AS
+--( 
+-- --DECLARE @startDate DATE = '20150701';    
+	SELECT cd.Date as SchoolDate, 	
 		   'Ed-Fi|' + Convert(NVARCHAR(MAX),s.SchoolId) AS [_sourceKey],
 		   --ses.SessionName,
 		   td.CodeValue TermDescriptorCodeValue,
 		   td.Description TermDescriptorDescription,       
 		   cet.CodeValue CalendarEventTypeCodeValue,
 		   cet.Description CalendarEventTypeDescription, 
-	       ROW_NUMBER() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY DATEADD(YEAR,9,cd.Date)) AS DayOfSchoolYear 
+	       DENSE_RANK() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY cd.Date) AS DayOfSchoolYear INTO #EdFiSchools
 	FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edOrg  ON s.SchoolId = edOrg.EducationOrganizationId
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cd ON s.SchoolId = cd.SchoolId
@@ -280,8 +281,9 @@ OPTION (MAXRECURSION 0);
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Session ses ON s.SchoolId = ses.SchoolId
 																		 AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
 		INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
-	   -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
-)
+	WHERE  cd.Date >= @startDate --AND cd.Date = '2019-12-03' --AND s.SchoolId = 1020 -- AND cd.Date = '2019-12-03'
+	  -- ORDER BY [_sourceKey], ses.SchoolYear, SchoolDate
+--)
 
 
 
@@ -339,6 +341,8 @@ INSERT INTO EdFiDW.[dbo].[DimTime]
            ,[ValidTo]
            ,[IsCurrent]
            ,[LineageKey])
+
+		   
 select nst.[SchoolDate]
 	  ,nst.[SchoolDate_MMYYYY]
 	  ,nst.[SchoolDate_Fomat1]
@@ -387,11 +391,10 @@ select nst.[SchoolDate]
 	    ,CASE WHEN ds._sourceKey IS NOT NULL THEN ds.IsCurrent ELSE  1 end AS IsCurrent
 	    ,@lineageKey AS [LineageKey]
 FROM @NonSchoolTime nst
-     LEFT JOIN EdFiSchools es ON nst.SchoolDate = es.SchoolDate
+     LEFT JOIN #EdFiSchools es ON nst.SchoolDate = es.SchoolDate
 	 left JOIN EdFiDW.dbo.DimSchool ds ON es._sourceKey = ds._sourceKey
 
-
-
+DROP TABLE #EdFiSchools;
  --updatng the lineage table
 UPDATE EdFiDW.[dbo].[Lineage]
   SET 

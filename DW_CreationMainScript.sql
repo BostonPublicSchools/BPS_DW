@@ -241,6 +241,12 @@ BEGIN
 			   AND TABLE_SCHEMA = 'Derived')
       DROP TABLE Derived.StudentAssessmentScore; 
 
+   IF exists (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentAttendanceADA' 
+			   AND TABLE_SCHEMA = 'Derived')
+      DROP TABLE Derived.StudentAttendanceADA; 
+
 END;
 
 
@@ -993,6 +999,31 @@ CREATE TABLE Derived.StudentAttendanceByDay
 --attendance by day
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentAttendanceADA' 
+			   AND TABLE_SCHEMA = 'Derived')
+CREATE TABLE Derived.StudentAttendanceADA
+(
+  StudentId NVARCHAR(32) NOT NULL, 
+  StudentStateId  NVARCHAR(32)  NULL, 
+  FirstName NVARCHAR(100) NOT NULL, 
+  LastName NVARCHAR(100) NOT NULL,  
+  DistrictSchoolCode NVARCHAR(10) NOT NULL, 
+  UmbrellaSchoolCode NVARCHAR(50) NOT NULL, 	   
+  SchoolName NVARCHAR(500) NOT NULL,   
+  SchoolYear INT NOT NULL,	   
+  NumberOfDaysPresent INT NOT NULL,
+  NumberOfDaysAbsent INT NOT NULL,
+  NumberOfDaysAbsentUnexcused INT NOT NULL,
+  NumberOfDaysMembership INT NOT NULL,
+  ADA FLOAT NOT NULL,
+  
+  CONSTRAINT PK_Derived_StudentAttendanceADA PRIMARY KEY (StudentId ASC, DistrictSchoolCode ASC, SchoolYear ASC)  
+);
+
+
+--attendance by day
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'StudentAssessmentScore' 
 			   AND TABLE_SCHEMA = 'Derived')
 CREATE TABLE Derived.StudentAssessmentScore
@@ -1000,14 +1031,14 @@ CREATE TABLE Derived.StudentAssessmentScore
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
-  AchievementProficiencyLevel NVARCHAR(500) NOT NULL,
-  CompositeRating  NVARCHAR(500) NOT NULL,
-  CompositeScore  NVARCHAR(500) NOT NULL,
-  PercentileRank  NVARCHAR(500) NOT NULL,
-  ProficiencyLevel  NVARCHAR(500) NOT NULL,
-  PromotionScore  NVARCHAR(500) NOT NULL,
-  RawScore  NVARCHAR(500) NOT NULL,
-  ScaleScore  NVARCHAR(500) NOT NULL,
+  AchievementProficiencyLevel NVARCHAR(500) NULL,
+  CompositeRating  NVARCHAR(500) NULL,
+  CompositeScore  NVARCHAR(500) NULL,
+  PercentileRank  NVARCHAR(500) NULL,
+  ProficiencyLevel  NVARCHAR(500) NULL,
+  PromotionScore  NVARCHAR(500) NULL,
+  RawScore  NVARCHAR(500) NULL,
+  ScaleScore  NVARCHAR(500) NULL,
   
   CONSTRAINT PK_Derived_StudentAssessmentScore PRIMARY KEY (StudentKey ASC, TimeKey ASC, AssessmentKey ASC),
 );
@@ -1047,7 +1078,7 @@ FROM Derived.StudentAssessmentScore sas
 		INNER JOIN dbo.DimAssessment da ON sas.AssessmentKey = da.AssessmentKey
 );
 GO
-
+SELECT * FROM dbo.View_StudentAssessmentScores
 CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentAssessmentScores
   ON dbo.View_StudentAssessmentScores (StudentKey, AssessmentKey, TimeKey)
 GO
@@ -1098,26 +1129,26 @@ GO
 CREATE VIEW dbo.View_StudentAttendance_ADA
 WITH SCHEMABINDING
 AS (
-	 SELECT   
-		   v_sabd.StudentKey,
-		   v_sabd.StudentId, 
-		   v_sabd.StudentStateId, 
-		   v_sabd.FirstName, 
-		   v_sabd.LastName, 
-		   v_sabd.[DistrictSchoolCode],
-		   v_sabd.[UmbrellaSchoolCode],	   
-		   v_sabd.SchoolName, 	   
-		   v_sabd.SchoolYear,	   
-		   SUM(CAST(v_sabd.[InAttendance] AS int)) OVER (PARTITION BY v_sabd.StudentKey,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysPresent,
-		   SUM(CASE WHEN v_sabd.[InAttendance] = 1 THEN 0 ELSE 1 end) OVER (PARTITION BY v_sabd.StudentKey,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysAbsent,
-		   SUM(CAST(v_sabd.[UnexcusedAbsence] AS int)) OVER (PARTITION BY v_sabd.StudentKey,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysAbsentUnexcused,
-		   COUNT(*) OVER (PARTITION BY v_sabd.StudentKey,v_sabd.SchoolName,v_sabd.SchoolYear) AS NumberOfDaysMembership,
-		   SUM(CAST(v_sabd.[InAttendance] AS int)) OVER (PARTITION BY v_sabd.StudentKey,v_sabd.SchoolName,v_sabd.SchoolYear) / CONVERT(Float,COUNT(*) OVER (PARTITION BY v_sabd.StudentId,v_sabd.SchoolName,v_sabd.SchoolYear)) * 100 AS ADA
-	--select *
-	FROM dbo.View_StudentAttendanceByDay v_sabd
+     select  StudentId, 
+			 StudentStateId, 
+			 FirstName, 
+			 LastName, 
+			 [DistrictSchoolCode],
+			 [UmbrellaSchoolCode],	   
+			 SchoolName, 	   
+			 SchoolYear,
+			 [NumberOfDaysPresent]
+			,[NumberOfDaysAbsent]
+			,[NumberOfDaysAbsentUnexcused]
+			,[NumberOfDaysMembership]
+			,[ADA]
+	 FROM .[Derived].[StudentAttendanceADA]
+	 
 );
 GO
-
+CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentAttendance_ADA
+  ON dbo.View_StudentAttendance_ADA (StudentId,DistrictSchoolCode, SchoolYear)
+GO
 
 
 --behavior incidents
@@ -1130,6 +1161,7 @@ AS(
 SELECT  fsd.StudentKey,
         fsd.TimeKey,
 		fsd.SchoolKey,
+		fsd.DisciplineIncidentKey,
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
@@ -1153,11 +1185,12 @@ FROM dbo.FactStudentDiscipline fsd
 		INNER JOIN dbo.DimDisciplineIncident ddi ON fsd.DisciplineIncidentKey = ddi.DisciplineIncidentKey		
 );
 GO
-/*
+
 CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentDiscipline
-  ON dbo.View_StudentDiscipline (StudentKey, TimeKey, SchoolKey, IncidentTime, IncidentType)
+  ON dbo.View_StudentDiscipline (StudentKey, TimeKey, SchoolKey, DisciplineIncidentKey)
 GO
-*/
+
+--706, 21066, 516, 12:21:00.0000000, Attendance Policy Violation
 
 --behavior incidents
 PRINT 'creating view :  View_StudentCourseTranscript'
@@ -1167,7 +1200,10 @@ GO
 CREATE VIEW dbo.View_StudentCourseTranscript
 WITH SCHEMABINDING
 AS(
-SELECT  ds.StudentKey,
+SELECT  fsct.StudentKey,
+        fsct.TimeKey,
+		fsct.SchoolKey,
+		fsct.CourseKey,
 		ds.StudentUniqueId AS StudentId,
 		ds.StateId AS StudentStateId,
 		ds.FirstName,
@@ -1191,6 +1227,9 @@ FROM dbo.FactStudentCourseTranscript fsct
 		INNER JOIN dbo.DimCourse dc ON fsct.CourseKey = dc.CourseKey		
 );
 
+GO
+CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentCourseTranscript
+  ON dbo.View_StudentCourseTranscript (StudentKey, TimeKey, SchoolKey, CourseKey)
 GO
 
 PRINT 'creating view :  View_StudentRoster'

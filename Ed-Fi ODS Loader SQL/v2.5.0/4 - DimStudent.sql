@@ -90,20 +90,20 @@ FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
 GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
 
 
-;WITH StudentHomeRooomByYear AS
-(
+--;WITH StudentHomeRooomByYear AS
+--(
 SELECT DISTINCT std_sa.StudentUSI, 
                 std_sa.SchoolYear, 
 				std_sa.SchoolId,  
 				std_sa.ClassroomIdentificationCode AS HomeRoom,
-				EdFiDW.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher  
+				EdFiDW.dbo.Func_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher  INTO #StudentHomeRooomByYear
 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa 
      INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
 	                                                                                        AND std_sa.SchoolYear = staff_sa.SchoolYear
 	 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
 WHERE std_sa.HomeroomIndicator = 1
      AND std_sa.SchoolYear IN (2019,2020)
-)
+--)
 
 INSERT INTO EdFiDW.[dbo].[DimStudent]
            ([_sourceKey]
@@ -149,11 +149,11 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[Migrant_Indicator]
            ,[Homeless_Indicator]
            ,[IEP_Indicator]
-           ,[LimitedEnglishProficiencyDescriptor_CodeValue]
-           ,[LimitedEnglishProficiencyDescriptor_Description]
-           ,[LimitedEnglishProficiency_EnglishLearner_Indicator]
-           ,[LimitedEnglishProficiency_Former_Indicator]
-           ,[LimitedEnglishProficiency_NotEnglisLearner_Indicator]
+           ,[English_Learner_Code_Value]
+           ,[English_Learner_Description]
+           ,[English_Learner_Indicator]
+           ,[Former_English_Learner_Indicator]
+           ,[Never_English_Learner_Indicator]
            ,[EconomicDisadvantage_Indicator]
            ,[EntryDate]
            ,[EntrySchoolYear]
@@ -166,7 +166,7 @@ INSERT INTO EdFiDW.[dbo].[DimStudent]
            ,[IsCurrent]
            ,[LineageKey])
 
-SELECT 
+SELECT distinct
        CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) AS [_sourceKey],
 	   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
 	   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
@@ -271,7 +271,7 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 	INNER JOIN EdFiDW.dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId
-	LEFT JOIN StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
+	LEFT JOIN #StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
 	                                       AND ssa.SchoolId = shrby.SchoolId
 										   AND ssa.SchoolYear = shrby.SchoolYear
     LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
@@ -296,13 +296,10 @@ FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
     --races
 	LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUsi
 	
-WHERE NOT EXISTS(SELECT 1 
-					FROM EdFiDW.[dbo].[DimStudent] ds 
-		 		 WHERE CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) = ds._sourceKey)
-	  AND ssa.SchoolYear IN (2019,2020);
+WHERE ssa.SchoolYear IN (2019,2020);
 
 
-DROP TABLE #StudentRaces; --, #StudentHomeRooomByYear;
+DROP TABLE #StudentRaces, #StudentHomeRooomByYear;
 
 --updatng the lineage table
 UPDATE EdFiDW.[dbo].[Lineage]
