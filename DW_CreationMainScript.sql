@@ -1078,7 +1078,7 @@ FROM Derived.StudentAssessmentScore sas
 		INNER JOIN dbo.DimAssessment da ON sas.AssessmentKey = da.AssessmentKey
 );
 GO
-SELECT * FROM dbo.View_StudentAssessmentScores
+
 CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentAssessmentScores
   ON dbo.View_StudentAssessmentScores (StudentKey, AssessmentKey, TimeKey)
 GO
