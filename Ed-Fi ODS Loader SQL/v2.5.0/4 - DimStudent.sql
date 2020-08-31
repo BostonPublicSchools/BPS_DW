@@ -184,13 +184,13 @@ SELECT distinct
 	   LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
 	   s.MiddleName,	   
        s.LastSurname,
-       EdFiDW.dbo.Func_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
+       dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
 	   s.BirthDate,
        DATEDIFF(YEAR, s.BirthDate, GetDate()) AS StudentAge,
 	   ssa.GraduationSchoolYear,
 
-	   NULL AS Homeroom,
-	   NULL AS HomeroomTeacher,
+	   shrby.Homeroom,
+	   shrby.HomeroomTeacher,
 
 	   CASE 
 	        WHEN sex.CodeValue  = 'Male' THEN 'M'

@@ -4,27 +4,36 @@ by the school or by year by OSS and ISS, by race.
 */
 
 SELECT DISTINCT 
-       [StudentId]
+       [StudentKey]
+      ,[TimeKey]
+      ,[SchoolKey]
+      ,[DisciplineIncidentKey]
+      ,[StudentId]
       ,[StudentStateId]
       ,[FirstName]
       ,[LastName]
+      ,[RaceCode]
+      ,[GradeLevel]
       ,[DistrictSchoolCode]
       ,[UmbrellaSchoolCode]
       ,[SchoolName]
       ,[IncidentDate]
-      ,[IncidentSchoolYear]     
+      ,[IncidentSchoolYear]
+      ,[SchoolTerm]
       ,[IncidentIdentifier]
       ,[IncidentTime]
       ,[IncidentDescription]
       ,[IncidentType]
       ,[IncidentLocation]
-      --,[IncidentAction] -- remov the action to get only unique incient records 
+      ,[IncidentAction]
       ,[IncidentReporter]
       ,[IsISS]
       ,[IsOSS]
 FROM EdFiDW.[dbo].[View_StudentDiscipline]
 WHERE UmbrellaSchoolCode = '1040' -- Brighton High School
   AND IncidentSchoolYear = 2020
+ORDER BY [StudentId], IncidentDate
+
 
 SELECT 
       DistrictSchoolCode,
@@ -89,3 +98,5 @@ FROM EdFiDW.dbo.View_StudentAttendance_ADA
 GROUP BY SchoolName,
          SchoolYear
 ORDER BY SchoolName, SchoolYear;
+
+

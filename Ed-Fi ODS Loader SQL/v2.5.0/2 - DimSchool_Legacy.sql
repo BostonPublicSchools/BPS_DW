@@ -33,6 +33,7 @@ END
 
 INSERT INTO EdFiDW.[dbo].[DimSchool]
            ([_sourceKey]
+		   ,[DistrictSchoolCode]
 		   ,[StateSchoolCode]
 		   ,[UmbrellaSchoolCode]
            ,[ShortNameOfInstitution]
@@ -52,7 +53,8 @@ INSERT INTO EdFiDW.[dbo].[DimSchool]
            ,[IsCurrent]
            ,[LineageKey])
 SELECT DISTINCT 
-       'LegacyDW|' + Convert(NVARCHAR(MAX),LTRIM(RTRIM(sd.sch))) AS [_sourceKey],
+        'LegacyDW|' + Convert(NVARCHAR(MAX),LTRIM(RTRIM(sd.sch))) AS [_sourceKey],
+	    LTRIM(RTRIM(sd.sch)) AS DistrictSchoolCode,
         CASE WHEN ISNULL(LTRIM(RTRIM(statecd)),'N/A') IN ('','N/A') THEN 'N/A' ELSE ISNULL(LTRIM(RTRIM(statecd)),'N/A') END AS StateSchoolCode,
         CASE
 		    WHEN LTRIM(RTRIM(sd.sch)) IN ('1291', '1292', '1293', '1294') THEN '1290'
