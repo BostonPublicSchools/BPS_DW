@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="152"
-  DTS:VersionGUID="{6786D0BC-4998-403C-93A1-47055DA52572}">
+  DTS:VersionBuild="153"
+  DTS:VersionGUID="{1D90D790-2E6B-4176-98E5-C3215930FAF1}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACRQ2uOccRKpticoA3CtkVT+Z+MPHI1Gfb5BA7PEysyRQAAAAAOgAAAAAIAACAAAACRQti7iv2Pjswa2bGaLWy91Rz9uY3YcD9OaqwPWeVSOSAAAADn1P6pAs23iqiEE2mnxwyoJOjfrNVON6PcaihZ508370AAAABZo0Ldgs+KqP/k8dY3eYjCjrKCVia9by/gq6ePLB0NUjBQzfEq76U9nqsF4Y5Q7s9ZsKM9Ez/J2DMSjHDh2/8W</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADl7hQtLB3at74M8d8BBz4qbhplrk0pory8BQQRO1FeKwAAAAAOgAAAAAIAACAAAACincKtvhf4rC8k3nZ49Yg8zse/UCks1kl6fpnSArzPKSAAAABzAvwf7JHxCTSlbZzwGLLsLcC9Lfx/VNEoXb8zqlu5kUAAAADX391lpcPj0R5giWD8VjBv9K9QJd+8iJwRCtfg8gykLghDT2/AoO5f2nU6JWZRGGD7q70PkJyrhV0Qam2PIz6i</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -3256,21 +3256,21 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Attendance\Fcat StudentAttendanceByDay"
-          TopLeft="54.4642857142858,591.071428571428" />
+          TopLeft="59.4642857142858,576.071428571428" />
         <EdgeLayout
           Id="Package\Attendance.PrecedenceConstraints[Constraint]"
-          TopLeft="214.732142857143,540.928571428571">
+          TopLeft="217.232142857143,540.928571428571">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,50.1428571428571"
+              EndConnector="0,35.1428571428571"
               Start="0,0"
-              End="0,42.6428571428571">
+              End="0,27.6428571428571">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,42.6428571428571" />
+                    End="0,27.6428571428571" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3299,17 +3299,17 @@
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,8.36290682122171" />
+                    End="0,8.36290682122163" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,8.36290682122171"
-                    Point2="0,12.3629068212217"
-                    Point3="-4,12.3629068212217" />
+                    Point1="0,8.36290682122163"
+                    Point2="0,12.3629068212216"
+                    Point3="-4,12.3629068212216" />
                   <mssgle:LineSegment
-                    End="-547.8,12.3629068212217" />
+                    End="-547.8,12.3629068212216" />
                   <mssgle:CubicBezierSegment
-                    Point1="-547.8,12.3629068212217"
-                    Point2="-551.8,12.3629068212217"
-                    Point3="-551.8,16.3629068212217" />
+                    Point1="-547.8,12.3629068212216"
+                    Point2="-551.8,12.3629068212216"
+                    Point3="-551.8,16.3629068212216" />
                   <mssgle:LineSegment
                     End="-551.8,34.6428571428573" />
                 </mssgle:SegmentCollection>
@@ -3980,21 +3980,21 @@
           PanelSize="317,476"
           Size="317,520"
           Id="Package\Assessment\Fcat StudentAssessmentScore"
-          TopLeft="53.0714285714284,585.357142857143" />
+          TopLeft="55.5714285714284,570.357142857143" />
         <EdgeLayout
           Id="Package\Assessment.PrecedenceConstraints[Constraint]"
-          TopLeft="211.196428571429,536.642857142857">
+          TopLeft="212.446428571429,536.642857142857">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,48.7142857142858"
+              EndConnector="0,33.7142857142858"
               Start="0,0"
-              End="0,41.2142857142858">
+              End="0,26.2142857142858">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,41.2142857142858" />
+                    End="0,26.2142857142858" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

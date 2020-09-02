@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="146"
-  DTS:VersionGUID="{733CA62E-B7F6-4C4A-BC50-658E82E2CD1D}">
+  DTS:VersionBuild="153"
+  DTS:VersionGUID="{1D90D790-2E6B-4176-98E5-C3215930FAF1}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADWY0BBuiHnHrVRBdb5shgzqayZ0jfl+JThkK4TGED3RgAAAAAOgAAAAAIAACAAAAB9EV+QTgv9gtdOczXDk7Rv1ikxqs9qBsuq4YSfH8FS7iAAAACfUqE7kRVD2rHOpHsSuSwxeRlOkGV+sJSmd1X5OEGNL0AAAAACku7eApywgj10ogMaEImcHyKV0+MppjOagHCwLpJRh/jrtFNLi6aryJEZ9SWB2qCeZHcsApfCyRsbm7fG48kC</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAAun8qYcQ3soW+FRyQSW72e7CitQcN1dQt2m53cSi0h9QAAAAAOgAAAAAIAACAAAAB1scnF08v7exsYGUsR6XV1xYa7N1Tui1yFxLMqV/PqYiAAAACTYV9gkj9e7gC2tVreA51Klc1NcvNXUu9+PXGpnfTp30AAAAA0rnLyGjatxsRJxv/g4EkhnUSDUhUYtT/6L2JavgJHaaQszKVccSu0EDeB/+NEB55XkYh61mIIM+Zv879sS/KW</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -120,7 +120,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -136,7 +136,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -164,7 +164,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -194,7 +194,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -224,7 +224,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -240,7 +240,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -328,7 +328,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -344,7 +344,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -372,7 +372,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -402,7 +402,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -432,7 +432,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -448,7 +448,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="0">
+              DTS:ThreadHint="2">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -558,7 +558,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -574,7 +574,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -602,7 +602,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -632,7 +632,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -662,7 +662,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -678,7 +678,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -766,7 +766,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -782,7 +782,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -810,7 +810,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -840,7 +840,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -870,7 +870,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -886,7 +886,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="1">
+              DTS:ThreadHint="4">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -996,7 +996,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -1012,7 +1012,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1040,7 +1040,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1070,7 +1070,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1100,7 +1100,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -1116,7 +1116,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1204,7 +1204,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Current Load"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -1220,7 +1220,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Get Date Of Previous Load"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1248,7 +1248,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Production"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1278,7 +1278,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Populate Staging"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -1308,7 +1308,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Set Table Name"
               DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <ExpressionTask
@@ -1324,7 +1324,7 @@
               DTS:LocaleID="-1"
               DTS:ObjectName="Update Lineage Table And Retrieve Key"
               DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-              DTS:ThreadHint="2">
+              DTS:ThreadHint="0">
               <DTS:Variables />
               <DTS:ObjectData>
                 <SQLTask:SqlTaskData
@@ -2278,7 +2278,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Get Date Of Current Load"
           DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <ExpressionTask
@@ -2294,7 +2294,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Get Date Of Previous Load"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -2322,7 +2322,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Populate Production"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -2352,7 +2352,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Populate Staging"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -2382,7 +2382,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Set Table Name"
           DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <ExpressionTask
@@ -2398,7 +2398,7 @@
           DTS:LocaleID="-1"
           DTS:ObjectName="Update Lineage Table And Retrieve Key"
           DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-          DTS:ThreadHint="4">
+          DTS:ThreadHint="1">
           <DTS:Variables />
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
@@ -2670,7 +2670,7 @@
           PanelSize="317,461"
           Size="317,504"
           Id="Package\School Dimension"
-          TopLeft="1023.36161592667,0.500000000000114" />
+          TopLeft="676.933044498099,39.0714285714287" />
         <NodeLayout
           Size="268,43"
           Id="Package\Time Dimension\Get Date Of Current Load"
@@ -2811,7 +2811,7 @@
           PanelSize="317,453"
           Size="317,496"
           Id="Package\Time Dimension"
-          TopLeft="1397.5,3.46616250481816" />
+          TopLeft="1051.07142857143,42.0375910762467" />
         <NodeLayout
           Size="268,43"
           Id="Package\Student Dimension\Get Date Of Current Load"
@@ -2952,21 +2952,21 @@
           PanelSize="317,469"
           Size="317,512"
           Id="Package\Student Dimension"
-          TopLeft="1220.75,554.25" />
+          TopLeft="874.321428571428,592.821428571429" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1340.36161592667,251.983081252409">
+          TopLeft="993.933044498098,290.554509823838">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="57.1383840733295,0"
+              EndConnector="57.1383840733297,0"
               Start="0,0"
-              End="49.6383840733295,0">
+              End="49.6383840733297,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="49.6383840733295,0" />
+                    End="49.6383840733297,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3115,7 +3115,7 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Attendance\Dim AttendanceEventCategory"
-          TopLeft="13.75,22.5" />
+          TopLeft="58,23.9285714285713" />
         <NodeLayout
           Size="268,43"
           Id="Package\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
@@ -3256,21 +3256,21 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Attendance\Fcat StudentAttendanceByDay"
-          TopLeft="374.5,22.5" />
+          TopLeft="59.4642857142858,576.071428571428" />
         <EdgeLayout
           Id="Package\Attendance.PrecedenceConstraints[Constraint]"
-          TopLeft="330.75,281">
+          TopLeft="217.232142857143,540.928571428571">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="43.75,0"
+              EndConnector="0,35.1428571428571"
               Start="0,0"
-              End="36.25,0">
+              End="0,27.6428571428571">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="36.25,0" />
+                    End="0,27.6428571428571" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3282,36 +3282,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="708,594"
-          Size="708,638"
+          PanelSize="422,1159"
+          Size="422,1202"
           Id="Package\Attendance"
-          TopLeft="3.75000000000023,1141.25" />
+          TopLeft="177.321428571429,1146.96428571429" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 2]"
-          TopLeft="1286.55,1066.25">
+          TopLeft="940.121428571428,1104.82142857143">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-928.8,75"
+              EndConnector="-551.8,42.1428571428573"
               Start="0,0"
-              End="-928.8,67.5">
+              End="-551.8,34.6428571428573">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.0017833259028" />
+                    End="0,8.36290682122163" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,18.0017833259028"
-                    Point2="0,22.0017833259028"
-                    Point3="-4,22.0017833259028" />
+                    Point1="0,8.36290682122163"
+                    Point2="0,12.3629068212216"
+                    Point3="-4,12.3629068212216" />
                   <mssgle:LineSegment
-                    End="-924.8,22.0017833259028" />
+                    End="-547.8,12.3629068212216" />
                   <mssgle:CubicBezierSegment
-                    Point1="-924.8,22.0017833259028"
-                    Point2="-928.8,22.0017833259028"
-                    Point3="-928.8,26.0017833259028" />
+                    Point1="-547.8,12.3629068212216"
+                    Point2="-551.8,12.3629068212216"
+                    Point3="-551.8,16.3629068212216" />
                   <mssgle:LineSegment
-                    End="-928.8,67.5" />
+                    End="-551.8,34.6428571428573" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3322,7 +3322,7 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 1]"
-          TopLeft="1181.86161592667,504.5">
+          TopLeft="835.433044498099,543.071428571429">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -3494,7 +3494,7 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Discipline\Dim DisciplineIncident"
-          TopLeft="13.75,22.5" />
+          TopLeft="52.3214285714287,20.8928571428573" />
         <NodeLayout
           Size="268,43"
           Id="Package\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
@@ -3632,24 +3632,24 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="317,485"
+          Size="317,528"
           Id="Package\Discipline\Fcat StudentDiscipline"
-          TopLeft="374.5,22.5" />
+          TopLeft="51.6428571428571,576.785714285714" />
         <EdgeLayout
           Id="Package\Discipline.PrecedenceConstraints[Constraint]"
-          TopLeft="330.75,281">
+          TopLeft="210.482142857143,537.892857142857">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="43.75,0"
+              EndConnector="0,38.8928571428569"
               Start="0,0"
-              End="36.25,0">
+              End="0,31.3928571428569">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="36.25,0" />
+                    End="0,31.3928571428569" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3661,36 +3661,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="708,594"
-          Size="708,638"
+          PanelSize="406,1159"
+          Size="406,1202"
           Id="Package\Discipline"
-          TopLeft="721.25,1140" />
+          TopLeft="610.535714285714,1144.28571428571" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1348.35,1066.25">
+          TopLeft="1001.92142857143,1104.82142857143">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-273.1,73.75"
+              EndConnector="-188.385714285715,39.4642857142849"
               Start="0,0"
-              End="-273.1,66.25">
+              End="-188.385714285715,31.9642857142849">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,28.8923453337994" />
+                    End="0,13.6009886653015" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,28.8923453337994"
-                    Point2="0,32.8923453337994"
-                    Point3="-4,32.8923453337994" />
+                    Point1="0,13.6009886653015"
+                    Point2="0,17.6009886653015"
+                    Point3="-4,17.6009886653015" />
                   <mssgle:LineSegment
-                    End="-269.1,32.8923453337994" />
+                    End="-184.385714285715,17.6009886653015" />
                   <mssgle:CubicBezierSegment
-                    Point1="-269.1,32.8923453337994"
-                    Point2="-273.1,32.8923453337994"
-                    Point3="-273.1,36.8923453337994" />
+                    Point1="-184.385714285715,17.6009886653015"
+                    Point2="-188.385714285715,17.6009886653015"
+                    Point3="-188.385714285715,21.6009886653015" />
                   <mssgle:LineSegment
-                    End="-273.1,66.25" />
+                    End="-188.385714285715,31.9642857142849" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -3839,7 +3839,7 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Assessment\Dim Assessment"
-          TopLeft="13.75,22.5" />
+          TopLeft="52.3214285714289,19.6428571428571" />
         <NodeLayout
           Size="268,43"
           Id="Package\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
@@ -3977,24 +3977,24 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="317,476"
+          Size="317,520"
           Id="Package\Assessment\Fcat StudentAssessmentScore"
-          TopLeft="374.5,22.5" />
+          TopLeft="55.5714285714284,570.357142857143" />
         <EdgeLayout
           Id="Package\Assessment.PrecedenceConstraints[Constraint]"
-          TopLeft="330.75,281">
+          TopLeft="212.446428571429,536.642857142857">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="43.75,0"
+              EndConnector="0,33.7142857142858"
               Start="0,0"
-              End="36.25,0">
+              End="0,26.2142857142858">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="36.25,0" />
+                    End="0,26.2142857142858" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4006,36 +4006,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="708,594"
-          Size="708,638"
+          PanelSize="418,1157"
+          Size="418,1200"
           Id="Package\Assessment"
-          TopLeft="1443.75,1141.25" />
+          TopLeft="1054.03571428571,1144.10714285714" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 4]"
-          TopLeft="1410.15,1066.25">
+          TopLeft="1063.72142857143,1104.82142857143">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="387.6,75"
+              EndConnector="199.314285714284,39.2857142857138"
               Start="0,0"
-              End="387.6,67.5">
+              End="199.314285714284,31.7857142857138">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,29.4498427123383" />
+                    End="0,13.5213461826532" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,29.4498427123383"
-                    Point2="0,33.4498427123383"
-                    Point3="4,33.4498427123383" />
+                    Point1="0,13.5213461826532"
+                    Point2="0,17.5213461826532"
+                    Point3="4,17.5213461826532" />
                   <mssgle:LineSegment
-                    End="383.6,33.4498427123383" />
+                    End="195.314285714284,17.5213461826532" />
                   <mssgle:CubicBezierSegment
-                    Point1="383.6,33.4498427123383"
-                    Point2="387.6,33.4498427123383"
-                    Point3="387.6,37.4498427123383" />
+                    Point1="195.314285714284,17.5213461826532"
+                    Point2="199.314285714284,17.5213461826532"
+                    Point3="199.314285714284,21.5213461826532" />
                   <mssgle:LineSegment
-                    End="387.6,67.5" />
+                    End="199.314285714284,31.7857142857138" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4184,7 +4184,7 @@
           PanelSize="317,474"
           Size="317,517"
           Id="Package\Course Grades\Dim Course"
-          TopLeft="13.75,22.5" />
+          TopLeft="52.5,22.5" />
         <NodeLayout
           Size="268,43"
           Id="Package\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
@@ -4322,24 +4322,24 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="317,476"
+          Size="317,520"
           Id="Package\Course Grades\Fcat StudentCourseTranscript"
-          TopLeft="374.5,22.5" />
+          TopLeft="57.5357142857142,581.071428571428" />
         <EdgeLayout
           Id="Package\Course Grades.PrecedenceConstraints[Constraint]"
-          TopLeft="330.75,281">
+          TopLeft="213.517857142857,539.5">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="43.75,0"
+              EndConnector="0,41.5714285714284"
               Start="0,0"
-              End="36.25,0">
+              End="0,34.0714285714284">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="36.25,0" />
+                    End="0,34.0714285714284" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4351,36 +4351,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="708,594"
-          Size="708,638"
+          PanelSize="416,1160"
+          Size="416,1203"
           Id="Package\Course Grades"
-          TopLeft="2170,1143.75" />
+          TopLeft="1497.85714285714,1142.32142857143" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint 5]"
-          TopLeft="1471.95,1066.25">
+          TopLeft="1125.52142857143,1104.82142857143">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="1052.05,77.5"
+              EndConnector="580.335714285715,37.4999999999998"
               Start="0,0"
-              End="1052.05,70">
+              End="580.335714285715,29.9999999999998">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,18.7351761034329" />
+                    End="0,7.00089166295133" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,18.7351761034329"
-                    Point2="0,22.7351761034329"
-                    Point3="4,22.7351761034329" />
+                    Point1="0,7.00089166295133"
+                    Point2="0,11.0008916629513"
+                    Point3="4,11.0008916629513" />
                   <mssgle:LineSegment
-                    End="1048.05,22.7351761034329" />
+                    End="576.335714285715,11.0008916629513" />
                   <mssgle:CubicBezierSegment
-                    Point1="1048.05,22.7351761034329"
-                    Point2="1052.05,22.7351761034329"
-                    Point3="1052.05,26.7351761034329" />
+                    Point1="576.335714285715,11.0008916629513"
+                    Point2="580.335714285715,11.0008916629513"
+                    Point3="580.335714285715,15.0008916629513" />
                   <mssgle:LineSegment
-                    End="1052.05,70" />
+                    End="580.335714285715,29.9999999999998" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

@@ -2,13 +2,13 @@
 <BuildLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectInfo>
     <Name>EdFiDW_SSIS</Name>
-    <LastWriteTime>2020-08-31T10:54:05.4449163Z</LastWriteTime>
+    <LastWriteTime>2020-09-02T11:05:38.1166112Z</LastWriteTime>
     <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
   </ProjectInfo>
   <LastBuildInfos>
     <ProjectBuildItemInfo>
       <Name>EdFiDW_DataLoad.dtsx</Name>
-      <LastWriteTime>2020-08-31T16:38:31.5966667Z</LastWriteTime>
+      <LastWriteTime>2020-08-31T20:12:47.4063363Z</LastWriteTime>
       <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
     </ProjectBuildItemInfo>
   </LastBuildInfos>
