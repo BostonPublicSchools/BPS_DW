@@ -127,334 +127,216 @@ if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimSchool' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimSchool
-(
-  SchoolKey int NOT NULL IDENTITY(1,1), -- surrogate
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
-  DistrictSchoolCode NVARCHAR(10) NULL ,
-  StateSchoolCode NVARCHAR(50) NULL ,
-  UmbrellaSchoolCode NVARCHAR(50) NULL,
+BEGIN
+	CREATE TABLE dbo.DimSchool
+	(
+	  SchoolKey int NOT NULL IDENTITY(1,1), -- surrogate
+	  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|Id'
+	  DistrictSchoolCode NVARCHAR(10) NULL ,
+	  StateSchoolCode NVARCHAR(50) NULL ,
+	  UmbrellaSchoolCode NVARCHAR(50) NULL,
 
-  ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
-  NameOfInstitution NVARCHAR(500) NOT NULL,    
+	  ShortNameOfInstitution NVARCHAR(500) NOT NULL,     
+	  NameOfInstitution NVARCHAR(500) NOT NULL,    
 
-  SchoolCategoryType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
-  SchoolCategoryType_Elementary_Indicator BIT NOT NULL,      
-  SchoolCategoryType_Middle_Indicator BIT NOT NULL,
-  SchoolCategoryType_HighSchool_Indicator BIT NOT NULL,    
-  SchoolCategoryType_Combined_Indicator BIT NOT NULL,    
-  SchoolCategoryType_Other_Indicator BIT NOT NULL,    
+	  SchoolCategoryType NVARCHAR(100) NOT NULL,     -- elem, middle, hs, combined
+	  SchoolCategoryType_Elementary_Indicator BIT NOT NULL,      
+	  SchoolCategoryType_Middle_Indicator BIT NOT NULL,
+	  SchoolCategoryType_HighSchool_Indicator BIT NOT NULL,    
+	  SchoolCategoryType_Combined_Indicator BIT NOT NULL,    
+	  SchoolCategoryType_Other_Indicator BIT NOT NULL,    
   
-  TitleIPartASchoolDesignationTypeCodeValue  NVARCHAR(50) NOT NULL,--Not designated as a Title I Part A school
-																	--Title I Part A Schoolwide Assistance Program Schoo
-																	--Title I Part A Targeted Assistance School
-																	--Title I targeted eligible school - no program
-																	--Title I targeted school
-																	--Title I school wide eligible - Title I targeted pr
-																	--Title I school wide eligible school - no program
+	  TitleIPartASchoolDesignationTypeCodeValue  NVARCHAR(50) NOT NULL,--Not designated as a Title I Part A school
+																		--Title I Part A Schoolwide Assistance Program Schoo
+																		--Title I Part A Targeted Assistance School
+																		--Title I targeted eligible school - no program
+																		--Title I targeted school
+																		--Title I school wide eligible - Title I targeted pr
+																		--Title I school wide eligible school - no program
                                             
-  TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
-  OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
-  OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
+	  TitleIPartASchoolDesignation_Indicator BIT NOT NULL, -- True,False
+	  OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+	  OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
   
 
-  ValidFrom DATETIME NOT NULL,
-  ValidTo DATETIME NOT NULL,
-  IsCurrent BIT NOT NULL,  
-  [LineageKey] INT NOT NULL,
+	  ValidFrom DATETIME NOT NULL,
+	  ValidTo DATETIME NOT NULL,
+	  IsCurrent BIT NOT NULL,  
+	  [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey)  
-);
+	  CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey)  
+	);
 
-CREATE NONCLUSTERED INDEX DimSchool_CoveringIndex
-  ON dbo.DimSchool (_sourceKey, ValidFrom)
-INCLUDE ( ValidTo, SchoolKey);
+	CREATE NONCLUSTERED INDEX DimSchool_CoveringIndex
+	  ON dbo.DimSchool (_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, SchoolKey);
+END;
+
 
 --time
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimTime' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimTime
-(
-  TimeKey INT NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate    
+BEGIN
+	CREATE TABLE dbo.DimTime
+	(
+	  TimeKey INT NOT NULL IDENTITY(1,1), -- ex 9/1/2019 : 20190901 -- surrogate    
   
-  SchoolDate DATE NOT NULL , -- 9/1/2019
-  SchoolDate_MMYYYY CHAR(6) NOT NULL,
-  SchoolDate_Fomat1 CHAR(10) NOT NULL,
-  SchoolDate_Fomat2 CHAR(8) NOT NULL,
-  SchoolDate_Fomat3 CHAR(10) NOT NULL,
+	  SchoolDate DATE NOT NULL , -- 9/1/2019
+	  SchoolDate_MMYYYY CHAR(6) NOT NULL,
+	  SchoolDate_Fomat1 CHAR(10) NOT NULL,
+	  SchoolDate_Fomat2 CHAR(8) NOT NULL,
+	  SchoolDate_Fomat3 CHAR(10) NOT NULL,
     
-  SchoolYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020  
-  SchoolYearDescription NVARCHAR(50) NOT NULL, -- '2019-2020 or SchoolYear 2019 - 2020'
-  CalendarYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020
+	  SchoolYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020  
+	  SchoolYearDescription NVARCHAR(50) NOT NULL, -- '2019-2020 or SchoolYear 2019 - 2020'
+	  CalendarYear SMALLINT NOT NULL, -- ex: 9/1/2019 = 2020
   
-  DayOfMonth TINYINT NOT NULL, -- 1 - 30|31
-  DaySuffix CHAR(2) NOT NULL , -- 1st, 2nd, 3rd
-  DayName  NVARCHAR(15) NOT NULL, -- Monday, Tuesday    
-  DayNameShort NVARCHAR(15) NOT NULL, -- Mon, Tue
-  DayOfWeek TINYINT NOT NULL, -- 1 - 7
+	  DayOfMonth TINYINT NOT NULL, -- 1 - 30|31
+	  DaySuffix CHAR(2) NOT NULL , -- 1st, 2nd, 3rd
+	  DayName  NVARCHAR(15) NOT NULL, -- Monday, Tuesday    
+	  DayNameShort NVARCHAR(15) NOT NULL, -- Mon, Tue
+	  DayOfWeek TINYINT NOT NULL, -- 1 - 7
   
-  WeekInMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this counts 7 days starting on the 1st of the month
-  WeekOfMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this is the actual week of the month (starting on sunday)
-  Weekend_Indicator BIT NOT NULL,
-  WeekOfYear TINYINT NOT NULL, -- 1 - 53   
-  FirstDayOfWeek DATE NOT NULL,
-  LastDayOfWeek DATE NOT NULL,
-  WeekBeforeChristmas_Indicator BIT NOT NULL, --  True,False
+	  WeekInMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this counts 7 days starting on the 1st of the month
+	  WeekOfMonth TINYINT NOT NULL, -- 1 - 4 or 5 -- this is the actual week of the month (starting on sunday)
+	  Weekend_Indicator BIT NOT NULL,
+	  WeekOfYear TINYINT NOT NULL, -- 1 - 53   
+	  FirstDayOfWeek DATE NOT NULL,
+	  LastDayOfWeek DATE NOT NULL,
+	  WeekBeforeChristmas_Indicator BIT NOT NULL, --  True,False
   
   
-  [Month] TINYINT NOT NULL, -- 1..12
-  MonthName  NVARCHAR(10) NOT NULL, --January,February,December
-  MonthNameShort CHAR(3) NOT NULL, --Jan,Feb,Dec  
-  FirstDayOfMonth DATE NOT NULL,
-  LastDayOfMonth DATE NOT NULL,
-  FirstDayOfNextMonth DATE NOT NULL,
-  LastDayOfNextMonth DATE NOT NULL,
+	  [Month] TINYINT NOT NULL, -- 1..12
+	  MonthName  NVARCHAR(10) NOT NULL, --January,February,December
+	  MonthNameShort CHAR(3) NOT NULL, --Jan,Feb,Dec  
+	  FirstDayOfMonth DATE NOT NULL,
+	  LastDayOfMonth DATE NOT NULL,
+	  FirstDayOfNextMonth DATE NOT NULL,
+	  LastDayOfNextMonth DATE NOT NULL,
     
-  DayOfYear SMALLINT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
+	  DayOfYear SMALLINT NULL, -- 1 - 365 or 366 (Leap Year Every Four Years)  
   
-  LeapYear_Indicator BIT NOT NULL,  
+	  LeapYear_Indicator BIT NOT NULL,  
     
-  FederalHolidayName NVARCHAR(20) NULL, -- Memorial Day
-  FederalHoliday_Indicator BIT NOT NULL, --  True,False
+	  FederalHolidayName NVARCHAR(20) NULL, -- Memorial Day
+	  FederalHoliday_Indicator BIT NOT NULL, --  True,False
   
-  --all these vary by school
-  SchoolKey INT NULL,  
-  DayOfSchoolYear SMALLINT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
-  SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
-  SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+	  --all these vary by school
+	  SchoolKey INT NULL,  
+	  DayOfSchoolYear SMALLINT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
+	  SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
+	  SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
     
-  SchoolTermDescriptor_CodeValue NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc.  SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
-  SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
+	  SchoolTermDescriptor_CodeValue NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc.  SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
+	  SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
 
-  --all indicators were removed until we see actual district's data.   
+	  --all indicators were removed until we see actual district's data.   
   
-  ValidFrom DATETIME NOT NULL,
-  ValidTo DATETIME NOT NULL,
-  IsCurrent BIT NOT NULL,  
-  [LineageKey] INT NOT NULL,
+	  ValidFrom DATETIME NOT NULL,
+	  ValidTo DATETIME NOT NULL,
+	  IsCurrent BIT NOT NULL,  
+	  [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimTime PRIMARY KEY (TimeKey),  
-  CONSTRAINT FK_DimTime_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES [dbo].[DimSchool] (SchoolKey)
-);
+	  CONSTRAINT PK_DimTime PRIMARY KEY (TimeKey),  
+	  CONSTRAINT FK_DimTime_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES [dbo].[DimSchool] (SchoolKey)
+	);
+
+	CREATE NONCLUSTERED INDEX DimTime_CoveringIndex
+	  ON dbo.DimTime (SchoolDate, ValidFrom)
+	INCLUDE ( ValidTo, TimeKey);
+END;
+
 
 --student
 if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimStudent' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimStudent
-(
-    [StudentKey] [int] IDENTITY(1,1) NOT NULL, 
-	[_sourceKey] [nvarchar](50) NOT NULL,
+               FROM INFORMATION_SCHEMA.TABLES
+               WHERE TABLE_NAME = 'DimStudent' 
+			     AND TABLE_SCHEMA = 'dbo')
+BEGIN
+	CREATE TABLE dbo.DimStudent
+	(
+		[StudentKey] [int] IDENTITY(1,1) NOT NULL, 
+		[_sourceKey] [nvarchar](50) NOT NULL,
 
-	[StudentUniqueId] [nvarchar](32) NULL,
-	[StateId] [nvarchar](32) NULL,
+		[StudentUniqueId] [nvarchar](32) NULL,
+		[StateId] [nvarchar](32) NULL,
 
-	PrimaryElectronicMailAddress [nvarchar](128) NULL,
-	PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-	PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+		PrimaryElectronicMailAddress [nvarchar](128) NULL,
+		PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
+		PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
 
-	[SchoolKey] [int] NOT NULL,
-	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
-	[NameOfInstitution] [nvarchar](500) NOT NULL,
-	[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
-	[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,	
+		[SchoolKey] [int] NOT NULL,
+		[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
+		[NameOfInstitution] [nvarchar](500) NOT NULL,
+		[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
+		[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,	
 	
-	[FirstName] [nvarchar](100) NOT NULL,
-	[MiddleInitial] [char](1) NULL,
-	[MiddleName] [nvarchar](100) NULL,
-	[LastSurname] [nvarchar](100) NOT NULL,
-	[FullName] [nvarchar](500) NOT NULL,
-	[BirthDate] [date] NOT NULL,
-	[StudentAge] [int] NOT NULL,
-	[GraduationSchoolYear] [int] NULL,
+		[FirstName] [nvarchar](100) NOT NULL,
+		[MiddleInitial] [char](1) NULL,
+		[MiddleName] [nvarchar](100) NULL,
+		[LastSurname] [nvarchar](100) NOT NULL,
+		[FullName] [nvarchar](500) NOT NULL,
+		[BirthDate] [date] NOT NULL,
+		[StudentAge] [int] NOT NULL,
+		[GraduationSchoolYear] [int] NULL,
 	
-	[Homeroom] [nvarchar](500) NULL,
-	[HomeroomTeacher] [nvarchar](500) NULL,
+		[Homeroom] [nvarchar](500) NULL,
+		[HomeroomTeacher] [nvarchar](500) NULL,
 
-	[SexType_Code] [nvarchar](100) NOT NULL,
-	[SexType_Description] [nvarchar](100) NOT NULL,
-	[SexType_Male_Indicator] [bit] NOT NULL,
-	[SexType_Female_Indicator] [bit] NOT NULL,
-	[SexType_NotSelected_Indicator] [bit] NOT NULL,
+		[SexType_Code] [nvarchar](100) NOT NULL,
+		[SexType_Description] [nvarchar](100) NOT NULL,
+		[SexType_Male_Indicator] [bit] NOT NULL,
+		[SexType_Female_Indicator] [bit] NOT NULL,
+		[SexType_NotSelected_Indicator] [bit] NOT NULL,
 	
-	[RaceCode] [nvarchar](1000) NOT NULL,
-	[RaceDescription] [nvarchar](1000) NOT NULL,
-	[StateRaceCode] [nvarchar](1000) NOT NULL,
-	[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
-	[Race_Asian_Indicator] [bit] NOT NULL,
-	[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
-	[Race_NativeHawaiianPacificIslander_Indicator] [bit] NOT NULL,
-	[Race_White_Indicator] [bit] NOT NULL,
-	[Race_MultiRace_Indicator] [bit] NOT NULL,
-	[Race_ChooseNotRespond_Indicator] [bit] NOT NULL,
-	[Race_Other_Indicator] [bit] NOT NULL,
+		[RaceCode] [nvarchar](1000) NOT NULL,
+		[RaceDescription] [nvarchar](1000) NOT NULL,
+		[StateRaceCode] [nvarchar](1000) NOT NULL,
+		[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
+		[Race_Asian_Indicator] [bit] NOT NULL,
+		[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
+		[Race_NativeHawaiianPacificIslander_Indicator] [bit] NOT NULL,
+		[Race_White_Indicator] [bit] NOT NULL,
+		[Race_MultiRace_Indicator] [bit] NOT NULL,
+		[Race_ChooseNotRespond_Indicator] [bit] NOT NULL,
+		[Race_Other_Indicator] [bit] NOT NULL,
 
-	[EthnicityCode] [nvarchar](100) NOT NULL,
-	[EthnicityDescription] [nvarchar](100) NOT NULL,
-	[EthnicityHispanicLatino_Indicator] [bit] NOT NULL,
-	[Migrant_Indicator] [bit] NOT NULL,
-	[Homeless_Indicator] [bit] NOT NULL,
-	[IEP_Indicator] [bit] NOT NULL,
-	[English_Learner_Code_Value] [nvarchar](100) NOT NULL,
-	[English_Learner_Description] [nvarchar](100) NOT NULL,
-	[English_Learner_Indicator] [bit] NOT NULL,
-	[Former_English_Learner_Indicator] [bit] NOT NULL,
-	[Never_English_Learner_Indicator] [bit] NOT NULL,
-	[EconomicDisadvantage_Indicator] [bit] NOT NULL,
+		[EthnicityCode] [nvarchar](100) NOT NULL,
+		[EthnicityDescription] [nvarchar](100) NOT NULL,
+		[EthnicityHispanicLatino_Indicator] [bit] NOT NULL,
+		[Migrant_Indicator] [bit] NOT NULL,
+		[Homeless_Indicator] [bit] NOT NULL,
+		[IEP_Indicator] [bit] NOT NULL,
+		[English_Learner_Code_Value] [nvarchar](100) NOT NULL,
+		[English_Learner_Description] [nvarchar](100) NOT NULL,
+		[English_Learner_Indicator] [bit] NOT NULL,
+		[Former_English_Learner_Indicator] [bit] NOT NULL,
+		[Never_English_Learner_Indicator] [bit] NOT NULL,
+		[EconomicDisadvantage_Indicator] [bit] NOT NULL,
 	
-	[EntryDate] [datetime2](7) NOT NULL,
-	[EntrySchoolYear] [int] NOT NULL,
-	[EntryCode] [nvarchar](25) NOT NULL,
+		[EntryDate] [datetime2](7) NOT NULL,
+		[EntrySchoolYear] [int] NOT NULL,
+		[EntryCode] [nvarchar](25) NOT NULL,
 	
-	[ExitWithdrawDate] [datetime2](7) NULL,
-	[ExitWithdrawSchoolYear] [int] NULL,
-	[ExitWithdrawCode] [nvarchar](100) NULL,
+		[ExitWithdrawDate] [datetime2](7) NULL,
+		[ExitWithdrawSchoolYear] [int] NULL,
+		[ExitWithdrawCode] [nvarchar](100) NULL,
 
-	[ValidFrom] [datetime] NOT NULL,
-	[ValidTo] [datetime] NOT NULL,
-	[IsCurrent] [bit] NOT NULL,
-	[LineageKey] [int] NOT NULL,
+		[ValidFrom] [datetime] NOT NULL,
+		[ValidTo] [datetime] NOT NULL,
+		[IsCurrent] [bit] NOT NULL,
+		[LineageKey] [int] NOT NULL,
 
-    CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey),
-    CONSTRAINT FK_DimStudent_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
-);
+		CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey),
+		CONSTRAINT FK_DimStudent_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
+	);
 
-CREATE NONCLUSTERED INDEX DimStudent_CoveringIndex
-  ON dbo.DimStudent (_sourceKey, ValidFrom)
-INCLUDE ( ValidTo, StudentKey);
-
-/*
---section
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimSection' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimSection
-(
-  SectionKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'Ed-Fi|25590100101Trad120ENG112011'
-  
-  [SchoolYear] [smallint] NOT NULL,  
-  SchoolKey INT NOT NULL,
-  ShortNameOfInstitution nvarchar(500) NOT NULL,
-  NameOfInstitution nvarchar(500) NOT NULL,
-  [ClassPeriodName] [nvarchar](20) NOT NULL,
-  [ClassroomIdentificationCode] [nvarchar](20) NOT NULL,
-  [LocalCourseCode] [nvarchar](60) NOT NULL,
-  [SchoolTermDescriptor_CodeValue] nvarchar(50) not null,
-  [SchoolTermDescriptor_Description] nvarchar(50) not null,
-  
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_DimSection PRIMARY KEY (SectionKey ASC),
-  CONSTRAINT FK_DimSection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
-);
-
---staff
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimStaff' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimStaff
-(
-  StaffKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
-  
-  PrimaryElectronicMailAddress [nvarchar](128) NULL,
-  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
-
-  [StaffUniqueId] [nvarchar](32) NOT NULL,
-  [PersonalTitlePrefix] [nvarchar](30) NULL,
-  [FirstName] [nvarchar](75) NOT NULL,
-  [MiddleName] [nvarchar](75) NULL,
-  [MiddleInitial] CHAR(1) NULL,
-  [LastSurname] nvarchar(75) NOT NULL,
-  [FullName] NVARCHAR(50) NOT NULL,
-  [GenerationCodeSuffix] [nvarchar](10) NULL,
-  [MaidenName] [nvarchar](75) NULL,  
-  [BirthDate] DATE NULL,
-  [StaffAge] INT NULL,  
-  
-  SexType_Code NVARCHAR(15) NOT NULL,
-  SexType_Description NVARCHAR(100) NOT NULL,    
-  SexType_Male_Indicator BIT NOT NULL,
-  SexType_Female_Indicator BIT NOT NULL,
-  SexType_NotSelected_Indicator BIT NOT NULL,
-  
-  [HispanicLatinoEthnicity_Indicator] [bit] NOT NULL,
-  [OldEthnicityType_CodeValue] NVARCHAR(100)  NULL,
-  [OldEthnicityType_Description] NVARCHAR(100)  NULL,
-  [CitizenshipStatusType_CodeValue] NVARCHAR(100)  NULL,
-  [CitizenshipStatusType_Description] NVARCHAR(100)  NULL,
-  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] NVARCHAR(100)  NULL, 
-  [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
-  [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
-  [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
-  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
-    
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
-);
-*/
-
---discipline incident
---this is not a slowly changing dimension since there is not a natural source key to match by
---we will deleting and repopulating the current year info
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimDisciplineIncident' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimDisciplineIncident
-(
-  DisciplineIncidentKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
-  
-  SchoolKey INT NOT NULL,
-  ShortNameOfInstitution nvarchar(500) NOT NULL,
-  NameOfInstitution nvarchar(500) NOT NULL,
-  SchoolYear INT NOT NULL,
-  IncidentDate DATE NOT NULL,   
-  IncidentTime TIME(7) NOT NULL,   
-  [IncidentDescription] nvarchar(MAX) NULL ,
-  [BehaviorDescriptor_CodeValue] nvarchar(50) not null, -- IncidentType: Weapons Possession (Firearms and Other Weapons), Drugs, Abuse Of Volatile Chemical,School Code of Conduct,  etc
-  [BehaviorDescriptor_Description] nvarchar(1024) not null,
-
-  [LocationDescriptor_CodeValue] nvarchar(50) not null,  -- Hallway, Cafeteria, Classroom, etc
-  [LocationDescriptor_Description] nvarchar(1024) not null,
-
-  [DisciplineDescriptor_CodeValue] nvarchar(50) not null, -- Actions: Community Service, Expulsion,In School Suspension,Out of School Suspension, Removal from Classroom, etc
-  [DisciplineDescriptor_Description] nvarchar(1024) not null,
-  DisciplineDescriptor_ISS_Indicator BIT NOT NULL,
-  DisciplineDescriptor_OSS_Indicator BIT NOT NULL,
-
-  ReporterDescriptor_CodeValue nvarchar(50) NOT NULL, -- Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student  
-  ReporterDescriptor_Description nvarchar(1024) NOT NULL,
-  
-  IncidentReporterName NVARCHAR(100) NOT NULL ,
-  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
-  IncidentCost Money NOT NULL,
-  
-  ValidFrom DATETIME NOT NULL,
-  ValidTo DATETIME NOT NULL,
-  IsCurrent BIT NOT NULL,  
-  
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_DimDisciplineIncident PRIMARY KEY (DisciplineIncidentKey ASC)  ,
-  CONSTRAINT FK_DimDisciplineIncident_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
-);
-
+	CREATE NONCLUSTERED INDEX DimStudent_CoveringIndex
+	  ON dbo.DimStudent (_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, StudentKey);
+END;
 
 
 --attendance event category
@@ -462,123 +344,177 @@ if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'DimAttendanceEventCategory' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimAttendanceEventCategory
-(
-  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
+BEGIN
+	CREATE TABLE dbo.DimAttendanceEventCategory
+	(
+	  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
+	  [_sourceKey] NVARCHAR(50) NOT NULL, 
    
-  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
-  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
+	  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
+	  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
   
-  [InAttendance_Indicator] BIT NOT NULL,  
-  [UnexcusedAbsence_Indicator] BIT NOT NULL,
-  [ExcusedAbsence_Indicator] BIT NOT NULL,  
-  [Tardy_Indicator] BIT NOT NULL,    
-  [EarlyDeparture_Indicator]  BIT NOT NULL,    
+	  [InAttendance_Indicator] BIT NOT NULL,  
+	  [UnexcusedAbsence_Indicator] BIT NOT NULL,
+	  [ExcusedAbsence_Indicator] BIT NOT NULL,  
+	  [Tardy_Indicator] BIT NOT NULL,    
+	  [EarlyDeparture_Indicator]  BIT NOT NULL,    
 
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
+	  ValidFrom DATETIME NOT NULL, 
+	  ValidTo DATETIME NOT NULL, 
+	  IsCurrent BIT NOT NULL,    
+	  [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
-);
+	  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
+	);
 
-CREATE NONCLUSTERED INDEX DimAttendanceEventCategory_CoveringIndex
-  ON dbo.DimAttendanceEventCategory(_sourceKey, ValidFrom)
-INCLUDE ( ValidTo, AttendanceEventCategoryKey);
+	CREATE NONCLUSTERED INDEX DimAttendanceEventCategory_CoveringIndex
+	  ON dbo.DimAttendanceEventCategory(_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, AttendanceEventCategoryKey);
+END;
 
 
-/*
---discipline incident types
--- NOT USED FOR NOW
+--discipline incident
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimDisciplineIncidentBehavior' 
+             WHERE TABLE_NAME = 'DimDisciplineIncident' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimDisciplineIncidentBehavior
-(
-  DisciplineIncidentBehaviorKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
+BEGIN
+	CREATE TABLE dbo.DimDisciplineIncident
+	(
+	  DisciplineIncidentKey INT NOT NULL IDENTITY(1,1),
+	  [_sourceKey] NVARCHAR(50) NOT NULL, 
   
-  [BehaviorDescriptor_CodeValue] nvarchar(50) not null,
-  [BehaviorDescriptor_Description] nvarchar(1024) not null,
+	  SchoolKey INT NOT NULL,
+	  ShortNameOfInstitution nvarchar(500) NOT NULL,
+	  NameOfInstitution nvarchar(500) NOT NULL,
+	  SchoolYear INT NOT NULL,
+	  IncidentDate DATE NOT NULL,   
+	  IncidentTime TIME(7) NOT NULL,   
+	  [IncidentDescription] nvarchar(MAX) NULL ,
+	  [BehaviorDescriptor_CodeValue] nvarchar(50) not null, -- IncidentType: Weapons Possession (Firearms and Other Weapons), Drugs, Abuse Of Volatile Chemical,School Code of Conduct,  etc
+	  [BehaviorDescriptor_Description] nvarchar(1024) not null,
+
+	  [LocationDescriptor_CodeValue] nvarchar(50) not null,  -- Hallway, Cafeteria, Classroom, etc
+	  [LocationDescriptor_Description] nvarchar(1024) not null,
+
+	  [DisciplineDescriptor_CodeValue] nvarchar(50) not null, -- Actions: Community Service, Expulsion,In School Suspension,Out of School Suspension, Removal from Classroom, etc
+	  [DisciplineDescriptor_Description] nvarchar(1024) not null,
+	  DisciplineDescriptor_ISS_Indicator BIT NOT NULL,
+	  DisciplineDescriptor_OSS_Indicator BIT NOT NULL,
+
+	  ReporterDescriptor_CodeValue nvarchar(50) NOT NULL, -- Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student  
+	  ReporterDescriptor_Description nvarchar(1024) NOT NULL,
   
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
+	  IncidentReporterName NVARCHAR(100) NOT NULL ,
+	  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
+	  IncidentCost Money NOT NULL,
+  
+	  ValidFrom DATETIME NOT NULL,
+	  ValidTo DATETIME NOT NULL,
+	  IsCurrent BIT NOT NULL,  
+  
+	  [LineageKey] INT NOT NULL,
 
-  CONSTRAINT PK_DimDisciplineIncidentBehavior PRIMARY KEY (DisciplineIncidentBehaviorKey ASC)  
-);
+	  CONSTRAINT PK_DimDisciplineIncident PRIMARY KEY (DisciplineIncidentKey ASC)  ,
+	  CONSTRAINT FK_DimDisciplineIncident_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
+	);
 
---discipline incident location
+	CREATE NONCLUSTERED INDEX DimDisciplineIncident_CoveringIndex
+	  ON dbo.DimDisciplineIncident(_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, DisciplineIncidentKey);
+END;
+
+--assessment
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimDisciplineIncidentLocation' 
+             WHERE TABLE_NAME = 'DimAssessment' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimDisciplineIncidentLocation
-(
-  DisciplineIncidentLocationKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
-  
-  [LocationDescriptor_CodeValue] nvarchar(50) not null,
-  [LocationDescriptor_Description] nvarchar(1024) not null,
-  
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
+BEGIN
+	CREATE TABLE dbo.DimAssessment
+	(
+		AssessmentKey INT NOT NULL IDENTITY(1,1),  
+		[_sourceKey] NVARCHAR(2000) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
+	
+		--assessment 
+		--------------------------------------------------------------------------------------
+		AssessmentCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,    
+		AssessmentCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,    
+		AssessmentFamilyTitle NVARCHAR(100) NULL,    	
+		AdaptiveAssessment_Indicator bit NOT NULL, 
+		AssessmentIdentifier NVARCHAR(60) NOT NULL,   
+		AssessmentTitle NVARCHAR(500) NOT NULL,
 
-  CONSTRAINT PK_DimDisciplineIncidentLocation PRIMARY KEY (DisciplineIncidentLocationKey  ASC)     
-);
 
---discipline incident location
--- NOT USED FOR NOW
+		ReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+		ReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	
+		ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+		ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	
+		AssessmentScore_Indicator  BIT NOT NULL,
+		AssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+
+		ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
+		ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+	
+		ValidFrom DATETIME NOT NULL, 
+		ValidTo DATETIME NOT NULL, 
+		IsCurrent BIT NOT NULL,	
+		[LineageKey] INT NOT NULL,
+
+		CONSTRAINT PK_DimAssessment PRIMARY KEY (AssessmentKey)    
+	);
+
+	CREATE NONCLUSTERED INDEX DimAssessment_CoveringIndex
+	  ON dbo.DimAssessment(_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, AssessmentKey);
+END;
+
+--course
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimDisciplineIncidentAction' 
+             WHERE TABLE_NAME = 'DimCourse' 
 			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimDisciplineIncidentAction
-(
-  DisciplineIncidentActionKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
-  
-  [DisciplineDescriptor_CodeValue] nvarchar(50) not null,
-  [DisciplineDescriptor_Description] nvarchar(1024) not null,
-  DisciplineDescriptor_ISS_Indicator BIT NOT NULL,
-  DisciplineDescriptor_OSS_Indicator BIT NOT NULL,
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
+BEGIN
+	CREATE TABLE dbo.DimCourse
+	(
+		CourseKey INT NOT NULL IDENTITY(1,1),  --surrogate
+		[_sourceKey] NVARCHAR(50) NOT NULL,
+	
+		CourseCode NVARCHAR(60) NOT NULL,
+		CourseTitle NVARCHAR(100) NOT NULL,
+		CourseDescription NVARCHAR(100) NOT NULL,
 
-  CONSTRAINT PK_DimDisciplineIncidentAction PRIMARY KEY (DisciplineIncidentActionKey ASC)  
-);
+		CourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(60) NOT NULL,
+		CourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(1024) NOT NULL, 
 
---discipline incident reporter types
--- NOT USED FOR NOW
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimDisciplineIncidentReporterType' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimDisciplineIncidentReporterType
-(
-  DisciplineIncidentReporterTypeKey INT NOT NULL IDENTITY(1,1),
-  [_sourceKey] NVARCHAR(50) NOT NULL, 
-  
-  ReporterDescriptor_CodeValue nvarchar(50) NOT NULL,
-  ReporterDescriptor_Description nvarchar(1024) NOT NULL,
-  
-  ValidFrom DATETIME NOT NULL, 
-  ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL,    
-  [LineageKey] INT NOT NULL,
+		AcademicSubjectDescriptor_CodeValue  NVARCHAR(60) NOT NULL,
+		AcademicSubjectDescriptor_Description  NVARCHAR(1024) NOT NULL,
 
-  CONSTRAINT PK_DimDisciplineIncidentReporterType PRIMARY KEY (DisciplineIncidentReporterTypeKey ASC)  
-);
+		HighSchoolCourseRequirement_Indicator BIT NOT NULL,
+		MinimumAvailableCredits INT NULL,
+		MaximumAvailableCredits INT NULL,
+	
+		GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
+		GPAApplicabilityType_Description NVARCHAR(50) NULL,
 
-*/
+		SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+		SecondaryCourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(50) NOT NULL,
+			
+		ValidFrom DATETIME NOT NULL, 
+		ValidTo DATETIME NOT NULL, 
+		IsCurrent BIT NOT NULL,	
+		[LineageKey] INT NOT NULL,
+
+  		CONSTRAINT PK_DimCourse PRIMARY KEY (CourseKey)
+    
+	);
+
+
+	CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex
+	  ON dbo.DimCourse(_sourceKey, ValidFrom)
+	INCLUDE ( ValidTo, CourseKey);
+END
 
 
 --FACT TABLES
@@ -605,73 +541,6 @@ CREATE TABLE dbo.FactStudentAttendanceByDay
   CONSTRAINT FK_FactStudentAttendanceByDay_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey)   
 );
 
-/*
---attendance by section
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentAttendanceBySection' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentAttendanceBySection
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL,  
-  SectionKey INT NOT NULL,
-  StaffKey INT NOT NULL,
-  SchoolKey INT NOT NULL,
-
-  AttendanceEventCategoryKey INT NOT NULL ,
-  AttendanceEventReason nvarchar(500) NOT NULL,
-
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentAttendanceBySection PRIMARY KEY (StudentKey ASC, TimeKey ASC, SectionKey ASC,SchoolKey ASC, StaffKey ASC, AttendanceEventCategoryKey ASC),
-  CONSTRAINT FK_FactStudentAttendanceBySection_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_SectionKey FOREIGN KEY (SectionKey) REFERENCES dbo.DimSection(SectionKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_AttendanceEventCategoryKey FOREIGN KEY (AttendanceEventCategoryKey) REFERENCES dbo.DimAttendanceEventCategory(AttendanceEventCategoryKey),
-  CONSTRAINT FK_FactStudentAttendanceBySection_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.ETL_Lineage([LineageKey])  
-);
-
-
---discipline -- v1
-
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'FactStudentDiscipline' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.FactStudentDiscipline
-(
-  StudentKey INT NOT NULL,
-  TimeKey INT NOT NULL, 
-  SchoolKey INT NOT NULL,
-  IncidentTime TIME(7) NOT NULL, 
-  
-  DisciplineIncidentBehaviorKey INT NOT NULL, -- Weapons Possession (Firearms and Other Weapons), Drugs. etcs
-  DisciplineIncidentLocationKey INT NOT NULL, -- Hallway, Cafeteria, Classroom, etc
-  DisciplineIncidentActionKey INT NOT NULL, -- ISS, OSS
-  DisciplineIncidentReporterTypeKey INT NOT NULL, --Law enforcement officer,Non-school personnel,Other,Parent/guardian,Staff,Student,
-
-
-  IncidentReporterName NVARCHAR(100) NULL ,
-  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
-  IncidentCost Money NOT NULL,
-  [LineageKey] INT NOT NULL,
-
-  CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, IncidentTime ASC),
-  CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
-  CONSTRAINT FK_FactStudentDiscipline_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),
-  CONSTRAINT FK_FactStudentDiscipline_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentBehaviorKey FOREIGN KEY (DisciplineIncidentBehaviorKey) REFERENCES dbo.DimDisciplineIncidentBehavior(DisciplineIncidentBehaviorKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentLocationKey FOREIGN KEY (DisciplineIncidentLocationKey) REFERENCES dbo.DimDisciplineIncidentLocation(DisciplineIncidentLocationKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentActionKey FOREIGN KEY (DisciplineIncidentActionKey) REFERENCES dbo.DimDisciplineIncidentAction(DisciplineIncidentActionKey),
-  CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentReporterTypeKey FOREIGN KEY (DisciplineIncidentReporterTypeKey) REFERENCES dbo.DimDisciplineIncidentReporterType(DisciplineIncidentReporterTypeKey),
-  
-  CONSTRAINT FK_FactStudentDiscipline_LineageKey FOREIGN KEY ([LineageKey]) REFERENCES dbo.ETL_Lineage([LineageKey])
-);
-*/
-
 --discipline -- v2
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -693,51 +562,6 @@ CREATE TABLE dbo.FactStudentDiscipline
   CONSTRAINT FK_FactStudentDiscipline_DisciplineIncidentKey FOREIGN KEY (DisciplineIncidentKey) REFERENCES dbo.DimDisciplineIncident(DisciplineIncidentKey)
 );
 
-
-
---assessment
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimAssessment' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimAssessment
-(
-    AssessmentKey INT NOT NULL IDENTITY(1,1),  
-	[_sourceKey] NVARCHAR(2000) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
-	
-	--assessment 
-	--------------------------------------------------------------------------------------
-	AssessmentCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,    
-	AssessmentCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,    
-	AssessmentFamilyTitle NVARCHAR(100) NULL,    	
-	AdaptiveAssessment_Indicator bit NOT NULL, 
-	AssessmentIdentifier NVARCHAR(60) NOT NULL,   
-	AssessmentTitle NVARCHAR(500) NOT NULL,
-
-
-	ReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
-	ReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
-	ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
-	
-	AssessmentScore_Indicator  BIT NOT NULL,
-	AssessmentPerformanceLevel_Indicator  BIT NOT NULL,
-
-	ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
-	ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
-	
-	ValidFrom DATETIME NOT NULL, 
-	ValidTo DATETIME NOT NULL, 
-	IsCurrent BIT NOT NULL,	
-    [LineageKey] INT NOT NULL,
-
-	CONSTRAINT PK_DimAssessment PRIMARY KEY (AssessmentKey)    
-);
-
-CREATE NONCLUSTERED INDEX DimAssessment_CoveringIndex
-  ON dbo.DimAssessment(_sourceKey, ValidFrom)
-INCLUDE ( ValidTo, AssessmentKey);
 
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -761,47 +585,6 @@ CREATE TABLE dbo.FactStudentAssessmentScore
   CONSTRAINT FK_FactStudentAssessmentScore_TimeKey FOREIGN KEY (AssessmentKey) REFERENCES dbo.DimAssessment(AssessmentKey)  
 );
 
-if NOT EXISTS (select 1
-             FROM INFORMATION_SCHEMA.TABLES
-             WHERE TABLE_NAME = 'DimCourse' 
-			   AND TABLE_SCHEMA = 'dbo')
-CREATE TABLE dbo.DimCourse
-(
-    CourseKey INT NOT NULL IDENTITY(1,1),  --surrogate
-	[_sourceKey] NVARCHAR(50) NOT NULL,
-	
-	CourseCode NVARCHAR(60) NOT NULL,
-	CourseTitle NVARCHAR(100) NOT NULL,
-	CourseDescription NVARCHAR(100) NOT NULL,
-
-	CourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(60) NOT NULL,
-	CourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(1024) NOT NULL, 
-
-	AcademicSubjectDescriptor_CodeValue  NVARCHAR(60) NOT NULL,
-	AcademicSubjectDescriptor_Description  NVARCHAR(1024) NOT NULL,
-
-	HighSchoolCourseRequirement_Indicator BIT NOT NULL,
-	MinimumAvailableCredits INT NULL,
-	MaximumAvailableCredits INT NULL,
-	
-	GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
-	GPAApplicabilityType_Description NVARCHAR(50) NULL,
-
-	SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
-	SecondaryCourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(50) NOT NULL,
-			
-	ValidFrom DATETIME NOT NULL, 
-	ValidTo DATETIME NOT NULL, 
-	IsCurrent BIT NOT NULL,	
-    [LineageKey] INT NOT NULL,
-
-  	CONSTRAINT PK_DimCourse PRIMARY KEY (CourseKey)
-    
-);
-
-CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex
-  ON dbo.DimCourse(_sourceKey, ValidFrom)
-INCLUDE ( ValidTo, CourseKey);
 
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -1065,7 +848,6 @@ CREATE UNIQUE CLUSTERED INDEX CLU_View_StudentDiscipline
   ON dbo.View_StudentDiscipline (StudentKey, TimeKey, SchoolKey, DisciplineIncidentKey)
 GO
 
---706, 21066, 516, 12:21:00.0000000, Attendance Policy Violation
 
 --behavior incidents
 PRINT 'creating view :  View_StudentCourseTranscript'
@@ -1413,7 +1195,7 @@ CREATE TABLE dbo.ETL_Lineage
    [Status] CHAR(1) NOT NULL, -- P = Processing , S = Success
    CONSTRAINT PK_ETL_Lineage PRIMARY KEY (LineageKey),
 );
-
+GO
 
 --ETL_IncrementalLoads
 IF NOT EXISTS (select 1
@@ -1703,8 +1485,201 @@ CREATE TABLE Staging.DisciplineIncident
   CONSTRAINT PK_StagingDisciplineIncident PRIMARY KEY (DisciplineIncidentKey ASC)   
 );
 GO
---stored procedures
-------------------------------------------------------------
+
+--assessment
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'Assessment' 
+			   AND TABLE_SCHEMA = 'Staging')
+BEGIN
+	CREATE TABLE Staging.Assessment
+	(
+		AssessmentKey INT NOT NULL IDENTITY(1,1),  
+		[_sourceKey] NVARCHAR(2000) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
+	
+		--assessment 
+		--------------------------------------------------------------------------------------
+		AssessmentCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,    
+		AssessmentCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,    
+		AssessmentFamilyTitle NVARCHAR(100) NULL,    	
+		AdaptiveAssessment_Indicator bit NOT NULL, 
+		AssessmentIdentifier NVARCHAR(60) NOT NULL,   
+		AssessmentTitle NVARCHAR(500) NOT NULL,
+
+
+		ReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+		ReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	
+		ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+		ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	
+		AssessmentScore_Indicator  BIT NOT NULL,
+		AssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+
+		ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
+		ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+	    
+		AssessmentModifiedDate [datetime] NOT NULL,
+
+		ValidFrom DATETIME NOT NULL, 
+		ValidTo DATETIME NOT NULL, 
+		IsCurrent BIT NOT NULL		
+
+		CONSTRAINT PK_StaginAssessment PRIMARY KEY (AssessmentKey)    
+	);
+	
+
+END;
+GO
+
+--course
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'Course' 
+			   AND TABLE_SCHEMA = 'Staging')
+BEGIN
+	CREATE TABLE Staging.Course
+	(
+		CourseKey INT NOT NULL IDENTITY(1,1),  --surrogate
+		[_sourceKey] NVARCHAR(50) NOT NULL,
+	
+		CourseCode NVARCHAR(60) NOT NULL,
+		CourseTitle NVARCHAR(100) NOT NULL,
+		CourseDescription NVARCHAR(100) NOT NULL,
+
+		CourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(60) NOT NULL,
+		CourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(1024) NOT NULL, 
+
+		AcademicSubjectDescriptor_CodeValue  NVARCHAR(60) NOT NULL,
+		AcademicSubjectDescriptor_Description  NVARCHAR(1024) NOT NULL,
+
+		HighSchoolCourseRequirement_Indicator BIT NOT NULL,
+		MinimumAvailableCredits INT NULL,
+		MaximumAvailableCredits INT NULL,
+	
+		GPAApplicabilityType_CodeValue NVARCHAR(50) NULL,
+		GPAApplicabilityType_Description NVARCHAR(50) NULL,
+
+		SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+		SecondaryCourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(50) NOT NULL,
+			
+		CourseModifiedDate [datetime] NOT NULL,
+
+		ValidFrom DATETIME NOT NULL, 
+		ValidTo DATETIME NOT NULL, 
+		IsCurrent BIT NOT NULL		
+
+  		CONSTRAINT PK_StagingCourse PRIMARY KEY (CourseKey)
+    
+	);	
+
+END;
+GO
+
+--attendance by day
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentAttendanceByDay' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.StudentAttendanceByDay
+(
+  StudentAttendanceByDayKey BIGINT IDENTITY(1,1) NOT NULL,
+  StudentKey INT NULL,
+  TimeKey INT NULL,  
+  SchoolKey INT NULL,
+  AttendanceEventCategoryKey INT NULL,
+  AttendanceEventReason nvarchar(500) NOT NULL,
+  
+  [ModifiedDate] [datetime] NULL,
+
+  _sourceStudentKey INT NULL,
+  _sourceTimeKey INT NULL,  
+  _sourceSchoolKey INT NULL,
+  _sourceAttendanceEventCategoryKey INT NULL,
+
+  CONSTRAINT PK_StagingStudentAttendanceByDay PRIMARY KEY (StudentAttendanceByDayKey ASC)  
+);
+GO
+
+--student discipline
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentDiscipline' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.StudentDiscipline
+(
+  StudentDisciplineKey BIGINT IDENTITY(1,1) NOT NULL,
+  StudentKey INT NULL,
+  TimeKey INT NULL, 
+  SchoolKey INT NULL,
+  DisciplineIncidentKey INT NULL,
+
+  _sourceStudentKey INT NULL,
+  _sourceTimeKey INT NULL, 
+  _sourceSchoolKey INT NULL,
+  _sourceDisciplineIncidentKey INT NULL,
+
+  CONSTRAINT PK_StagingStudentDiscipline PRIMARY KEY (StudentDisciplineKey)
+);
+GO
+
+--student assessment score
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentAssessmentScore' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.StudentAssessmentScore
+(
+  StudentAssessmentScoreKey BIGINT IDENTITY(1,1) NOT NULL,
+  StudentKey INT NULL,
+  TimeKey INT NULL, 
+  AssessmentKey INT NULL,
+
+  ScoreResult   NVARCHAR(50) NOT NULL,
+  IntegerScoreResult INT NULL,
+  DecimalScoreResult FLOAT NULL,
+  LiteralScoreResult NVARCHAR(60) NULL,
+  
+  _sourceStudentKey INT NULL,
+  _sourceTimeKey INT NULL, 
+  _sourceAssessmentKey INT NULL,
+
+  CONSTRAINT PK_StagingStudentAssessmentScore PRIMARY KEY (StudentAssessmentScoreKey ASC)
+  
+);
+GO
+
+--student course transcript
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StudentCourseTranscript' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.StudentCourseTranscript
+(
+  StudentCourseTranscriptKey BIGINT IDENTITY(1,1) NOT NULL,
+
+  StudentKey INT NULL,
+  TimeKey INT NULL, 
+  CourseKey INT NULL,
+  SchoolKey INT NULL,
+
+  EarnedCredits INT NOT NULL,
+  PossibleCredits INT NOT NULL,
+  FinalLetterGradeEarned NVARCHAR(10)  NULL,
+  FinalNumericGradeEarned DECIMAL(9,2) NULL,
+    
+  _sourceTimeKey INT NULL, 
+  _sourceCourseKey INT NULL,
+  _sourceSchoolKey INT NULL,
+  _sourceEarnedCredits INT NOT NULL,
+  
+  CONSTRAINT PK_StagingStudentCourseTranscript PRIMARY KEY (StudentCourseTranscriptKey ASC)  
+  
+);
+GO
+
+--Stored Procedures
+----------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_Lineage_GetKey]
 @LoadType nvarchar(1),
 @TableName nvarchar(100)
@@ -1953,7 +1928,7 @@ BEGIN
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(sct.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolCategoryModifiedDate,
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(tIt.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolTitle1StatusModifiedDate,
 
-				--Making sure the first time, the ValidFrom is set 
+				--Making sure the first time, the ValidFrom is set to beginning of time 
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
@@ -3169,7 +3144,7 @@ BEGIN
 			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolCategoryModifiedDate,
 			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(ssa.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolTitle1StatusModifiedDate,
 
-				--Making sure the first time, the ValidFrom is set 
+				--Making sure the first time, the ValidFrom is set to beginning of time 
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
@@ -4024,7 +3999,7 @@ BEGIN
 				
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(di.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS IncidentModifiedDate,
 
-				--Making sure the first time, the ValidFrom is set 
+				--Making sure the first time, the ValidFrom is set to beginning of time 
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
@@ -4276,6 +4251,1138 @@ BEGIN
 		UPDATE [dbo].[ETL_IncrementalLoads]
 		SET [LoadDate] = @LastDateLoaded
 		WHERE [TableName] = N'dbo.DimDisciplineIncident';
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+
+--Dim Assessment
+--------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimAssessment_PopulateStaging]
+@LastLoadDate datetime,
+@NewLoadDate datetime
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+
+		BEGIN TRANSACTION;   
+
+		
+		DECLARE @Assessment TABLE
+		(   
+			AssessmentCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,    
+			AssessmentCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,    
+			AssessmentFamilyTitle NVARCHAR(100) NULL,    	
+			AdaptiveAssessment_Indicator bit NOT NULL, 
+			AssessmentIdentifier NVARCHAR(60) NOT NULL,   
+			ObjectiveAssessmentIdentificationCode NVARCHAR(60) NOT NULL,   
+			AssessmentTitle NVARCHAR(500) NOT NULL,
+
+			ReportingMethodDescriptor_CodeValue NVARCHAR(50) NOT NULL,   
+			ReportingMethodDescriptor_Description NVARCHAR(1024) NOT NULL,   
+	
+			ResultDatatypeTypeDescriptor_CodeValue  NVARCHAR(50) NOT NULL,   
+			ResultDatatypeTypeDescriptor_Description NVARCHAR(1024) NOT NULL,   
+
+
+			AssessmentScore_Indicator  BIT NOT NULL,
+			AssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+
+			ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
+			ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
+
+			AssessmentModifiedDate [datetime] NOT NULL,
+
+			ValidFrom DATETIME NOT NULL, 
+			ValidTo DATETIME NOT NULL, 
+			IsCurrent BIT NOT NULL,
+			IsLegacy BIT NOT NULL
+
+		);
+
+
+
+		--Assessmnent
+		INSERT INTO @Assessment
+		(
+			AssessmentCategoryDescriptor_CodeValue,
+			AssessmentCategoryDescriptor_Description,
+			AssessmentFamilyTitle,
+			AdaptiveAssessment_Indicator,
+			AssessmentIdentifier,
+			ObjectiveAssessmentIdentificationCode,
+			AssessmentTitle,
+
+			ReportingMethodDescriptor_CodeValue,   
+			ReportingMethodDescriptor_Description,   
+	
+			ResultDatatypeTypeDescriptor_CodeValue,   
+			ResultDatatypeTypeDescriptor_Description,   
+
+
+			AssessmentScore_Indicator,
+			AssessmentPerformanceLevel_Indicator,
+
+			ObjectiveAssessmentScore_Indicator,
+			ObjectiveAssessmentPerformanceLevel_Indicator,
+
+			AssessmentModifiedDate,
+			ValidFrom, 
+			ValidTo, 
+			IsCurrent,
+			IsLegacy
+		)
+
+		SELECT DISTINCT 
+			   a_d.CodeValue AS [AssessmentCategoryDescriptor_CodeValue],
+			   a_d.[Description] AS [AssessmentCategoryDescriptor_Description],
+			   a.AssessmentFamilyTitle AS [AssessmentFamilyTitle],
+			   ISNULL(a.AdaptiveAssessment,0) AS [AdaptiveAssessment_Indicator], 
+			   a.AssessmentIdentifier,
+			   'N/A' AS ObjectiveAssessmentIdentificationCode,
+			   a.AssessmentTitle,	   
+
+			   a_s_armt.CodeValue AS ReportingMethodDescriptor_CodeValue,
+			   a_s_armt.[Description] AS ReportingMethodDescriptor_Description,
+			   a_s_rdtt.CodeValue AS ResultDatatypeTypeDescriptor_CodeValue,
+			   a_s_rdtt.[Description] AS ResultDatatypeTypeDescriptor_Description,
+
+			   1 AS AssessmentScore_Indicator,
+			   0 AS AssessmentPerformanceLevel_Indicator,
+  
+			   0 AS ObjectiveAssessmentScore_Indicator,
+			   0 AS ObjectiveAssessmentPerformanceLevel_Indicator,
+			   
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(a.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS AssessmentModifiedDate,
+			   --Making sure the first time, the ValidFrom is set to beginning of time 
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (a.LastModifiedDate)                             
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+			   END AS ValidFrom,
+			   '12/31/9999' AS ValidTo,
+			   1 AS IsCurrent,
+			   0 AS IsLegacy
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Assessment a 
+			 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor a_d ON a.AssessmentCategoryDescriptorId = a_d.DescriptorId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AssessmentScore a_s ON a.AssessmentIdentifier = a_s.AssessmentIdentifier 
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AssessmentReportingMethodType a_s_armt ON a_s.AssessmentReportingMethodTypeId = a_s_armt.AssessmentReportingMethodTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ResultDatatypeType a_s_rdtt ON a_s.ResultDatatypeTypeId = a_s_rdtt.ResultDatatypeTypeId
+		WHERE CHARINDEX('MCAS',a.AssessmentIdentifier,1) = 1 
+		      AND (a.LastModifiedDate > @LastLoadDate AND a.LastModifiedDate <= @NewLoadDate)
+		Union
+		SELECT DISTINCT 
+			   a_d.CodeValue AS [AssessmentCategoryDescriptor_CodeValue],
+			   a_d.[Description] AS [AssessmentCategoryDescriptor_Description],
+			   a.AssessmentFamilyTitle AS [AssessmentFamilyTitle],
+			   ISNULL(a.AdaptiveAssessment,0) AS [AdaptiveAssessment_Indicator], 
+			   a.AssessmentIdentifier,
+				'N/A' AS ObjectiveAssessmentIdentificationCode,
+			   a.AssessmentTitle,	   
+	   
+			   a_pl_armt.CodeValue AS ReportingMethodDescriptor_CodeValue,
+			   a_pl_armt.[Description] AS ReportingMethodDescriptor_Description,
+			   a_pl_rdtt.CodeValue AS ResultDatatypeTypeDescriptor_CodeValue,
+			   a_pl_rdtt.[Description] AS ResultDatatypeTypeDescriptor_Description,
+
+			   0 AS AssessmentScore_Indicator,
+			   1 AS AssessmentPerformanceLevel_Indicator,
+  
+			   0 AS ObjectiveAssessmentScore_Indicator,
+			   0 AS ObjectiveAssessmentPerformanceLevel_Indicator,
+			   
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(a.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS AssessmentModifiedDate,
+			   ---Making sure the first time, the ValidFrom is set to beginning of time 
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (a.LastModifiedDate)                             
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+			   END AS ValidFrom,
+			   '12/31/9999' AS ValidTo,
+			   1 AS IsCurrent,
+			   0 AS IsLegacy
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Assessment a 
+			 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor a_d ON a.AssessmentCategoryDescriptorId = a_d.DescriptorId
+	 
+	 
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AssessmentPerformanceLevel a_pl ON a.AssessmentIdentifier = a_pl.AssessmentIdentifier 
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor a_pl_d ON a_pl.PerformanceLevelDescriptorId = a_pl_d.DescriptorId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AssessmentReportingMethodType a_pl_armt ON a_pl.AssessmentReportingMethodTypeId = a_pl_armt.AssessmentReportingMethodTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ResultDatatypeType a_pl_rdtt ON a_pl.ResultDatatypeTypeId = a_pl_rdtt.ResultDatatypeTypeId
+		WHERE CHARINDEX('MCAS',a.AssessmentIdentifier,1) = 1 
+		      AND (a.LastModifiedDate > @LastLoadDate AND a.LastModifiedDate <= @NewLoadDate)
+		--ORDER BY a.AssessmentIdentifier, ObjectiveAssessmentIdentificationCode, ReportingMethodDescriptor_CodeValue
+
+		
+			
+							
+			
+		--loading legacy data if it has not been loaded.
+		--load types are ignored as this data will only be loaded once.
+		IF NOT EXISTS(SELECT 1 
+		              FROM dbo.DimAssessment 
+					  WHERE CHARINDEX('LegacyDW',_sourceKey,1) > 0)
+			BEGIN
+			   ;WITH UnpivotedScores AS 
+				(
+					SELECT testid,schyear,testtime,studentno,adminyear,grade, scoretype, scorevalue, CASE WHEN a.scoretype IN ('Proficiency level','Proficiency level 2') THEN 1 ELSE 0 END AS isperflevel
+					--INTO [Raw_LegacyDW].[MCASAssessmentScores]
+					FROM (  
+							 --ensuring all score columns have the same data type to avoid conflicts with unpivot
+							 SELECT testid,schyear,testtime,studentno,adminyear,grade,teststatus ,
+								  CAST(rawscore AS NVARCHAR(MAX)) AS [Raw score],
+								  CAST(scaledscore AS NVARCHAR(MAX)) AS [Scale score],
+								  CAST(perflevel AS NVARCHAR(MAX)) AS  [Proficiency level],
+								  CAST(sgp AS NVARCHAR(MAX)) AS [Percentile rank],
+								  CAST(cpi AS NVARCHAR(MAX)) AS [Composite Performance Index],
+								  CAST(perf2 AS NVARCHAR(MAX)) AS [Proficiency level 2]
+     
+							FROM [BPSGranary02].[RAEDatabase].[dbo].[mcasitems] 
+							WHERE schyear >= 2015 ) scores
+					UNPIVOT
+					(
+					   scorevalue
+					   FOR scoretype IN ([Raw score],[Scale score],[Proficiency level],[Percentile rank],[Composite Performance Index],[Proficiency level 2])
+					) AS a
+				)
+
+			   INSERT INTO @Assessment
+				(
+					AssessmentCategoryDescriptor_CodeValue,
+					AssessmentCategoryDescriptor_Description,
+					AssessmentFamilyTitle,
+					AdaptiveAssessment_Indicator,
+					AssessmentIdentifier,
+					ObjectiveAssessmentIdentificationCode,
+					AssessmentTitle,
+
+					ReportingMethodDescriptor_CodeValue,   
+					ReportingMethodDescriptor_Description,   
+	
+					ResultDatatypeTypeDescriptor_CodeValue,   
+					ResultDatatypeTypeDescriptor_Description,   
+
+
+					AssessmentScore_Indicator,
+					AssessmentPerformanceLevel_Indicator,
+
+					ObjectiveAssessmentScore_Indicator,
+					ObjectiveAssessmentPerformanceLevel_Indicator,
+
+					AssessmentModifiedDate,
+					ValidFrom, 
+					ValidTo, 
+					IsCurrent,
+			        IsLegacy
+				)
+
+				SELECT DISTINCT 
+					   'State assessment' AS [AssessmentCategoryDescriptor_CodeValue],
+					   'State assessment' AS [AssessmentCategoryDescriptor_Description],
+					   NULL AS [AssessmentFamilyTitle],
+					   0 AS [AdaptiveAssessment_Indicator], 
+					   testid AS AssessmentIdentifier,
+					   'N/A' AS ObjectiveAssessmentIdentificationCode,
+					   testid AS AssessmentTitle,	   
+
+					   scoretype AS ReportingMethodDescriptor_CodeValue,
+					   scoretype AS ReportingMethodDescriptor_Description,
+					   CASE WHEN isperflevel = 1 THEN 'Level' ELSE 'Integer' end   AS ResultDatatypeTypeDescriptor_CodeValue,
+					   CASE WHEN isperflevel = 1 THEN 'Level' ELSE 'Integer' end AS ResultDatatypeTypeDescriptor_Description,
+	   
+					   CASE WHEN isperflevel = 1 THEN 0 ELSE 1 end AS AssessmentScore_Indicator,
+					   isperflevel AS AssessmentPerformanceLevel_Indicator,
+  
+					   0 AS ObjectiveAssessmentScore_Indicator,
+					   0 AS ObjectiveAssessmentPerformanceLevel_Indicator,
+
+					   '07/01/2015' AS AssessmentModifiedDate,
+					   '07/01/2015' AS ValidFrom,
+					   GETDATE() AS ValidTo,
+					   0 AS IsCurrent,
+					   1 AS IsLegacy
+				FROM UnpivotedScores
+			END
+
+		TRUNCATE TABLE Staging.Assessment
+		INSERT INTO Staging.Assessment
+				   ([_sourceKey]
+				   ,[AssessmentCategoryDescriptor_CodeValue]
+				   ,[AssessmentCategoryDescriptor_Description]
+				   ,[AssessmentFamilyTitle]
+				   ,[AdaptiveAssessment_Indicator]
+				   ,[AssessmentIdentifier]
+				   ,[AssessmentTitle]
+
+				   ,[ReportingMethodDescriptor_CodeValue]
+				   ,[ReportingMethodDescriptor_Description]
+
+				   ,[ResultDatatypeTypeDescriptor_CodeValue]
+				   ,[ResultDatatypeTypeDescriptor_Description]
+
+				   ,[AssessmentScore_Indicator]
+				   ,[AssessmentPerformanceLevel_Indicator]
+
+				   ,[ObjectiveAssessmentScore_Indicator]
+				   ,[ObjectiveAssessmentPerformanceLevel_Indicator]
+				   
+				   ,AssessmentModifiedDate
+
+				   ,[ValidFrom]
+				   ,[ValidTo]
+				   ,[IsCurrent])
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
+		SELECT DISTINCT 
+				CONCAT_WS('|',CASE WHEN IsLegacy = 0 THEN 'Ed-Fi' ELSE 'LegacyDW' END , Convert(NVARCHAR(MAX),AssessmentIdentifier)  + '|' + Convert(NVARCHAR(MAX),ObjectiveAssessmentIdentificationCode) + '|' + Convert(NVARCHAR(MAX),ReportingMethodDescriptor_CodeValue)) AS [_sourceKey]
+				
+				,[AssessmentCategoryDescriptor_CodeValue]
+			    ,[AssessmentCategoryDescriptor_Description]
+			    ,[AssessmentFamilyTitle]
+			    ,[AdaptiveAssessment_Indicator]
+			    ,[AssessmentIdentifier]
+			    ,[AssessmentTitle]
+			    
+			    ,[ReportingMethodDescriptor_CodeValue]
+			    ,[ReportingMethodDescriptor_Description]
+			    
+			    ,[ResultDatatypeTypeDescriptor_CodeValue]
+			    ,[ResultDatatypeTypeDescriptor_Description]
+			    
+			    ,[AssessmentScore_Indicator]
+			    ,[AssessmentPerformanceLevel_Indicator]
+			    
+			    ,[ObjectiveAssessmentScore_Indicator]
+			    ,[ObjectiveAssessmentPerformanceLevel_Indicator]
+	  		    ,AssessmentModifiedDate
+			    ,ValidFrom
+			    ,ValidTo
+			    ,IsCurrent
+		FROM @Assessment;
+			    
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		
+		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+		
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimAssessment_PopulateProduction]
+@LineageKey INT,
+@LastDateLoaded DATETIME
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	    
+		BEGIN TRANSACTION;   
+		 
+		--staging table holds newer records. 
+		--the matching prod records will be valid until the date in which the newest data change was identified		
+		UPDATE prod
+		SET prod.ValidTo = stage.ValidFrom
+		FROM 
+			[dbo].DimAssessment AS prod
+			INNER JOIN Staging.Assessment AS stage ON prod._sourceKey = stage._sourceKey
+		WHERE prod.ValidTo = '12/31/9999'
+
+
+		INSERT INTO dbo.DimAssessment
+		(
+		    _sourceKey,
+		    AssessmentCategoryDescriptor_CodeValue,
+		    AssessmentCategoryDescriptor_Description,
+		    AssessmentFamilyTitle,
+		    AdaptiveAssessment_Indicator,
+		    AssessmentIdentifier,
+		    AssessmentTitle,
+		    ReportingMethodDescriptor_CodeValue,
+		    ReportingMethodDescriptor_Description,
+		    ResultDatatypeTypeDescriptor_CodeValue,
+		    ResultDatatypeTypeDescriptor_Description,
+		    AssessmentScore_Indicator,
+		    AssessmentPerformanceLevel_Indicator,
+		    ObjectiveAssessmentScore_Indicator,
+		    ObjectiveAssessmentPerformanceLevel_Indicator,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent,
+		    LineageKey
+		)
+		
+		
+		SELECT 
+		    _sourceKey,
+		    AssessmentCategoryDescriptor_CodeValue,
+		    AssessmentCategoryDescriptor_Description,
+		    AssessmentFamilyTitle,
+		    AdaptiveAssessment_Indicator,
+		    AssessmentIdentifier,
+		    AssessmentTitle,
+		    ReportingMethodDescriptor_CodeValue,
+		    ReportingMethodDescriptor_Description,
+		    ResultDatatypeTypeDescriptor_CodeValue,
+		    ResultDatatypeTypeDescriptor_Description,
+		    AssessmentScore_Indicator,
+		    AssessmentPerformanceLevel_Indicator,
+		    ObjectiveAssessmentScore_Indicator,
+		    ObjectiveAssessmentPerformanceLevel_Indicator,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent,
+		    @LineageKey
+		FROM Staging.Assessment
+
+		-- updating the EndTime to now and status to Success		
+		UPDATE dbo.ETL_Lineage
+			SET 
+				EndTime = SYSDATETIME(),
+				Status = 'S' -- success
+		WHERE [LineageKey] = @LineageKey;
+	
+	
+		-- Update the LoadDates table with the most current load date
+		UPDATE [dbo].[ETL_IncrementalLoads]
+		SET [LoadDate] = @LastDateLoaded
+		WHERE [TableName] = N'dbo.DimAssessment';
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+
+--Dim Course
+--------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimCourse_PopulateStaging]
+@LastLoadDate datetime,
+@NewLoadDate datetime
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+
+		BEGIN TRANSACTION;   
+
+		TRUNCATE TABLE Staging.Course
+		INSERT INTO Staging.Course
+		(
+		    _sourceKey,
+		    CourseCode,
+		    CourseTitle,
+		    CourseDescription,
+		    CourseLevelCharacteristicTypeDescriptor_CodeValue,
+		    CourseLevelCharacteristicTypeDescriptor_Description,
+		    AcademicSubjectDescriptor_CodeValue,
+		    AcademicSubjectDescriptor_Description,
+		    HighSchoolCourseRequirement_Indicator,
+		    MinimumAvailableCredits,
+		    MaximumAvailableCredits,
+		    GPAApplicabilityType_CodeValue,
+		    GPAApplicabilityType_Description,
+		    SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+		    SecondaryCourseLevelCharacteristicTypeDescriptor_Description,
+		    CourseModifiedDate,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent
+		)
+		
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
+		SELECT DISTINCT 
+			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),c.CourseCode)) AS [_sourceKey],
+			   c.CourseCode,
+			   c.CourseTitle,
+			   c.CourseDescription,
+			   COALESCE(clct.CodeValue,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_CodeValue],
+			   COALESCE(clct.[Description],'N/A') AS [CourseLevelCharacteristicTypeDescriptor_Descriptor],
+
+			   COALESCE(ast.CodeValue,'N/A') AS [AcademicSubjectDescriptor_CodeValue],
+			   COALESCE(ast.[Description],'N/A') AS [AcademicSubjectDescriptor_Descriptor],
+			   COALESCE(c.HighSchoolCourseRequirement,0) AS [HighSchoolCourseRequirement_Indicator],
+
+			   c.MinimumAvailableCredits,
+			   c.MaximumAvailableCredits,
+			   COALESCE(cgat.CodeValue,'N/A')  AS GPAApplicabilityType_CodeValue,
+			   COALESCE(cgat.[Description],'N/A') AS GPAApplicabilityType_Description,
+	   
+			   'N/A' AS [SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue],
+			   'N/A' AS [SecondaryCourseLevelCharacteristicTypeDescriptor_Description],
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(c.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS CourseModifiedDate,
+
+				--Making sure the first time, the ValidFrom is set to beginning of time 
+				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (c.LastModifiedDate)                                               
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+				END AS ValidFrom,
+			   '12/31/9999' as ValidTo,
+				1 AS IsCurrent
+		--select *
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Course c --WHERE c.CourseCode = '094'
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseLevelCharacteristic clc ON c.CourseCode = clc.CourseCode
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseLevelCharacteristicType clct ON clc.CourseLevelCharacteristicTypeId = clct.CourseLevelCharacteristicTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AcademicSubjectType ast ON c.AcademicSubjectDescriptorId = ast.AcademicSubjectTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseGPAApplicabilityType cgat ON c.CourseGPAApplicabilityTypeId = cgat.CourseGPAApplicabilityTypeId
+		WHERE EXISTS (SELECT 1 
+					  FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseOffering co 
+					  WHERE c.CourseCode = co.CourseCode
+						AND co.SchoolYear IN (2019,2020)) AND
+			 (c.LastModifiedDate > @LastLoadDate AND c.LastModifiedDate <= @NewLoadDate)
+			
+							
+			
+		--loading legacy data if it has not been loaded.
+		--load types are ignored as this data will only be loaded once.
+		IF NOT EXISTS(SELECT 1 
+		              FROM dbo.DimCourse 
+					  WHERE CHARINDEX('LegacyDW',_sourceKey,1) > 0)
+			BEGIN
+			   INSERT INTO Staging.Course
+				   (_sourceKey,
+				    CourseCode,
+					CourseTitle,
+					CourseDescription,
+					CourseLevelCharacteristicTypeDescriptor_CodeValue,
+					CourseLevelCharacteristicTypeDescriptor_Description,
+					AcademicSubjectDescriptor_CodeValue,
+					AcademicSubjectDescriptor_Description,
+					HighSchoolCourseRequirement_Indicator,
+					MinimumAvailableCredits,
+					MaximumAvailableCredits,
+					GPAApplicabilityType_CodeValue,
+					GPAApplicabilityType_Description,
+					SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+					SecondaryCourseLevelCharacteristicTypeDescriptor_Description,
+					CourseModifiedDate,
+					ValidFrom,
+					ValidTo,
+					IsCurrent)
+				 SELECT DISTINCT 
+					   CONCAT('LegacyDW|',c.CourseNumber,'-',CASE WHEN s.SectionID = '' THEN 'N/A' ELSE s.SectionID END) AS [_sourceKey],
+					   CONCAT_WS('-',c.CourseNumber,CASE WHEN s.SectionID = '' THEN 'N/A' ELSE s.SectionID END) AS [CourseCode],
+					   c.TitleFull,
+					   c.TitleFull,
+					   COALESCE(c.LevelCode,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_CodeValue],
+					   COALESCE(c.LevelCode,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_Description],
+
+					   COALESCE(c.Department,'N/A') AS [AcademicSubjectDescriptor_CodeValue],
+					   COALESCE(c.Department,'N/A') AS [AcademicSubjectDescriptor_Description],
+					   0 AS [HighSchoolCourseRequirement_Indicator],
+
+					   NULL AS MinimumAvailableCredits,
+					   NULL AS MaximumAvailableCredits,
+					   CASE WHEN COALESCE(c.InGPA,'N') = 'Y' THEN 'Applicable' ELSE 'Not Applicable' END  AS GPAApplicabilityType_CodeValue,
+					   CASE WHEN COALESCE(c.InGPA,'N') = 'Y' THEN 'Applicable' ELSE 'Not Applicable' END AS GPAApplicabilityType_Description,
+					   COALESCE(c.MassCore,'N/A') AS [SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue],
+					   COALESCE(c.MassCore,'N/A') AS [SecondaryCourseLevelCharacteristicTypeDescriptor_Description],
+					   '07/01/2015' AS CourseModifiedDate,
+					   '07/01/2015' AS ValidFrom,
+					    GETDATE() as ValidTo,
+						0 AS IsCurrent
+				--select *
+				FROM [BPSGranary02].[RAEDatabase].[dbo].[CourseCatalog_aspen] c  --   WHERE CourseNumber = '094' AND SchoolYear IN ('2017-2018','2016-2017','2015-2016')
+					 INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[StudentCourseGrade_aspenNewFormat] s ON c.CourseNumber = s.CourseNumber
+																										AND c.SchoolYear = s.SchoolYear
+				WHERE c.SchoolYear IN ('2017-2018','2016-2017','2015-2016');
+			
+
+			END
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		
+		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+		
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimCourse_PopulateProduction]
+@LineageKey INT,
+@LastDateLoaded DATETIME
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	    
+		BEGIN TRANSACTION;   
+		 
+		--staging table holds newer records. 
+		--the matching prod records will be valid until the date in which the newest data change was identified		
+		UPDATE prod
+		SET prod.ValidTo = stage.ValidFrom
+		FROM 
+			[dbo].[DimCourse] AS prod
+			INNER JOIN Staging.Course AS stage ON prod._sourceKey = stage._sourceKey
+		WHERE prod.ValidTo = '12/31/9999'
+
+
+		INSERT INTO dbo.DimCourse
+		(
+		    _sourceKey,
+			CourseCode,
+			CourseTitle,
+			CourseDescription,
+			CourseLevelCharacteristicTypeDescriptor_CodeValue,
+			CourseLevelCharacteristicTypeDescriptor_Description,
+			AcademicSubjectDescriptor_CodeValue,
+			AcademicSubjectDescriptor_Description,
+			HighSchoolCourseRequirement_Indicator,
+			MinimumAvailableCredits,
+			MaximumAvailableCredits,
+			GPAApplicabilityType_CodeValue,
+			GPAApplicabilityType_Description,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_Description,			
+			ValidFrom,
+			ValidTo,
+			IsCurrent,
+			LineageKey
+		)
+		
+		SELECT 
+		    _sourceKey,
+			CourseCode,
+			CourseTitle,
+			CourseDescription,
+			CourseLevelCharacteristicTypeDescriptor_CodeValue,
+			CourseLevelCharacteristicTypeDescriptor_Description,
+			AcademicSubjectDescriptor_CodeValue,
+			AcademicSubjectDescriptor_Description,
+			HighSchoolCourseRequirement_Indicator,
+			MinimumAvailableCredits,
+			MaximumAvailableCredits,
+			GPAApplicabilityType_CodeValue,
+			GPAApplicabilityType_Description,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_Description,			
+			ValidFrom,
+			ValidTo,
+			IsCurrent,
+		    @LineageKey
+		FROM Staging.Course
+
+		-- updating the EndTime to now and status to Success		
+		UPDATE dbo.ETL_Lineage
+			SET 
+				EndTime = SYSDATETIME(),
+				Status = 'S' -- success
+		WHERE [LineageKey] = @LineageKey;
+	
+	
+		-- Update the LoadDates table with the most current load date
+		UPDATE [dbo].[ETL_IncrementalLoads]
+		SET [LoadDate] = @LastDateLoaded
+		WHERE [TableName] = N'dbo.DimCourse';
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+
+
+--Fact 
+--------------------------------------------------------------------
+
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimCourse_PopulateStaging]
+@LastLoadDate datetime,
+@NewLoadDate datetime
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+
+		BEGIN TRANSACTION;   
+
+		TRUNCATE TABLE Staging.Course
+		INSERT INTO Staging.Course
+		(
+		    _sourceKey,
+		    CourseCode,
+		    CourseTitle,
+		    CourseDescription,
+		    CourseLevelCharacteristicTypeDescriptor_CodeValue,
+		    CourseLevelCharacteristicTypeDescriptor_Description,
+		    AcademicSubjectDescriptor_CodeValue,
+		    AcademicSubjectDescriptor_Description,
+		    HighSchoolCourseRequirement_Indicator,
+		    MinimumAvailableCredits,
+		    MaximumAvailableCredits,
+		    GPAApplicabilityType_CodeValue,
+		    GPAApplicabilityType_Description,
+		    SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+		    SecondaryCourseLevelCharacteristicTypeDescriptor_Description,
+		    CourseModifiedDate,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent
+		)
+		
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
+		SELECT DISTINCT 
+			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),c.CourseCode)) AS [_sourceKey],
+			   c.CourseCode,
+			   c.CourseTitle,
+			   c.CourseDescription,
+			   COALESCE(clct.CodeValue,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_CodeValue],
+			   COALESCE(clct.[Description],'N/A') AS [CourseLevelCharacteristicTypeDescriptor_Descriptor],
+
+			   COALESCE(ast.CodeValue,'N/A') AS [AcademicSubjectDescriptor_CodeValue],
+			   COALESCE(ast.[Description],'N/A') AS [AcademicSubjectDescriptor_Descriptor],
+			   COALESCE(c.HighSchoolCourseRequirement,0) AS [HighSchoolCourseRequirement_Indicator],
+
+			   c.MinimumAvailableCredits,
+			   c.MaximumAvailableCredits,
+			   COALESCE(cgat.CodeValue,'N/A')  AS GPAApplicabilityType_CodeValue,
+			   COALESCE(cgat.[Description],'N/A') AS GPAApplicabilityType_Description,
+	   
+			   'N/A' AS [SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue],
+			   'N/A' AS [SecondaryCourseLevelCharacteristicTypeDescriptor_Description],
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(c.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS CourseModifiedDate,
+
+				--Making sure the first time, the ValidFrom is set to beginning of time 
+				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (c.LastModifiedDate)                                               
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+				END AS ValidFrom,
+			   '12/31/9999' as ValidTo,
+				1 AS IsCurrent
+		--select *
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Course c --WHERE c.CourseCode = '094'
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseLevelCharacteristic clc ON c.CourseCode = clc.CourseCode
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseLevelCharacteristicType clct ON clc.CourseLevelCharacteristicTypeId = clct.CourseLevelCharacteristicTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.AcademicSubjectType ast ON c.AcademicSubjectDescriptorId = ast.AcademicSubjectTypeId
+			 LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseGPAApplicabilityType cgat ON c.CourseGPAApplicabilityTypeId = cgat.CourseGPAApplicabilityTypeId
+		WHERE EXISTS (SELECT 1 
+					  FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseOffering co 
+					  WHERE c.CourseCode = co.CourseCode
+						AND co.SchoolYear IN (2019,2020)) AND
+			 (c.LastModifiedDate > @LastLoadDate AND c.LastModifiedDate <= @NewLoadDate)
+			
+							
+			
+		--loading legacy data if it has not been loaded.
+		--load types are ignored as this data will only be loaded once.
+		IF NOT EXISTS(SELECT 1 
+		              FROM dbo.DimCourse 
+					  WHERE CHARINDEX('LegacyDW',_sourceKey,1) > 0)
+			BEGIN
+			   INSERT INTO Staging.Course
+				   (_sourceKey,
+				    CourseCode,
+					CourseTitle,
+					CourseDescription,
+					CourseLevelCharacteristicTypeDescriptor_CodeValue,
+					CourseLevelCharacteristicTypeDescriptor_Description,
+					AcademicSubjectDescriptor_CodeValue,
+					AcademicSubjectDescriptor_Description,
+					HighSchoolCourseRequirement_Indicator,
+					MinimumAvailableCredits,
+					MaximumAvailableCredits,
+					GPAApplicabilityType_CodeValue,
+					GPAApplicabilityType_Description,
+					SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+					SecondaryCourseLevelCharacteristicTypeDescriptor_Description,
+					CourseModifiedDate,
+					ValidFrom,
+					ValidTo,
+					IsCurrent)
+				 SELECT DISTINCT 
+					   CONCAT('LegacyDW|',c.CourseNumber,'-',CASE WHEN s.SectionID = '' THEN 'N/A' ELSE s.SectionID END) AS [_sourceKey],
+					   CONCAT_WS('-',c.CourseNumber,CASE WHEN s.SectionID = '' THEN 'N/A' ELSE s.SectionID END) AS [CourseCode],
+					   c.TitleFull,
+					   c.TitleFull,
+					   COALESCE(c.LevelCode,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_CodeValue],
+					   COALESCE(c.LevelCode,'N/A') AS [CourseLevelCharacteristicTypeDescriptor_Description],
+
+					   COALESCE(c.Department,'N/A') AS [AcademicSubjectDescriptor_CodeValue],
+					   COALESCE(c.Department,'N/A') AS [AcademicSubjectDescriptor_Description],
+					   0 AS [HighSchoolCourseRequirement_Indicator],
+
+					   NULL AS MinimumAvailableCredits,
+					   NULL AS MaximumAvailableCredits,
+					   CASE WHEN COALESCE(c.InGPA,'N') = 'Y' THEN 'Applicable' ELSE 'Not Applicable' END  AS GPAApplicabilityType_CodeValue,
+					   CASE WHEN COALESCE(c.InGPA,'N') = 'Y' THEN 'Applicable' ELSE 'Not Applicable' END AS GPAApplicabilityType_Description,
+					   COALESCE(c.MassCore,'N/A') AS [SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue],
+					   COALESCE(c.MassCore,'N/A') AS [SecondaryCourseLevelCharacteristicTypeDescriptor_Description],
+					   '07/01/2015' AS CourseModifiedDate,
+					   '07/01/2015' AS ValidFrom,
+					    GETDATE() as ValidTo,
+						0 AS IsCurrent
+				--select *
+				FROM [BPSGranary02].[RAEDatabase].[dbo].[CourseCatalog_aspen] c  --   WHERE CourseNumber = '094' AND SchoolYear IN ('2017-2018','2016-2017','2015-2016')
+					 INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[StudentCourseGrade_aspenNewFormat] s ON c.CourseNumber = s.CourseNumber
+																										AND c.SchoolYear = s.SchoolYear
+				WHERE c.SchoolYear IN ('2017-2018','2016-2017','2015-2016');
+			
+
+			END
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		
+		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+		
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimCourse_PopulateProduction]
+@LineageKey INT,
+@LastDateLoaded DATETIME
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	    
+		BEGIN TRANSACTION;   
+		 
+		--staging table holds newer records. 
+		--the matching prod records will be valid until the date in which the newest data change was identified		
+		UPDATE prod
+		SET prod.ValidTo = stage.ValidFrom
+		FROM 
+			[dbo].[DimCourse] AS prod
+			INNER JOIN Staging.Course AS stage ON prod._sourceKey = stage._sourceKey
+		WHERE prod.ValidTo = '12/31/9999'
+
+
+		INSERT INTO dbo.DimCourse
+		(
+		    _sourceKey,
+			CourseCode,
+			CourseTitle,
+			CourseDescription,
+			CourseLevelCharacteristicTypeDescriptor_CodeValue,
+			CourseLevelCharacteristicTypeDescriptor_Description,
+			AcademicSubjectDescriptor_CodeValue,
+			AcademicSubjectDescriptor_Description,
+			HighSchoolCourseRequirement_Indicator,
+			MinimumAvailableCredits,
+			MaximumAvailableCredits,
+			GPAApplicabilityType_CodeValue,
+			GPAApplicabilityType_Description,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_Description,			
+			ValidFrom,
+			ValidTo,
+			IsCurrent,
+			LineageKey
+		)
+		
+		SELECT 
+		    _sourceKey,
+			CourseCode,
+			CourseTitle,
+			CourseDescription,
+			CourseLevelCharacteristicTypeDescriptor_CodeValue,
+			CourseLevelCharacteristicTypeDescriptor_Description,
+			AcademicSubjectDescriptor_CodeValue,
+			AcademicSubjectDescriptor_Description,
+			HighSchoolCourseRequirement_Indicator,
+			MinimumAvailableCredits,
+			MaximumAvailableCredits,
+			GPAApplicabilityType_CodeValue,
+			GPAApplicabilityType_Description,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
+			SecondaryCourseLevelCharacteristicTypeDescriptor_Description,			
+			ValidFrom,
+			ValidTo,
+			IsCurrent,
+		    @LineageKey
+		FROM Staging.Course
+
+		-- updating the EndTime to now and status to Success		
+		UPDATE dbo.ETL_Lineage
+			SET 
+				EndTime = SYSDATETIME(),
+				Status = 'S' -- success
+		WHERE [LineageKey] = @LineageKey;
+	
+	
+		-- Update the LoadDates table with the most current load date
+		UPDATE [dbo].[ETL_IncrementalLoads]
+		SET [LoadDate] = @LastDateLoaded
+		WHERE [TableName] = N'dbo.DimCourse';
 
 		COMMIT TRANSACTION;		
 	END TRY
