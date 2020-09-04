@@ -80,6 +80,11 @@ BEGIN
    DROP TABLE IF EXISTS Staging.Assessment;
    DROP TABLE IF EXISTS Staging.Course;
 
+   DROP TABLE IF EXISTS Staging.StudentAttendanceByDay;
+   DROP TABLE IF EXISTS Staging.StudentDiscipline;
+   DROP TABLE IF EXISTS Staging.StudentAssessmentScore;
+   DROP TABLE IF EXISTS Staging.StudentCourseTranscript;
+
    --functions
    DROP FUNCTION IF EXISTS dbo.Func_ETL_GetFullName;
    DROP FUNCTION IF EXISTS dbo.Func_ETL_GetHolidayFromDate;
@@ -5581,10 +5586,9 @@ BEGIN
 END;
 GO
 
-
+/*
 --Fact 
---------------------------------------------------------------------
-
+----------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_FactStudentAttendanceByDay_PopulateStaging]
 @LastLoadDate datetime,
 @NewLoadDate datetime
@@ -5608,29 +5612,22 @@ BEGIN
 
 		BEGIN TRANSACTION;   
 
-		TRUNCATE TABLE Staging.Course
-		INSERT INTO Staging.Course
+		TRUNCATE TABLE Staging.StudentAttendanceByDay
+		INSERT INTO Staging.StudentAttendanceByDay
 		(
 		    _sourceKey,
-		    CourseCode,
-		    CourseTitle,
-		    CourseDescription,
-		    CourseLevelCharacteristicTypeDescriptor_CodeValue,
-		    CourseLevelCharacteristicTypeDescriptor_Description,
-		    AcademicSubjectDescriptor_CodeValue,
-		    AcademicSubjectDescriptor_Description,
-		    HighSchoolCourseRequirement_Indicator,
-		    MinimumAvailableCredits,
-		    MaximumAvailableCredits,
-		    GPAApplicabilityType_CodeValue,
-		    GPAApplicabilityType_Description,
-		    SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue,
-		    SecondaryCourseLevelCharacteristicTypeDescriptor_Description,
-		    CourseModifiedDate,
-		    ValidFrom,
-		    ValidTo,
-		    IsCurrent
+		    StudentKey,
+		    TimeKey,
+		    SchoolKey,
+		    AttendanceEventCategoryKey,
+		    AttendanceEventReason,
+		    ModifiedDate,
+		    _sourceStudentKey,
+		    _sourceTimeKey,
+		    _sourceSchoolKey,
+		    _sourceAttendanceEventCategoryKey
 		)
+		
 		
         --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT DISTINCT 
@@ -5886,6 +5883,8 @@ BEGIN
 	END CATCH;
 END;
 GO
+
+*/
 
 /*
 CREATE COLUMNSTORE INDEX CSI_FactStudentDiscipline
