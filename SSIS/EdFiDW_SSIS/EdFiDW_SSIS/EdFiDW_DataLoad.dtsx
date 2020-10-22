@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="171"
-  DTS:VersionGUID="{829F878E-3BD1-4066-91FB-022EC132109F}">
+  DTS:VersionBuild="203"
+  DTS:VersionGUID="{BA8C690E-2F5A-42F9-9ECA-17000F15737D}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAB3TmyuyPIUOC++sy0f4ulQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADpyT5/VNE7CyjlMmR7hR4Y5V3qBksi6N3PCo9ApU4WMgAAAAAOgAAAAAIAACAAAACw00IOntcf3q57oXm684Bd6H1Iq6Q0bq3y6SC8Eamb2iAAAAAWmxknTaiZaoPLDf0tjLDnhU6SLiY0XpeOuxFT/yhaWEAAAABCM/eyT/pagjdFjiLOGNUY44tySZcagOcsBRfrPTy0vmNr9xRRmAhzQfo3Wnkc89zq8NIquQwQV9oLOO9782Dp</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAMIZZ03Gw6UytDLU++9TldQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAAFdZwesDrXGo+buf10PVc8AihRK2A1qm4aPOU6nJkftQAAAAAOgAAAAAIAACAAAAC9eTzIunDKELcp1hIQA7MpRe6EuW3dMExyGs1Ky/43aCAAAABq+KcAguQcBHh1CftAPsLYhEtZ8DBjCU2pdL0AYkO/LUAAAAChrZp35iJoVN2oEXaNNxpbMkLTU1GN22aVr6+SCEVBECs0glH/OJEoquiQymlqRTer3AE7gVmSLkJCo9BVtelZ</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -746,17 +746,17 @@
       </DTS:PrecedenceConstraints>
     </DTS:Executable>
     <DTS:Executable
-      DTS:refId="Package\Sequence Container"
+      DTS:refId="Package\Each of these containers run regardless of whether others succeed"
       DTS:CreationName="STOCK:SEQUENCE"
       DTS:Description="Sequence Container"
       DTS:DTSID="{EE682A38-250F-48BF-9665-69BEA0AA55C2}"
       DTS:ExecutableType="STOCK:SEQUENCE"
       DTS:LocaleID="-1"
-      DTS:ObjectName="Sequence Container">
+      DTS:ObjectName="Each of these containers run regardless of whether others succeed">
       <DTS:Variables />
       <DTS:Executables>
         <DTS:Executable
-          DTS:refId="Package\Sequence Container\Assessment"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment"
           DTS:CreationName="STOCK:SEQUENCE"
           DTS:Description="Sequence Container"
           DTS:DTSID="{0A1EF05A-E611-4CAE-96AF-83F6DEC02B69}"
@@ -766,7 +766,7 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Assessment\Dim Assessment"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{8C28A59C-74F4-451B-9B04-5ED8F0D684C4}"
@@ -776,7 +776,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{55348CDA-AB57-49F2-B84E-B8A70C2B560B}"
@@ -792,7 +792,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{C1FD2237-9ECB-402A-B8C0-5F29B80C2C8E}"
@@ -820,7 +820,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{70F9BA72-671C-4259-85F2-4B0E181E3875}"
@@ -850,7 +850,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{83FCD6DF-91DA-4B23-8F82-11BF24EA7A23}"
@@ -880,7 +880,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{6DA285AE-A9CF-4CD4-B850-B8D5C3A501A5}"
@@ -896,7 +896,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{E5F50F1D-7876-4ACA-BDA2-FADB1A437529}"
@@ -932,49 +932,49 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{A133CDAA-2147-4B96-A0BC-E35A5FBD627F}"
-                  DTS:From="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{ABD2C7AF-9228-44DD-83C4-5797CA6F14C6}"
-                  DTS:From="Package\Sequence Container\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{840D49CF-8432-4B16-AF61-D418475EABE0}"
-                  DTS:From="Package\Sequence Container\Assessment\Dim Assessment\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Assessment\Dim Assessment\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{7FAFAF53-CFA0-40C9-94B0-023AD8D098D0}"
-                  DTS:From="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Assessment\Dim Assessment\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{15DCE556-8B2D-460C-80E6-059884AA8563}"
-                  DTS:From="Package\Sequence Container\Assessment\Dim Assessment\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{9529E63D-2BFD-433B-B54B-AF13D0580629}"
@@ -984,7 +984,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{43068E97-60E3-4858-B46C-9F2C87E01D03}"
@@ -1000,7 +1000,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{87661568-F16F-436C-9423-52AB9ACEDD62}"
@@ -1028,7 +1028,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{C5869D83-D83C-43AA-8C76-13C025B40CED}"
@@ -1058,7 +1058,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{793F12E8-6A5E-4FEC-A14E-1C3D31E83828}"
@@ -1088,7 +1088,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{13806AF4-DA77-46D6-8AEE-92E9B42BFBC3}"
@@ -1100,11 +1100,11 @@
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <ExpressionTask
-                      Expression="@[User::TableName]=&quot;dbo.StudentAssessmentScore&quot;" />
+                      Expression="@[User::TableName]=&quot;dbo.FactStudentAssessmentScore&quot;" />
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{52A066CD-A255-46DF-B146-8DA5D8CD18FF}"
@@ -1140,61 +1140,61 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{4CD35594-9A99-455D-BD7C-FD3922280075}"
-                  DTS:From="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{DB90E3B7-B6D6-4FB0-850A-5EB51956A303}"
-                  DTS:From="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{ADDD0977-331C-489F-BE13-54A3DB6F5E2E}"
-                  DTS:From="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{680C68F1-9684-4574-AF95-E62CC306F23C}"
-                  DTS:From="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{E603D071-F2FD-4BE1-A94B-22779CF687AC}"
-                  DTS:From="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
           </DTS:Executables>
           <DTS:PrecedenceConstraints>
             <DTS:PrecedenceConstraint
-              DTS:refId="Package\Sequence Container\Assessment.PrecedenceConstraints[Constraint]"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Assessment.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
               DTS:DTSID="{0083E88B-0F62-4F87-80C9-ABFC1D26C4F7}"
-              DTS:From="Package\Sequence Container\Assessment\Dim Assessment"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Sequence Container\Attendance"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance"
           DTS:CreationName="STOCK:SEQUENCE"
           DTS:Description="Sequence Container"
           DTS:DTSID="{D3C11FF6-D3C9-4E8F-8321-A4A41D366380}"
@@ -1204,7 +1204,7 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{8BFDB6AC-4683-4CFB-A65B-B81D28108E6F}"
@@ -1214,7 +1214,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{0B5EF873-3FF9-4DFE-8527-7786BCFF1B7F}"
@@ -1230,7 +1230,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{20E40CF3-2111-47BF-AB5C-67F4DA1CC311}"
@@ -1258,7 +1258,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{2BB54F67-E56D-4D6F-8061-399FD0AD1BC2}"
@@ -1288,7 +1288,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{CD2EC92C-E8A2-4A3E-AA37-3F211C86523C}"
@@ -1318,7 +1318,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{791E2C51-7C94-43CC-8539-1E9A1B28C5DA}"
@@ -1334,7 +1334,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{7B3BA827-8EC0-49D9-BE97-7B723749C603}"
@@ -1370,49 +1370,49 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{E7307553-F4C7-4FF7-9A97-3ABDFEB2C6FA}"
-                  DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{46C13A5B-3FB7-4977-8ED5-BADDFF6C2A37}"
-                  DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{05E0439E-27C2-4AB6-B115-A2340066118A}"
-                  DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{E798439B-D9D8-4F42-B7B5-D0F1B0063089}"
-                  DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{0011BCB3-10CC-4325-B0C7-4307B3C410C0}"
-                  DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{A2A8D5A3-F739-46E2-8955-047F11F4053E}"
@@ -1422,7 +1422,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{ED21E93A-307B-46DA-946B-D6DA5D056D4D}"
@@ -1438,7 +1438,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{07DE6462-3169-413F-A21E-3EEEAF2CB913}"
@@ -1466,7 +1466,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{97480077-7AB5-4E21-8751-1EE3766749D1}"
@@ -1496,7 +1496,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{D13A12F7-2059-4189-AABE-106A4BA8C42B}"
@@ -1526,7 +1526,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{010DBCBA-B5CE-43FB-AA68-C388A35F8C99}"
@@ -1542,7 +1542,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{AB6AD64A-0E2A-42FC-BEF2-B7EBCA9350B6}"
@@ -1578,61 +1578,61 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{187EE6FE-D9E1-4575-A82B-562606237AA9}"
-                  DTS:From="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{BBA18327-7306-4C23-9B8D-D4B5655FFC48}"
-                  DTS:From="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{F636CF9B-B7CD-4D7B-8246-140D3AED02B6}"
-                  DTS:From="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{6FB6BEA2-2E4D-4FA2-B47D-4B8CA5B8E59E}"
-                  DTS:From="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{553DE1D5-3C03-48F1-9092-06CCBE4C980B}"
-                  DTS:From="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
           </DTS:Executables>
           <DTS:PrecedenceConstraints>
             <DTS:PrecedenceConstraint
-              DTS:refId="Package\Sequence Container\Attendance.PrecedenceConstraints[Constraint]"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Attendance.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
               DTS:DTSID="{8119373C-CA41-44E9-A480-7D870E3AEB97}"
-              DTS:From="Package\Sequence Container\Attendance\Dim AttendanceEventCategory"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Sequence Container\Course Grades"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades"
           DTS:CreationName="STOCK:SEQUENCE"
           DTS:Description="Sequence Container"
           DTS:DTSID="{F91C2FB3-FB9E-4CE0-A299-756E3538E2F0}"
@@ -1642,7 +1642,7 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Course Grades\Dim Course"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{8B579A78-C099-46FF-8084-5BFC166B72D6}"
@@ -1652,7 +1652,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{BB877822-3884-464B-99F7-DBC7D4EDD4B3}"
@@ -1668,7 +1668,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{23D1AABB-7340-4C21-8CB0-53E1F1A8A322}"
@@ -1696,7 +1696,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{4FE3C567-E24D-4EC6-8DB4-15A337A0FE49}"
@@ -1726,7 +1726,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{C543CA49-8A9F-47CB-816B-A1D92090495A}"
@@ -1756,7 +1756,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{50E94811-46CC-4579-99CC-945BE35809DA}"
@@ -1772,7 +1772,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{5809D9B6-4D4A-41FE-A01F-01BAE9A922E7}"
@@ -1808,49 +1808,49 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{FEEDD8BB-1D04-440C-BBBE-BE527A14F167}"
-                  DTS:From="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Course Grades\Dim Course\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{6DF549B1-6778-42FA-A298-B3CB17760ED5}"
-                  DTS:From="Package\Sequence Container\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{85AA8AA1-1BA4-45C8-B9D3-A6B034DA7F6E}"
-                  DTS:From="Package\Sequence Container\Course Grades\Dim Course\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Course Grades\Dim Course\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{567B05A1-25F5-491A-A012-2EBB90E4549A}"
-                  DTS:From="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Course Grades\Dim Course\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{D7E3E43D-08A8-4513-809C-F79A9499BB8C}"
-                  DTS:From="Package\Sequence Container\Course Grades\Dim Course\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{A607584C-0727-48A6-8261-E30CED6315A7}"
@@ -1860,7 +1860,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{F089DD01-0866-450A-A48E-183793B84541}"
@@ -1876,7 +1876,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{E2587EC1-25CF-4A1F-9F12-A0F8FE61D265}"
@@ -1904,7 +1904,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{3E799FFB-C9A7-4915-9CAB-C9F14A9F655D}"
@@ -1934,7 +1934,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{FD1C51D8-C1B3-49FA-86F0-52517B46C9C4}"
@@ -1964,7 +1964,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{EC36E0BC-469C-4CE4-A555-719064059F07}"
@@ -1980,7 +1980,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{17AC4249-7E20-498E-8AB4-D4C410E30614}"
@@ -2016,61 +2016,61 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{17045312-CD5F-4A6F-BDE2-5BCAE7EBF1B0}"
-                  DTS:From="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{95E8F764-8A3D-4490-8D69-295C55DC9A6E}"
-                  DTS:From="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{187A1567-261E-47B3-B451-C1DDFF286003}"
-                  DTS:From="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{6ADEA8E1-147F-4D61-A18E-9A09CB71CF64}"
-                  DTS:From="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{7D9AA083-915C-4CF6-B08D-3722FB7D5492}"
-                  DTS:From="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
           </DTS:Executables>
           <DTS:PrecedenceConstraints>
             <DTS:PrecedenceConstraint
-              DTS:refId="Package\Sequence Container\Course Grades.PrecedenceConstraints[Constraint]"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
               DTS:DTSID="{4C9B0289-4FF8-465E-933D-DB48FF1515DB}"
-              DTS:From="Package\Sequence Container\Course Grades\Dim Course"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
         <DTS:Executable
-          DTS:refId="Package\Sequence Container\Discipline"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline"
           DTS:CreationName="STOCK:SEQUENCE"
           DTS:Description="Sequence Container"
           DTS:DTSID="{260C99BC-B786-48A9-BE88-7D12C7D360EE}"
@@ -2080,7 +2080,7 @@
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{912822E2-951E-4983-811F-F6A1BF5D6AC9}"
@@ -2090,7 +2090,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{2978289C-5A23-4C12-AF3E-2ECB5BF3FE35}"
@@ -2106,7 +2106,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{5FAE2EDD-11FD-4052-8755-124C2701555C}"
@@ -2134,7 +2134,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{0CA94088-91C9-42DC-A72E-F582C2B3F091}"
@@ -2164,7 +2164,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{41FA5BD0-E748-4459-B9E0-CE6DE4ADCF53}"
@@ -2194,7 +2194,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{AC48A10F-BF9E-4331-9975-711E116CF4E4}"
@@ -2210,7 +2210,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{5462B186-23CC-4726-8703-7ABF8305DC7A}"
@@ -2246,49 +2246,49 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{45B053FA-DF7C-4BA3-B461-9513449024E7}"
-                  DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{23986401-7817-497D-9892-E255D11F6124}"
-                  DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{B67BA7E0-6E8F-433C-8950-BB6939EF7920}"
-                  DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{9BE523D6-557E-4761-B69B-A1BA119CB77A}"
-                  DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{8D449D99-42CA-416D-9189-E5CF00B680DC}"
-                  DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
             <DTS:Executable
-              DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
               DTS:DTSID="{4791A6E7-E9CA-4000-9011-2ADECC305A0A}"
@@ -2298,7 +2298,7 @@
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{239A5017-2C15-49E1-BAEA-C67F6A43B414}"
@@ -2314,7 +2314,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
                   DTS:DTSID="{31B08D8D-1B07-4AB1-9EE0-39F429916BD7}"
@@ -2342,7 +2342,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
                   DTS:DTSID="{FF98D900-6F5B-44FE-8152-DC52239AF4BE}"
@@ -2372,7 +2372,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
                   DTS:DTSID="{E8A2BB02-6288-412C-B0C6-CF161895052C}"
@@ -2402,7 +2402,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
                   DTS:DTSID="{F33EDE84-6E0E-48EC-8AA6-4F85C1A0FFCB}"
@@ -2418,7 +2418,7 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
                   DTS:DTSID="{AB5696E5-218F-474E-81AB-443B948F61B8}"
@@ -2454,87 +2454,87 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
                   DTS:DTSID="{F298B999-FB91-4AF4-8231-08C2E5D41944}"
-                  DTS:From="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
                   DTS:DTSID="{E7B819DD-8A07-437F-99FE-F59C3D40B79B}"
-                  DTS:From="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
                   DTS:DTSID="{C24CBCAC-6639-476A-9248-FF09B24479C4}"
-                  DTS:From="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Staging"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
                   DTS:DTSID="{B260C160-369F-4EC6-9F16-91758D043831}"
-                  DTS:From="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
                   DTS:DTSID="{4C0645AF-9045-484B-A829-690517211052}"
-                  DTS:From="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Set Table Name"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
           </DTS:Executables>
           <DTS:PrecedenceConstraints>
             <DTS:PrecedenceConstraint
-              DTS:refId="Package\Sequence Container\Discipline.PrecedenceConstraints[Constraint]"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Discipline.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
               DTS:DTSID="{EFE37105-8C0D-4EAE-9184-43183AEC54F5}"
-              DTS:From="Package\Sequence Container\Discipline\Dim DisciplineIncident"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Sequence Container\Discipline\Fcat StudentDiscipline" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
       </DTS:Executables>
       <DTS:PrecedenceConstraints>
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 3]"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
           DTS:CreationName=""
           DTS:DTSID="{CBEAEE07-18E7-4BB3-932F-5F38B58FCBC5}"
-          DTS:From="Package\Sequence Container\Attendance"
+          DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 3"
-          DTS:To="Package\Sequence Container\Discipline"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline"
           DTS:Value="2" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 4]"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 4]"
           DTS:CreationName=""
           DTS:DTSID="{EEC60902-A6E8-4BBD-96FA-020DD373D536}"
-          DTS:From="Package\Sequence Container\Discipline"
+          DTS:From="Package\Each of these containers run regardless of whether others succeed\Discipline"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 4"
-          DTS:To="Package\Sequence Container\Assessment"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Assessment"
           DTS:Value="2" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Sequence Container.PrecedenceConstraints[Constraint 5]"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 5]"
           DTS:CreationName=""
           DTS:DTSID="{CF5DFDF2-4519-4BE7-8603-2896DFB1E2B3}"
-          DTS:From="Package\Sequence Container\Assessment"
+          DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 5"
-          DTS:To="Package\Sequence Container\Course Grades"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades"
           DTS:Value="2" />
       </DTS:PrecedenceConstraints>
     </DTS:Executable>
@@ -2547,7 +2547,7 @@
       DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
       DTS:LogicalAnd="True"
       DTS:ObjectName="Constraint"
-      DTS:To="Package\Sequence Container" />
+      DTS:To="Package\Each of these containers run regardless of whether others succeed" />
   </DTS:PrecedenceConstraints>
   <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
 <!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
@@ -2561,169 +2561,6 @@
     <LayoutInfo>
       <GraphLayout
         Capacity="256" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
-        <NodeLayout
-          Size="267,43"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="266,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Previous Load"
-          TopLeft="30.5535728508349,236.325196309716" />
-        <NodeLayout
-          Size="269,44"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="268,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Staging"
-          TopLeft="31.8705371914306,305.011285894113" />
-        <NodeLayout
-          Size="266,47"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="271,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint]"
-          TopLeft="161.258930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.437501457521,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937121"
-              Start="0,0"
-              End="0,20.5469950937121">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.5469950937121" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 3]"
-          TopLeft="164.167412164655,347.011285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.501882960285"
-              Start="0,0"
-              End="0,21.001882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.001882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 4]"
-          TopLeft="164.712055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,26.6860895843969"
-              Start="0,0"
-              End="0,19.1860895843969">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.1860895843969" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.524553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,466"
-          Size="317,509"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
-          TopLeft="776.638384073329,29.571428571429" />
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 1]"
-          TopLeft="720.388384073331,283.554509823838">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="56.2499999999984,0"
-              Start="0,0"
-              End="48.7499999999984,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="48.7499999999984,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <NodeLayout
           Size="276,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load"
@@ -2865,20 +2702,44 @@
           Size="317,501"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
           TopLeft="30.5,29.5714285714287" />
+        <NodeLayout
+          Size="267,43"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="266,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Previous Load"
+          TopLeft="30.5535728508349,236.325196309716" />
+        <NodeLayout
+          Size="269,44"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="268,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Staging"
+          TopLeft="31.8705371914306,305.011285894113" />
+        <NodeLayout
+          Size="266,47"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="271,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint]"
-          TopLeft="347.5,281.554509823838">
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint]"
+          TopLeft="161.258930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="55.8883840733311,0"
+              EndConnector="0,28.8421066154074"
               Start="0,0"
-              End="48.3883840733311,0">
+              End="0,21.3421066154074">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="48.3883840733311,0" />
+                    End="0,21.3421066154074" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -2887,6 +2748,101 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.437501457521,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937121"
+              Start="0,0"
+              End="0,20.5469950937121">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937121" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 3]"
+          TopLeft="164.167412164655,347.011285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.501882960285"
+              Start="0,0"
+              End="0,21.001882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.001882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 4]"
+          TopLeft="164.712055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,26.6860895843969"
+              Start="0,0"
+              End="0,19.1860895843969">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.1860895843969" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.524553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="317,466"
+          Size="317,509"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
+          TopLeft="776.638384073329,29.571428571429" />
         <NodeLayout
           Size="268,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Current Load"
@@ -3028,6 +2984,50 @@
           Size="317,511"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension"
           TopLeft="403.388384073331,27.5375910762467" />
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint]"
+          TopLeft="347.5,281.554509823838">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="55.8883840733311,0"
+              Start="0,0"
+              End="48.3883840733311,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="48.3883840733311,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 1]"
+          TopLeft="720.388384073331,283.554509823838">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="56.2499999999984,0"
+              Start="0,0"
+              End="48.7499999999984,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="48.7499999999984,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
@@ -3037,30 +3037,30 @@
           TopLeft="731.25,28.928571428571" />
         <NodeLayout
           Size="268,43"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Current Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
           Size="272,42"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Get Date Of Previous Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
           Size="269,44"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Populate Production"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
           Size="272,42"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Populate Staging"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
           Size="266,47"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Set Table Name"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
           Size="275,42"
-          Id="Package\Sequence Container\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint]"
           TopLeft="162.508930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3082,7 +3082,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 1]"
           TopLeft="163.68750145752,208.278201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3104,7 +3104,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 3]"
           TopLeft="161.417412164655,348.261285894113">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3126,7 +3126,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 4]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 4]"
           TopLeft="162.212055021133,278.325196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3148,7 +3148,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment.PrecedenceConstraints[Constraint 5]"
           TopLeft="161.774553582239,69.9448659251289">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3174,34 +3174,34 @@
           IsExpanded="True"
           PanelSize="317,474"
           Size="317,517"
-          Id="Package\Sequence Container\Assessment\Dim Assessment"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment"
           TopLeft="52.3214285714289,19.6428571428571" />
         <NodeLayout
           Size="268,43"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
           Size="267,42"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
           Size="272,44"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Production"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
           Size="275,42"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Populate Staging"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
           Size="266,47"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Set Table Name"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
           Size="272,42"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642062,166.278201216004" />
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint]"
           TopLeft="161.758930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3223,7 +3223,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 1]"
           TopLeft="161.687501457521,208.278201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3245,7 +3245,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 3]"
           TopLeft="162.917412164655,348.261285894113">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3267,7 +3267,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 4]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 4]"
           TopLeft="161.712055021133,278.325196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3289,7 +3289,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore.PrecedenceConstraints[Constraint 5]"
           TopLeft="161.774553582239,69.9448659251289">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3315,10 +3315,10 @@
           IsExpanded="True"
           PanelSize="317,477"
           Size="317,520"
-          Id="Package\Sequence Container\Assessment\Fcat StudentAssessmentScore"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore"
           TopLeft="55.5714285714284,570.357142857143" />
         <EdgeLayout
-          Id="Package\Sequence Container\Assessment.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment.PrecedenceConstraints[Constraint]"
           TopLeft="212.446428571429,536.642857142857">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -3344,728 +3344,34 @@
           IsExpanded="True"
           PanelSize="418,1157"
           Size="418,1200"
-          Id="Package\Sequence Container\Assessment"
+          Id="Package\Each of these containers run regardless of whether others succeed\Assessment"
           TopLeft="1021.03571428571,7.10714285713993" />
-        <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 4]"
-          TopLeft="928.535714285714,609.571428571425">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="92.4999999999964,0"
-              Start="0,0"
-              End="84.9999999999964,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="84.9999999999964,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="17.1955468749982,5,50.60890625,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 5]"
-          TopLeft="1439.03571428571,607.797619047618">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="50.8214285714298,0"
-              Start="0,0"
-              End="43.3214285714298,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="43.3214285714298,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="-3.6437388392851,5,50.60890625,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
         <NodeLayout
           Size="268,43"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Current Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
           Size="269,42"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Get Date Of Previous Load"
-          TopLeft="28.0535728508348,236.325196309716" />
-        <NodeLayout
-          Size="273,44"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="271,42"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Populate Staging"
-          TopLeft="24.3705371914307,306.261285894113" />
-        <NodeLayout
-          Size="266,47"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="275,42"
-          Id="Package\Sequence Container\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.93750145752,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937119"
-              Start="0,0"
-              End="0,20.5469950937119">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.5469950937119" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
-          TopLeft="162.167412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
-          TopLeft="161.212055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
-              Start="0,0"
-              End="0,20.436089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.436089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
-          Id="Package\Sequence Container\Course Grades\Dim Course"
-          TopLeft="52.5,22.5" />
-        <NodeLayout
-          Size="268,43"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="268,42"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
-          TopLeft="31.8035728508348,238.825196309716" />
-        <NodeLayout
-          Size="270,44"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="276,42"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
-          TopLeft="24.3705371914307,306.261285894113" />
-        <NodeLayout
-          Size="266,47"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="275,42"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
-          TopLeft="164.56250145752,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,30.5469950937119"
-              Start="0,0"
-              End="0,23.0469950937119">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,23.0469950937119" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
-          TopLeft="162.667412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
-          TopLeft="164.087055021133,280.825196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,25.436089584397"
-              Start="0,0"
-              End="0,17.936089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,17.936089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,477"
-          Size="317,520"
-          Id="Package\Sequence Container\Course Grades\Fcat StudentCourseTranscript"
-          TopLeft="57.5357142857142,581.071428571428" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Course Grades.PrecedenceConstraints[Constraint]"
-          TopLeft="213.517857142857,539.5">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,41.5714285714284"
-              Start="0,0"
-              End="0,34.0714285714284">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,34.0714285714284" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="416,1160"
-          Size="416,1203"
-          Id="Package\Sequence Container\Course Grades"
-          TopLeft="1489.85714285714,6.98809523809689" />
-        <NodeLayout
-          Size="268,43"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="269,42"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
-          TopLeft="28.0535728508349,236.325196309716" />
-        <NodeLayout
-          Size="269,44"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="272,42"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Populate Staging"
-          TopLeft="24.3705371914306,306.261285894113" />
-        <NodeLayout
-          Size="266,47"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="275,42"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.937501457521,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937119"
-              Start="0,0"
-              End="0,20.5469950937119">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.5469950937119" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 3]"
-          TopLeft="161.417412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 4]"
-          TopLeft="161.462055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
-              Start="0,0"
-              End="0,20.436089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.436089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
-          Id="Package\Sequence Container\Discipline\Dim DisciplineIncident"
-          TopLeft="52.3214285714287,20.8928571428573" />
-        <NodeLayout
-          Size="268,43"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="268,42"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
-          TopLeft="29.3035728508348,236.325196309716" />
-        <NodeLayout
-          Size="269,43"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="272,42"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Populate Staging"
-          TopLeft="24.3705371914307,306.261285894113" />
-        <NodeLayout
-          Size="266,47"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="275,42"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 1]"
-          TopLeft="163.31250145752,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937119"
-              Start="0,0"
-              End="0,20.5469950937119">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.5469950937119" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 3]"
-          TopLeft="161.417412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 4]"
-          TopLeft="161.837055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
-              Start="0,0"
-              End="0,20.436089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.436089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,485"
-          Size="317,528"
-          Id="Package\Sequence Container\Discipline\Fcat StudentDiscipline"
-          TopLeft="51.6428571428571,570.535714285714" />
-        <EdgeLayout
-          Id="Package\Sequence Container\Discipline.PrecedenceConstraints[Constraint]"
-          TopLeft="210.482142857143,537.892857142857">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,32.6428571428567"
-              Start="0,0"
-              End="0,25.1428571428567">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,25.1428571428567" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="406,1159"
-          Size="406,1202"
-          Id="Package\Sequence Container\Discipline"
-          TopLeft="522.535714285714,11.0357142857097" />
-        <EdgeLayout
-          Id="Package\Sequence Container.PrecedenceConstraints[Constraint 3]"
-          TopLeft="446.321428571429,612.75">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="76.214285714285,0"
-              Start="0,0"
-              End="68.714285714285,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="68.714285714285,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="9.05268973214252,5,50.60890625,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <NodeLayout
-          Size="268,43"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="269,42"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
           Size="272,44"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Production"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
           Size="276,42"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Populate Staging"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
           Size="266,47"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Set Table Name"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
           Size="275,42"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint]"
           TopLeft="162.508930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4087,7 +3393,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 1]"
           TopLeft="162.937501457521,208.278201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4109,7 +3415,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 3]"
           TopLeft="163.167412164655,348.261285894113">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4131,7 +3437,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 4]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 4]"
           TopLeft="162.462055021133,278.325196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4153,7 +3459,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory.PrecedenceConstraints[Constraint 5]"
           TopLeft="161.774553582239,69.9448659251289">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4179,34 +3485,34 @@
           IsExpanded="True"
           PanelSize="317,474"
           Size="317,517"
-          Id="Package\Sequence Container\Attendance\Dim AttendanceEventCategory"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory"
           TopLeft="58,23.9285714285713" />
         <NodeLayout
           Size="268,43"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
           Size="272,42"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
           TopLeft="25.5535728508349,236.325196309716" />
         <NodeLayout
           Size="270,44"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Production"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
           Size="272,42"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
           Size="266,47"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
           Size="275,42"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint]"
           TopLeft="162.508930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4228,7 +3534,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 1]"
           TopLeft="162.437501457521,208.278201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4250,7 +3556,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 3]"
           TopLeft="161.667412164655,348.261285894113">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4272,7 +3578,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 4]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 4]"
           TopLeft="160.962055021133,278.325196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4294,7 +3600,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay.PrecedenceConstraints[Constraint 5]"
           TopLeft="161.774553582239,69.9448659251289">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4320,10 +3626,10 @@
           IsExpanded="True"
           PanelSize="317,474"
           Size="317,517"
-          Id="Package\Sequence Container\Attendance\Fcat StudentAttendanceByDay"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay"
           TopLeft="59.4642857142858,576.071428571428" />
         <EdgeLayout
-          Id="Package\Sequence Container\Attendance.PrecedenceConstraints[Constraint]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance.PrecedenceConstraints[Constraint]"
           TopLeft="217.232142857143,540.928571428571">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4349,14 +3655,708 @@
           IsExpanded="True"
           PanelSize="422,1159"
           Size="422,1202"
-          Id="Package\Sequence Container\Attendance"
+          Id="Package\Each of these containers run regardless of whether others succeed\Attendance"
           TopLeft="24.3214285714288,12.4642857142899" />
+        <NodeLayout
+          Size="268,43"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="269,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
+          TopLeft="28.0535728508348,236.325196309716" />
+        <NodeLayout
+          Size="273,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="271,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="266,47"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.93750145752,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.167412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.212055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1925,1269"
-          Size="1925,1312"
-          Id="Package\Sequence Container"
+          PanelSize="317,474"
+          Size="317,517"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
+          TopLeft="52.5,22.5" />
+        <NodeLayout
+          Size="268,43"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="267,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+          TopLeft="28.9464299936917,238.825196309716" />
+        <NodeLayout
+          Size="270,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="276,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="266,47"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.883930028949,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.5469950937119"
+              Start="0,0"
+              End="0,23.0469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.0469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.667412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+          TopLeft="162.408483592561,280.825196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.4360895843971"
+              Start="0,0"
+              End="0,17.9360895843971">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.9360895843971" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="317,477"
+          Size="317,520"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript"
+          TopLeft="58.9642857142858,568.214285714285" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
+          TopLeft="214.232142857143,539.5">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.7142857142851"
+              Start="0,0"
+              End="0,21.2142857142851">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.2142857142851" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="416,1160"
+          Size="416,1203"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades"
+          TopLeft="1489.85714285714,6.98809523809689" />
+        <NodeLayout
+          Size="268,43"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="269,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
+          TopLeft="28.0535728508349,236.325196309716" />
+        <NodeLayout
+          Size="269,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="272,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging"
+          TopLeft="24.3705371914306,306.261285894113" />
+        <NodeLayout
+          Size="266,47"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.937501457521,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 3]"
+          TopLeft="161.417412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.462055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="317,474"
+          Size="317,517"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident"
+          TopLeft="52.3214285714287,20.8928571428573" />
+        <NodeLayout
+          Size="268,43"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="268,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
+          TopLeft="29.3035728508348,236.325196309716" />
+        <NodeLayout
+          Size="269,43"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="272,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="266,47"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 1]"
+          TopLeft="163.31250145752,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 3]"
+          TopLeft="161.417412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.837055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="317,485"
+          Size="317,528"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline"
+          TopLeft="51.6428571428571,570.535714285714" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline.PrecedenceConstraints[Constraint]"
+          TopLeft="210.482142857143,537.892857142857">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,32.6428571428567"
+              Start="0,0"
+              End="0,25.1428571428567">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,25.1428571428567" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="406,1159"
+          Size="406,1202"
+          Id="Package\Each of these containers run regardless of whether others succeed\Discipline"
+          TopLeft="522.535714285714,11.0357142857097" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
+          TopLeft="446.321428571429,612.75">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="76.214285714285,0"
+              Start="0,0"
+              End="68.714285714285,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="68.714285714285,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="9.0526897321425,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 4]"
+          TopLeft="928.535714285714,609.571428571425">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="92.4999999999964,0"
+              Start="0,0"
+              End="84.9999999999964,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="84.9999999999964,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="17.1955468749982,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 5]"
+          TopLeft="1439.03571428571,607.797619047618">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="50.8214285714298,0"
+              Start="0,0"
+              End="43.3214285714298,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="43.3214285714298,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="-3.6437388392851,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="1925,1232"
+          Size="1925,1275"
+          Id="Package\Each of these containers run regardless of whether others succeed"
           TopLeft="322.5,751.25" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
@@ -4366,12 +4366,12 @@
               StartConnector="{assembly:Null}"
               EndConnector="0,104.321428571429"
               Start="0,0"
-              End="0,96.8214285714288">
+              End="0,96.821428571429">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,96.8214285714288" />
+                    End="0,96.821428571429" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
