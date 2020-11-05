@@ -3908,6 +3908,39 @@ BEGIN
 		   ,@LineageKey
 		FROM Staging.Student
 
+		--BPS is having data quality issues with exit/withdrawal dates in the ODS
+		--this is patch to overcome the problem and maintain the data clean momentarily
+		--------------------------------------------------------------------------------------------------
+		UPDATE dbo.DimStudent
+		SET IsCurrent = 0;
+
+		DECLARE @currentSchoolYear INT 
+		SELECT TOP (1) @currentSchoolYear =  SchoolYear 
+		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt
+		WHERE syt.CurrentSchoolYear = 1;
+		
+
+		;WITH LatestEntryDatePerStudent AS
+        (
+			SELECT DISTINCT 
+				   ds.StudentUniqueId, 
+				   ds.StudentKey, 
+				   ROW_NUMBER() OVER (PARTITION BY ds.StudentUniqueId ORDER BY ds.EntryDate DESC) AS RowRankId
+			FROM dbo.DimStudent ds 
+			WHERE ds.EntrySchoolYear = @currentSchoolYear
+		)
+
+		UPDATE ds 
+		SET ds.IsCurrent = 1
+		FROM dbo.DimStudent ds 
+		WHERE ds.EntrySchoolYear = @currentSchoolYear
+		      AND EXISTS (SELECT 1 
+			              FROM LatestEntryDatePerStudent ledps 
+						  WHERE ds.StudentKey = ledps.StudentKey 
+						    AND ledps.RowRankId = 1);
+		---------------------------------------------------------------------------------------------------
+
+
 		-- updating the EndTime to now and status to Success		
 		UPDATE dbo.ETL_Lineage
 			SET 
