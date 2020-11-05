@@ -41,31 +41,31 @@ IF NOT EXISTS (SELECT 1
 IF (@dropExistingTables = 1)
 BEGIN
 
-  --views - dropping views first as they are schema bound
-  ---------------------------------------------------------------
-  DROP VIEW IF EXISTS dbo.View_StudentAssessmentScores;
-  DROP VIEW IF EXISTS dbo.View_StudentAttendance_ADA;
-  DROP VIEW IF EXISTS dbo.View_StudentAttendanceByDay;
-  DROP VIEW IF EXISTS dbo.View_StudentDiscipline;
-  DROP VIEW IF EXISTS dbo.View_StudentCourseTranscript;
-  DROP VIEW IF EXISTS dbo.View_StudentRoster;
-   
-  --fact tables
-  ---------------------------------------------------------------
-  DROP TABLE IF EXISTS dbo.FactStudentAttendanceByDay;
-  DROP TABLE IF EXISTS dbo.FactStudentAssessmentScore;
-  DROP TABLE IF EXISTS dbo.FactStudentDiscipline;
-  DROP TABLE IF EXISTS dbo.FactStudentCourseTranscript;
-	  
-  --dim tables
-  ---------------------------------------------------------------
-  DROP TABLE IF EXISTS dbo.DimCourse;
-  DROP TABLE IF EXISTS dbo.DimAssessment;
-  DROP TABLE IF EXISTS dbo.DimDisciplineIncident;
-  DROP TABLE IF EXISTS dbo.DimAttendanceEventCategory;
-  DROP TABLE IF EXISTS dbo.DimStudent;
-  DROP TABLE IF EXISTS dbo.DimTime;
-  DROP TABLE IF EXISTS dbo.DimSchool;
+   --views - dropping views first as they are schema bound
+   ---------------------------------------------------------------
+   DROP VIEW IF EXISTS dbo.View_StudentAssessmentScores;
+   DROP VIEW IF EXISTS dbo.View_StudentAttendance_ADA;
+   DROP VIEW IF EXISTS dbo.View_StudentAttendanceByDay;
+   DROP VIEW IF EXISTS dbo.View_StudentDiscipline;
+   DROP VIEW IF EXISTS dbo.View_StudentCourseTranscript;
+   DROP VIEW IF EXISTS dbo.View_StudentRoster;
+    
+   --fact tables
+   ---------------------------------------------------------------
+   DROP TABLE IF EXISTS dbo.FactStudentAttendanceByDay;
+   DROP TABLE IF EXISTS dbo.FactStudentAssessmentScore;
+   DROP TABLE IF EXISTS dbo.FactStudentDiscipline;
+   DROP TABLE IF EXISTS dbo.FactStudentCourseTranscript;
+    
+   --dim tables
+   ---------------------------------------------------------------
+   DROP TABLE IF EXISTS dbo.DimCourse;
+   DROP TABLE IF EXISTS dbo.DimAssessment;
+   DROP TABLE IF EXISTS dbo.DimDisciplineIncident;
+   DROP TABLE IF EXISTS dbo.DimAttendanceEventCategory;
+   DROP TABLE IF EXISTS dbo.DimStudent;
+   DROP TABLE IF EXISTS dbo.DimTime;
+   DROP TABLE IF EXISTS dbo.DimSchool;
 	   
    --ETL Objects
    ---------------------------------------------------------------
@@ -867,8 +867,7 @@ GO
 CREATE VIEW dbo.View_StudentAttendance_ADA
 WITH SCHEMABINDING
 AS (
-     select  StudentId, 
-			 StudentStateId, 
+     select  StudentId, 			 
 			 FirstName, 
 			 LastName, 
 			 [DistrictSchoolCode],
@@ -3319,8 +3318,9 @@ BEGIN
 					      ssa.EntryDate
 				END AS ValidFrom,
 			   CASE when ssa.ExitWithdrawDate is null then '12/31/9999'  else ssa.ExitWithdrawDate END  AS ValidTo,
-			   case when ssa.ExitWithdrawDate is null then 1 else 0 end AS IsCurrent
-		--select *  
+			   case when ssa.ExitWithdrawDate is NULL AND EXISTS(SELECT 1 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt WHERE syt.CurrentSchoolYear = 1 AND syt.SchoolYear = ssa.SchoolYear) then 1 else 0 end AS IsCurrent
+			   	
+		--select ssa.SchoolYear, ssa.ExitWithdrawDate , case  when ssa.ExitWithdrawDate is NULL and EXISTS(SELECT 1 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt WHERE syt.CurrentSchoolYear = 1 AND syt.SchoolYear = ssa.SchoolYear)   then 1 else 0 end 
 		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
 			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 			INNER JOIN dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
@@ -3776,7 +3776,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsCurrent = 0
 		FROM 
 			[dbo].[DimStudent] AS prod
 			INNER JOIN Staging.Student AS stage ON prod._sourceKey = stage._sourceKey
@@ -5741,7 +5742,7 @@ BEGIN
 								WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),
 			s.TimeKey = (
 							SELECT TOP (1) dt.TimeKey
@@ -5757,7 +5758,7 @@ BEGIN
 								WHERE s._sourceSchoolKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),		
 			s.AttendanceEventCategoryKey = COALESCE(
 													(
@@ -5958,7 +5959,7 @@ BEGIN
 					   AND d_sabd.[SchoolYear] = dt.SchoolYear)
 					   
 		INSERT INTO [Derived].[StudentAttendanceADA]([StudentId]
-																,[StudentStateId]
+																
 																,[FirstName]
 																,[LastName]
 																,[DistrictSchoolCode]
@@ -5973,7 +5974,6 @@ BEGIN
 
 		SELECT     DISTINCT
 					v_sabd.StudentId, 
-					v_sabd.StudentStateId, 
 					v_sabd.FirstName, 
 					v_sabd.LastName, 
 					v_sabd.[DistrictSchoolCode],
@@ -5992,8 +5992,8 @@ BEGIN
 						  INNER JOIN dbo.DimStudent st ON s_sabd.StudentKey = st.StudentKey
 					 WHERE v_sabd.StudentId = st.StudentUniqueId
 					   AND v_sabd.[SchoolYear] = dt.SchoolYear)
-		GROUP BY  v_sabd.StudentId, 
-					v_sabd.StudentStateId, 
+		GROUP BY    v_sabd.StudentId, 
+					
 					v_sabd.FirstName, 
 					v_sabd.LastName, 
 					v_sabd.[DistrictSchoolCode],
@@ -6166,7 +6166,7 @@ BEGIN
 								WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),
 			s.TimeKey = (
 							SELECT TOP (1) dt.TimeKey
@@ -6182,7 +6182,7 @@ BEGIN
 								WHERE s._sourceSchoolKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),		
 			s.DisciplineIncidentKey =(
 										SELECT TOP (1) ddi.DisciplineIncidentKey
@@ -6190,7 +6190,7 @@ BEGIN
 										WHERE s._sourceDisciplineIncidentKey = ddi._sourceKey									
 											AND s.[ModifiedDate] >= ddi.[ValidFrom]
 											AND s.[ModifiedDate] < ddi.[ValidTo]
-										ORDER BY ddi.[ValidFrom]
+										ORDER BY ddi.[ValidFrom] DESC
 									)  
 										             
         FROM Staging.StudentDiscipline s;
@@ -6495,7 +6495,7 @@ BEGIN
 								WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),
 			s.TimeKey = (
 							SELECT TOP (1) dt.TimeKey
@@ -6509,7 +6509,7 @@ BEGIN
 								WHERE s._sourceAssessmentKey = da._sourceKey									
 									AND s.[ModifiedDate] >= da.[ValidFrom]
 									AND s.[ModifiedDate] < da.[ValidTo]
-								ORDER BY da.[ValidFrom]
+								ORDER BY da.[ValidFrom] DESC
 						 	 )  										             
         FROM Staging.StudentAssessmentScore s;
 		
@@ -6973,7 +6973,7 @@ BEGIN
 								WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),
 			s.SchoolKey = (
 								SELECT TOP (1) ds.SchoolKey
@@ -6981,7 +6981,7 @@ BEGIN
 								WHERE s._sourceSchoolKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom]
+								ORDER BY ds.[ValidFrom] DESC
 							),
 			s.CourseKey = (
 								SELECT TOP (1) dc.CourseKey
@@ -6989,7 +6989,7 @@ BEGIN
 								WHERE s._sourceCourseKey = dc._sourceKey									
 									AND s.[ModifiedDate] >= dc.[ValidFrom]
 									AND s.[ModifiedDate] < dc.[ValidTo]
-								ORDER BY dc.[ValidFrom]
+								ORDER BY dc.[ValidFrom] DESC
 							)													             
         FROM Staging.StudentCourseTranscript s;
 

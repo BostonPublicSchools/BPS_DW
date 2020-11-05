@@ -944,7 +944,11 @@ BEGIN
 					      ssa.EntryDate
 				END AS ValidFrom,
 			   CASE when ssa.ExitWithdrawDate is null then '12/31/9999'  else ssa.ExitWithdrawDate END  AS ValidTo,
-			   case when ssa.ExitWithdrawDate is null then 1 else 0 end AS IsCurrent
+			   case when ssa.ExitWithdrawDate is NULL AND EXISTS(SELECT 1 
+			                                                     FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType syt 
+																 WHERE syt.CurrentSchoolYear = 1 
+																   AND syt.SchoolYear = ssa.SchoolYear) then 1 else 0 end AS IsCurrent
+			   
 		--select *  
 		FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student s
 			INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
