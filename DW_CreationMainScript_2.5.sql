@@ -3055,6 +3055,15 @@ BEGIN
 
 		TRUNCATE TABLE Staging.[Student]
 
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
+		SELECT DISTINCT s.StudentUSI INTO #StudentsWithChanges
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student s		      
+		      INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
+        WHERE (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+			  (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+
+
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
 		SELECT DISTINCT 
 			   s.StudentUSI, 
 			   COUNT(sr.StudentUSI) AS RaceCount,
@@ -3108,14 +3117,12 @@ BEGIN
 										 AND sr.RaceTypeId = 6) THEN 1
 			   ELSE 
 				   0	             
-			   END AS Race_Other_Indicator into #StudentRaces    
+			   END AS Race_Other_Indicator -- into #StudentRaces    
 
-		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
+		FROM   #StudentsWithChanges s     	
 			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
-			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId
-	    WHERE (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) --OR
-			  --(rt.LastModifiedDate > @LastLoadDate AND rt.LastModifiedDate <= @NewLoadDate)
-		GROUP BY s.StudentUSI, s.HispanicLatinoEthnicity
+			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	   
+		GROUP BY s.StudentUSI
 				
 				
 		--;WITH StudentHomeRooomByYear AS
@@ -3128,8 +3135,8 @@ BEGIN
 							ROW_NUMBER() OVER (PARTITION BY std_sa.StudentUSI, 
 															std_sa.SchoolYear, 
 															std_sa.SchoolId ORDER BY staff_sa.BeginDate DESC) AS RowRankId INTO #StudentHomeRooomByYear
-			FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
+			FROM #StudentsWithChanges s
+			     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
 				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
 																										AND std_sa.SchoolYear = staff_sa.SchoolYear
 				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
@@ -3137,9 +3144,7 @@ BEGIN
 				 AND std_sa.SchoolYear >= 2019
 				 AND std_sa.EndDate > GETDATE()
 				 --AND s.StudentUniqueId = 269159 
-				 AND (
-				       (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) 
-				     )
+				
 					 
         --)
 		
@@ -3355,11 +3360,11 @@ BEGIN
 	
 		WHERE ssa.SchoolYear >= 2019 AND
 		     (
-			   (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) --OR
-			   --(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+			   (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+			   (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
 			 )
 			 
-		DROP TABLE #StudentRaces, #StudentHomeRooomByYear;
+		DROP TABLE #StudentRaces, #StudentHomeRooomByYear, #StudentsWithChanges;
 				
 			
 		--loading legacy data if it has not been loaded.
@@ -3565,7 +3570,10 @@ BEGIN
 						'07/01/2015' AS SchoolTitle1StatusModifiedDate
 
 						,s.entdate AS ValidFrom
-						,COALESCE(s.withdate,s.entdate) AS ValidTo
+						,CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) 
+						      WHEN s.schyearsequenceno <>  999999 AND s.withdate IS null   THEN s.entdate
+							  ELSE s.withdate
+						 END AS ValidTo
 						,0 IsCurrent
 				--select distinct top 1000 *
 				FROM [BPSGranary02].[BPSDW].[dbo].[student] s 
@@ -4154,7 +4162,7 @@ BEGIN
 			INNER JOIN Staging.AttendanceEventCategory AS stage ON prod._sourceKey = stage._sourceKey
 		WHERE prod.ValidTo = '12/31/9999'
 
-		SELECT * FROM dbo.DimAttendanceEventCategory
+		
            
 		INSERT INTO dbo.DimAttendanceEventCategory
            ([_sourceKey]
@@ -4252,11 +4260,8 @@ BEGIN
 	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
 	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
 
-
-
 	BEGIN TRY
-
-		
+			
 		TRUNCATE TABLE Staging.DisciplineIncident
 		INSERT INTO Staging.DisciplineIncident
 				   (_sourceKey
@@ -4424,7 +4429,9 @@ BEGIN
 					  INNER JOIN dbo.DimTime dt ON di.CND_INCIDENT_DATE = dt.SchoolDate
 														 AND dt.SchoolKey is not null   
 														 AND dschool.SchoolKey = dt.SchoolKey	
-				WHERE TRY_CAST(di.CND_INCIDENT_DATE AS DATETIME)  > '2015-09-01'
+				WHERE TRY_CAST(di.CND_INCIDENT_DATE AS DATETIME)  BETWEEN '2015-09-01' AND '2018-06-30'
+
+
 			END
 
 			
@@ -4858,7 +4865,7 @@ BEGIN
 								  CAST(perf2 AS NVARCHAR(MAX)) AS [Proficiency level 2]
      
 							FROM [BPSGranary02].[RAEDatabase].[dbo].[mcasitems] 
-							WHERE schyear >= 2015 ) scores
+							WHERE schyear in (2015,2016,2017) ) scores
 					UNPIVOT
 					(
 					   scorevalue
@@ -5279,7 +5286,7 @@ BEGIN
 		WHERE EXISTS (SELECT 1 
 					  FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseOffering co 
 					  WHERE c.CourseCode = co.CourseCode
-						AND co.SchoolYear IN (2019,2020)) AND
+						AND co.SchoolYear >=2019) AND
 			 (c.LastModifiedDate > @LastLoadDate AND c.LastModifiedDate <= @NewLoadDate)
 			
 							
@@ -5889,7 +5896,7 @@ BEGIN
 																					ELSE 'In Attendance' 	                                                                   
 																				END = daec.AttendanceEventCategoryDescriptor_CodeValue
  
-				WHERE  a.[Date] >= '2015-07-01'
+				WHERE  a.[Date] BETWEEN '2015-07-01' AND '2018-06-30'
 			  END
 
 		--re-creating the columnstore index
@@ -6292,7 +6299,7 @@ BEGIN
 														  AND dt.SchoolKey is not null   
 														  AND dschool.SchoolKey = dt.SchoolKey
 						  INNER JOIN dbo.DimDisciplineIncident d_di ON CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),di.CND_INCIDENT_ID))    = d_di._sourceKey
-					WHERE TRY_CAST(di.CND_INCIDENT_DATE AS DATETIME)  > '2015-09-01'
+					WHERE TRY_CAST(di.CND_INCIDENT_DATE AS DATETIME)  BETWEEN '2015-09-01' AND '2018-06-30' 
 			 END;
 
         --re-creating the columnstore index
@@ -6731,7 +6738,7 @@ BEGIN
 																	  AND dt.SchoolDate BETWEEN ds.ValidFrom AND ds.ValidTo
 						INNER JOIN [dbo].DimAssessment da ON 'LegacyDW|' + Convert(NVARCHAR(MAX),us.testid)  + '|N/A|' + Convert(NVARCHAR(MAX),us.scoretype)  = da._sourceKey
 	
-					WHERE  dt.SchoolDate >= '07/01/2015';
+					WHERE  dt.SchoolDate BETWEEN '07/01/2015' AND '2018-06-30';
 
 			 END;
 		
