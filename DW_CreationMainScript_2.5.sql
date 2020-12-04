@@ -3057,11 +3057,13 @@ BEGIN
 
 		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
 		SELECT DISTINCT s.StudentUSI INTO #StudentsWithChanges
-		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student s		      
-		      INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
-        WHERE (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
-			  (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
-
+		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s		      
+		      INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
+        WHERE  ssa.SchoolYear >= 2019 AND
+			   (
+				(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+				(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+			   )
 
 		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
 		SELECT DISTINCT 
@@ -3117,9 +3119,9 @@ BEGIN
 										 AND sr.RaceTypeId = 6) THEN 1
 			   ELSE 
 				   0	             
-			   END AS Race_Other_Indicator -- into #StudentRaces    
+			   END AS Race_Other_Indicator into #StudentRaces    
 
-		FROM   #StudentsWithChanges s     	
+		FROM  #StudentsWithChanges s     	
 			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
 			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	   
 		GROUP BY s.StudentUSI
@@ -3212,7 +3214,8 @@ BEGIN
 				   ,[ValidFrom]
 				   ,[ValidTo]
 				   ,[IsCurrent])
-        SELECT distinct
+        --DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
+		SELECT distinct
 			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) AS [_sourceKey],
 			   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
 			   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
@@ -3330,6 +3333,8 @@ BEGIN
 			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 			INNER JOIN dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
 			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId			
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
+
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
@@ -3337,7 +3342,7 @@ BEGIN
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentElectronicMail sem ON s.StudentUSI = sem.StudentUSI
 																		   AND sem.PrimaryEmailAddressIndicator = 1
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
+			
 
 			--lunch
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor food ON s.SchoolFoodServicesEligibilityDescriptorId = food.DescriptorId
@@ -3350,7 +3355,7 @@ BEGIN
 			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
 	
 			--races
-			LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUsi
+			LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUSI
 			
 			--homeroom
 			LEFT JOIN #StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI

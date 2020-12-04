@@ -3062,8 +3062,11 @@ BEGIN
 		SELECT DISTINCT s.StudentUSI INTO #StudentsWithChanges
 		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student s		      
 		      INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
-        WHERE (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
-			  (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+        WHERE  ssa.SchoolYear >= 2019 AND
+			   (
+				(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+				(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+			   )			 
 
 
 		
