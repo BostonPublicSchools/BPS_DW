@@ -2121,7 +2121,7 @@ BEGIN
                              ) AS [MaxLastModifiedDate](t)
                            )
 					ELSE 
-					      '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+					      @LastLoadDate -- setting the validFrom to beggining of time during thre first load. 
 				END AS ValidFrom,
 				'12/31/9999' AS ValidTo,
 				CASE WHEN COALESCE(ost.CodeValue,'N/A') IN ('Active','Added','Changed Agency','Continuing','New','Reopened') THEN 1  ELSE 0  END AS IsCurrent		
@@ -2207,7 +2207,7 @@ BEGIN
 				    '07/01/2015' AS SchoolCategoryModifiedDate,
 				    '07/01/2015' AS SchoolTitle1StatusModifiedDate,
 
-					'07/01/2015' AS ValidFrom,
+					@LastLoadDate AS ValidFrom,
 					GETDATE() AS ValidTo,
 					0 AS IsCurrent
 				--SELECT *
@@ -3288,7 +3288,7 @@ BEGIN
 				CASE WHEN EXISTS (
 							   SELECT 1
 							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociation spa
-							   WHERE CHARINDEX('IEP', spa.ProgramName,1) > 1
+							   WHERE CHARINDEX('504 Plan', spa.ProgramName,1) = 0
 									 AND spa.StudentUSI = s.StudentUSI
 									 AND spa.IEPEndDate IS NULL
 						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
@@ -3371,6 +3371,7 @@ BEGIN
 			 
 		DROP TABLE #StudentRaces, #StudentHomeRooomByYear, #StudentsWithChanges;
 				
+			
 			
 		--loading legacy data if it has not been loaded.
 		--load types are ignored as this data will only be loaded once.
@@ -3565,20 +3566,24 @@ BEGIN
 						COALESCE(s.entcode,'N/A') AS EntryCode,
        
 						--exit
-						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) 
+						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
 							ELSE s.withdate
 						END AS ExitWithdrawDate,
 						s.schyear + 1 AS ExitWithdrawSchoolYear, 
 						COALESCE(s.withcode,'N/A') AS ExitWithdrawCode,
 				
 						'07/01/2015' AS SchoolCategoryModifiedDate,
-						'07/01/2015' AS SchoolTitle1StatusModifiedDate
+						'07/01/2015' AS SchoolTitle1StatusModifiedDate,
 
-						,s.entdate AS ValidFrom
-						,CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear AS NVARCHAR(max)) 
+						CASE WHEN MONTH(s.entdate) >= 7 THEN 
+								DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
+							ELSE 
+								DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
+						END AS ValidFrom,
+						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
 						      WHEN s.schyearsequenceno <>  999999 AND s.withdate IS null   THEN s.entdate
 							  ELSE s.withdate
-						 END AS ValidTo
+						END AS ValidTo
 						,0 IsCurrent
 				--select distinct top 1000 *
 				FROM [BPSGranary02].[BPSDW].[dbo].[student] s 
@@ -3592,6 +3597,8 @@ BEGIN
 				ORDER BY s.StudentNo;
 
 			END
+
+			
 
 		--COMMIT TRANSACTION;		
 	END TRY
@@ -5902,6 +5909,7 @@ BEGIN
 																				END = daec.AttendanceEventCategoryDescriptor_CodeValue
  
 				WHERE  a.[Date] BETWEEN '2015-07-01' AND '2018-06-30'
+				   AND a.sch between '1000' and '4700'
 			  END
 
 		--re-creating the columnstore index
