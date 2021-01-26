@@ -12,11 +12,11 @@
   <DataSourceViews />
   <DeploymentModelSpecificContent>
     <Manifest>
-      <SSIS:Project SSIS:ProtectionLevel="EncryptSensitiveWithUserKey" xmlns:SSIS="www.microsoft.com/SqlServer/SSIS">
+      <SSIS:Project SSIS:ProtectionLevel="EncryptSensitiveWithPassword" xmlns:SSIS="www.microsoft.com/SqlServer/SSIS">
         <SSIS:Properties>
           <SSIS:Property SSIS:Name="ID">{5fb618a1-3cc1-4020-8266-4ce99a073f95}</SSIS:Property>
           <SSIS:Property SSIS:Name="Name">EdFiDW_SSIS</SSIS:Property>
-          <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
+          <SSIS:Property SSIS:Name="VersionMajor">0</SSIS:Property>
           <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
           <SSIS:Property SSIS:Name="VersionBuild">0</SSIS:Property>
           <SSIS:Property SSIS:Name="VersionComments">
@@ -26,7 +26,7 @@
           <SSIS:Property SSIS:Name="CreatorComputerName">DESKTOP-14U1PRC</SSIS:Property>
           <SSIS:Property SSIS:Name="Description">
           </SSIS:Property>
-          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAMIZZ03Gw6UytDLU++9TldQAAAAACAAAAAAAQZgAAAAEAACAAAACNJc3y3WoEoYAHwuTeYFupBXV4Yv7WesqJn03WSOXXjgAAAAAOgAAAAAIAACAAAACx2b17qaQ/oBF/ZiNp10xT5SnAorpRppMMKaI08gnThJAAAABi4RH2GgXykx17GkmQzeN6wcjjfdAKka+fgTRbwsizxlSyB/k1A8bL3Cy4meAvGTQilKXfuLx72CuhBQCzZ38P8C8MUWXzPYec/3gZwZ1Kg75PqVMNf7Lh5v0MONA7C925buNuNzRYwqVh8t3FV5ar1c0AZSlg9JVoga2W55ncInq9814/78awkDam5NriLgVAAAAAILyv1niG6yHAOoZv/lAslg2Ed0+S6avO0nrFxKY4e5hTUkEwWwt3fhes0cgJMoJrDiaxZndoFeMCBRYYVDZaOg==</SSIS:Property>
+          <SSIS:Property SSIS:Name="PasswordVerifier" SSIS:Sensitive="1" SSIS:Salt="/KLFXyin4IE=" SSIS:IV="2jR3X9ODldc9VR1VxdktfQ==" SSIS:Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc">z+18l/zrjNBlgG5Mg6ihgHtQCqXH6VA/twFMZg525pNFAsi1PN3TtQfQcAspNOpy3gTK4KA/Ul3CEfu45Veyv3M383kravMDSiDmosWkXlo+ch0Z40N+JkktAPcnRLVzu6cdnr0IGKKxrbwlasrFEFHPgXCYL3ys6TclxwVCTyugCXVUP7nkskSN7ZVl4KuZ</SSIS:Property>
           <SSIS:Property SSIS:Name="FormatVersion">1</SSIS:Property>
         </SSIS:Properties>
         <SSIS:Packages>
@@ -42,14 +42,14 @@
                 <SSIS:Property SSIS:Name="Name">EdFiDW_DataLoad</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMajor">1</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionMinor">0</SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionBuild">202</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionBuild">206</SSIS:Property>
                 <SSIS:Property SSIS:Name="VersionComments">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="VersionGUID">{DDE809B3-B51B-4BEE-96EB-434A3DAC1724}</SSIS:Property>
+                <SSIS:Property SSIS:Name="VersionGUID">{FFD08BFB-C43B-4330-BF64-7771CCB0B62C}</SSIS:Property>
                 <SSIS:Property SSIS:Name="PackageFormatVersion">8</SSIS:Property>
                 <SSIS:Property SSIS:Name="Description">
                 </SSIS:Property>
-                <SSIS:Property SSIS:Name="ProtectionLevel">1</SSIS:Property>
+                <SSIS:Property SSIS:Name="ProtectionLevel">2</SSIS:Property>
               </SSIS:Properties>
               <SSIS:Parameters>
                 <SSIS:Parameter SSIS:Name="LoadType">

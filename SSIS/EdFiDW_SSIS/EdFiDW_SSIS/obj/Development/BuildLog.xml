@@ -2,14 +2,18 @@
 <BuildLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
   <ProjectInfo>
     <Name>EdFiDW_SSIS</Name>
-    <LastWriteTime>2020-10-20T16:41:02.7190676Z</LastWriteTime>
-    <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
+    <LastWriteTime>2021-01-22T20:45:27.6290864Z</LastWriteTime>
+    <LastKnownProtectionLevel>EncryptSensitiveWithPassword</LastKnownProtectionLevel>
+    <Salt>19yyD+MG</Salt>
+    <LastKnownProtectedHashedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAACAAAAAAAQZgAAAAEAACAAAADwt8g1PBC7JOlEcPp4cEOaQJAx8bL4dWtZXUKtriIzbQAAAAAOgAAAAAIAACAAAAAaYA3hHDvv1uEmxU9YBpBNTJk9TnQrlv2/R+DkJmsBBTAAAADyVXld0LA/ObqV/yFtRdYPwX4BF6fkatJobu4VV8xlgNcbBqlBOKC/0lYLkIyQOc5AAAAAABlRExRdxzSRZyw+vABUJOUDOuTov2WuKgZoepn2gC0YWRpr4IVBzB6anu0EU9blUWlg7g/42QHhyXFXAwp0IA==</LastKnownProtectedHashedPassword>
   </ProjectInfo>
   <LastBuildInfos>
     <ProjectBuildItemInfo>
       <Name>EdFiDW_DataLoad.dtsx</Name>
-      <LastWriteTime>2021-01-13T00:28:34.0035538Z</LastWriteTime>
-      <LastKnownProtectionLevel>EncryptSensitiveWithUserKey</LastKnownProtectionLevel>
+      <LastWriteTime>2021-01-22T20:42:26.4108799Z</LastWriteTime>
+      <LastKnownProtectionLevel>EncryptSensitiveWithPassword</LastKnownProtectionLevel>
+      <Salt>0239nRxX</Salt>
+      <LastKnownProtectedHashedPassword>AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAACAAAAAAAQZgAAAAEAACAAAABywX7zNH3p3WgvDrwbIajAtrCiquUkKE8sGLIn3VDsuAAAAAAOgAAAAAIAACAAAACUD7/EUJk85lvviLdx83VBEf9c1jMlff4uSH7QQgl/SDAAAABG58UQhGp+4oji9arb3XVpRs/BtttcPaoQVfU6svE0yaw6WUlfV1J5RClpRyjF4f9AAAAAF5gvnoWXigvV7trGvx8A28nsL0eaybvxygkDHarYAJehjeBuLFJSLhEIV18vidlXeIzb6vWrav/X6vZ0azjLUA==</LastKnownProtectedHashedPassword>
     </ProjectBuildItemInfo>
   </LastBuildInfos>
 </BuildLog>

@@ -253,6 +253,50 @@ BEGIN
 	INCLUDE ( ValidTo, TimeKey);
 END;
 
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'DimStaff' 
+			   AND TABLE_SCHEMA = 'dbo')
+CREATE TABLE dbo.DimStaff
+(
+  StaffKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
+  
+  PrimaryElectronicMailAddress [nvarchar](128) NULL,
+  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
+  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+
+  [StaffUniqueId] [nvarchar](32) NOT NULL,
+  [PersonalTitlePrefix] [nvarchar](30) NULL,
+  [FirstName] [nvarchar](75) NOT NULL,
+  [MiddleName] [nvarchar](75) NULL,
+  [MiddleInitial] CHAR(1) NULL,
+  [LastSurname] nvarchar(75) NOT NULL,
+  [FullName] NVARCHAR(50) NOT NULL,
+  [GenerationCodeSuffix] [nvarchar](10) NULL,
+  [MaidenName] [nvarchar](75) NULL,  
+  [BirthDate] DATE NULL,
+  [StaffAge] INT NULL,  
+  
+  SexType_Code NVARCHAR(15) NOT NULL,
+  SexType_Description NVARCHAR(100) NOT NULL,    
+  SexType_Male_Indicator BIT NOT NULL,
+  SexType_Female_Indicator BIT NOT NULL,
+  SexType_NotSelected_Indicator BIT NOT NULL,
+     
+  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] NVARCHAR(100)  NULL, 
+  [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
+  [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
+  [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
+  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
+    
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL,    
+  [LineageKey] INT NOT NULL,
+
+  CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
+);
 
 --student
 if NOT EXISTS (select 1

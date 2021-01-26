@@ -9,7 +9,7 @@
         <WinAuthUserName />
         <WinAuthDomain />
         <ServerName>10.244.1.135</ServerName>
-        <PathOnServer />
+        <PathOnServer>/SSISDB/EdFiDW/EdFiDW</PathOnServer>
         <UserIDs />
         <UserPasswords />
         <OfflineMode>false</OfflineMode>
