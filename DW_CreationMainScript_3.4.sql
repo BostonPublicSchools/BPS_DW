@@ -3348,7 +3348,8 @@ BEGIN
 							       SELECT 1
 								   FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.[StudentProgramAssociationService] spas
 										INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d ON spas.ProgramTypeDescriptorId = d.DescriptorId 
-																											   AND CHARINDEX('504 Plan', d.CodeValue ,1) = 0								   WHERE spas.StudentUSI = s.StudentUSI									 
+																											   AND CHARINDEX('504 Plan', d.CodeValue ,1) = 0								   
+								   WHERE spas.StudentUSI = s.StudentUSI									 
 										 AND GETDATE() BETWEEN spas.BeginDate AND COALESCE(spas.ServiceEndDate,'12/31/9999')
 						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
 	   

@@ -3334,7 +3334,10 @@ BEGIN
 							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociation spa
 							   WHERE CHARINDEX('504 Plan', spa.ProgramName,1) = 0
 									 AND spa.StudentUSI = s.StudentUSI
-									 AND spa.IEPEndDate IS NULL
+									 AND (
+									         spa.IEPEndDate IS NULL
+									      OR spa.IEPEndDate > CAST(GETDATE() AS DATE)
+									     )
 						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
 	   
 			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
