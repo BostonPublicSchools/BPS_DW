@@ -65,6 +65,7 @@ BEGIN
    DROP TABLE IF EXISTS dbo.DimAttendanceEventCategory;
    DROP TABLE IF EXISTS dbo.DimStudent;
    DROP TABLE IF EXISTS dbo.DimTime;
+   DROP TABLE IF EXISTS dbo.DimStaff;
    DROP TABLE IF EXISTS dbo.DimSchool;
 	   
    --ETL Objects
@@ -74,6 +75,7 @@ BEGIN
    DROP TABLE IF EXISTS dbo.ETL_IncrementalLoads;
    DROP TABLE IF EXISTS Staging.School;
    DROP TABLE IF EXISTS Staging.[Time];
+   DROP TABLE IF EXISTS Staging.[Staff];
    DROP TABLE IF EXISTS Staging.Student;
    DROP TABLE IF EXISTS Staging.AttendanceEventCategory;
    DROP TABLE IF EXISTS Staging.DisciplineIncident;
@@ -121,6 +123,9 @@ BEGIN
    DROP TABLE IF EXISTS Derived.StudentAttendanceByDay; 
    DROP TABLE IF EXISTS Derived.StudentAttendanceADA; 
    DROP TABLE IF EXISTS Derived.StudentAssessmentScore;    
+   DROP TABLE IF EXISTS Derived.StaffCurrentSchools;
+   DROP TABLE IF EXISTS Derived.StaffCurrentGradeLevels;
+   DROP TABLE IF EXISTS Derived.StaffCurrentStudents;
 
 END;
 
@@ -290,6 +295,9 @@ CREATE TABLE dbo.DimStaff
   [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
   [HighlyQualifiedTeacher_Indicator] [bit] NULL,
     
+  [StaffClassificationDescriptor_CodeValue]  NVARCHAR(100)  NULL, 
+  [StaffClassificationDescriptor_CodeDescription]  NVARCHAR(100)  NULL, 
+
   ValidFrom DATETIME NOT NULL, 
   ValidTo DATETIME NOT NULL, 
   IsCurrent BIT NOT NULL,    
@@ -711,8 +719,52 @@ CREATE TABLE Derived.StudentAttendanceADA
   CONSTRAINT PK_Derived_StudentAttendanceADA PRIMARY KEY (StudentId ASC, DistrictSchoolCode ASC, SchoolYear ASC)  
 );
 
+--Staff Current Schools
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StaffCurrentSchools' 
+			   AND TABLE_SCHEMA = 'Derived')
 
---attendance by day
+CREATE TABLE Derived.StaffCurrentSchools
+(
+	StaffKey INT NOT NULL,
+	SchoolKey INT NOT NULL, 
+	CONSTRAINT PK_Derived_StaffCurrentSchools PRIMARY KEY (StaffKey ASC, SchoolKey ASC) ,
+	CONSTRAINT FK_Derived_StaffCurrentSchools_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+	CONSTRAINT FK_Derived_StaffCurrentSchools_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES dbo.DimSchool(SchoolKey)
+);
+
+--Staff Current Grade Levels
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StaffCurrentGradeLevels' 
+			   AND TABLE_SCHEMA = 'Derived')
+			   
+CREATE TABLE Derived.StaffCurrentGradeLevels
+(
+	Id INT NOT NULL IDENTITY(1,1),
+	StaffKey INT NOT NULL,
+	GradeLevel NVARCHAR(50) NOT NULL, 
+	CONSTRAINT PK_Derived_StaffCurrentGradeLevels PRIMARY KEY (Id ASC) ,
+	CONSTRAINT FK_Derived_StaffCurrentGradeLevels_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+);
+
+--Staff Current Students
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'StaffCurrentStudents' 
+			   AND TABLE_SCHEMA = 'Derived')
+
+CREATE TABLE Derived.StaffCurrentStudents
+(
+	StaffKey INT NOT NULL,
+	StudentKey INT NOT NULL,	
+	CONSTRAINT PK_Derived_StaffCurrentStudents PRIMARY KEY (StaffKey ASC, StudentKey ASC) ,
+	CONSTRAINT FK_Derived_StaffCurrentStudents_StaffKey FOREIGN KEY (StaffKey) REFERENCES dbo.DimStaff(StaffKey),
+	CONSTRAINT FK_Derived_StaffCurrentStudents_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
+);
+
+--Student Assessment Score
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'StudentAssessmentScore' 
@@ -1541,6 +1593,59 @@ CREATE TABLE Staging.[Time]
   CONSTRAINT PK_StagingTime PRIMARY KEY (TimeKey)  
 );
 GO
+
+
+--staff
+if NOT EXISTS (select 1
+             FROM INFORMATION_SCHEMA.TABLES
+             WHERE TABLE_NAME = 'Staff' 
+			   AND TABLE_SCHEMA = 'Staging')
+CREATE TABLE Staging.Staff
+(
+  StaffKey INT NOT NULL IDENTITY(1,1),
+  [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
+  
+  PrimaryElectronicMailAddress [nvarchar](128) NULL,
+  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
+  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+
+  [StaffUniqueId] [nvarchar](32) NOT NULL,
+  [PersonalTitlePrefix] [nvarchar](30) NULL,
+  [FirstName] [nvarchar](75) NOT NULL,
+  [MiddleName] [nvarchar](75) NULL,
+  [MiddleInitial] CHAR(1) NULL,
+  [LastSurname] nvarchar(75) NOT NULL,
+  [FullName] NVARCHAR(50) NOT NULL,
+  [GenerationCodeSuffix] [nvarchar](10) NULL,
+  [MaidenName] [nvarchar](75) NULL,  
+  [BirthDate] DATE NULL,
+  [StaffAge] INT NULL,  
+  
+  SexType_Code NVARCHAR(15) NOT NULL,
+  SexType_Description NVARCHAR(100) NOT NULL,    
+  SexType_Male_Indicator BIT NOT NULL,
+  SexType_Female_Indicator BIT NOT NULL,
+  SexType_NotSelected_Indicator BIT NOT NULL,
+     
+  [HighestLevelOfEducationDescriptorDescriptor_CodeValue] NVARCHAR(100)  NULL, 
+  [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
+  [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
+  [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
+  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
+    
+  [StaffClassificationDescriptor_CodeValue]  NVARCHAR(100)  NULL, 
+  [StaffClassificationDescriptor_CodeDescription]  NVARCHAR(100)  NULL, 
+  
+  StaffMainInfoModifiedDate [datetime] NOT NULL,  
+
+  ValidFrom DATETIME NOT NULL, 
+  ValidTo DATETIME NOT NULL, 
+  IsCurrent BIT NOT NULL  
+
+  CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)   
+);
+GO
+
 
 --student
 if NOT EXISTS (select 1
@@ -3073,6 +3178,379 @@ BEGIN
 END;
 GO
 
+-- Dim Staff
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStaff_PopulateStaging]
+@LastLoadDate datetime,
+@NewLoadDate datetime
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	
+		TRUNCATE TABLE Staging.Staff
+		INSERT INTO Staging.Staff
+		(
+		    _sourceKey,
+		    PrimaryElectronicMailAddress,
+		    PrimaryElectronicMailTypeDescriptor_CodeValue,
+		    PrimaryElectronicMailTypeDescriptor_Description,
+		    StaffUniqueId,
+		    PersonalTitlePrefix,
+		    FirstName,
+		    MiddleName,
+		    MiddleInitial,
+		    LastSurname,
+		    FullName,
+		    GenerationCodeSuffix,
+		    MaidenName,
+		    BirthDate,
+		    StaffAge,
+		    SexType_Code,
+		    SexType_Description,
+		    SexType_Male_Indicator,
+		    SexType_Female_Indicator,
+		    SexType_NotSelected_Indicator,
+		    HighestLevelOfEducationDescriptorDescriptor_CodeValue,
+		    HighestLevelOfEducationDescriptorDescriptor_Description,
+		    YearsOfPriorProfessionalExperience,
+		    YearsOfPriorTeachingExperience,
+		    HighlyQualifiedTeacher_Indicator,
+		    StaffClassificationDescriptor_CodeValue,
+		    StaffClassificationDescriptor_CodeDescription,			
+			StaffMainInfoModifiedDate,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent
+		)
+	
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
+		SELECT  DISTINCT 
+			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.StaffUSI)) AS [_sourceKey]
+				,sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress]
+				,emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue]
+				,emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description]
+				,s.StaffUniqueId
+				,s.PersonalTitlePrefix
+				,s.FirstName
+				,s.MiddleName
+				,LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial	    
+				,s.LastSurname
+				,dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName
+				,s.GenerationCodeSuffix
+				,s.MaidenName        
+				,s.BirthDate
+				,DATEDIFF(YEAR, s.BirthDate, GetDate()) AS [StaffAge]
+				,CASE 
+					WHEN sex.CodeValue  = 'Male' THEN 'M'
+					WHEN sex.CodeValue  = 'Female' THEN 'F'
+					ELSE 'NS' -- not selected
+				END AS SexType_Code
+				,COALESCE(sex.CodeValue,'Not Selected') AS SexType_Description
+				,CASE WHEN COALESCE(sex.CodeValue,'Not Selected')  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator
+				,CASE WHEN COALESCE(sex.CodeValue,'Not Selected')  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator
+				,CASE WHEN COALESCE(sex.CodeValue,'Not Selected')  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator
+				,COALESCE(d_le.CodeValue,'N/A') as [HighestLevelOfEducationDescriptorDescriptor_CodeValue]
+				,COALESCE(d_le.Description,'N/A') as [HighestLevelOfEducationDescriptorDescriptor_Description]
+				,s.YearsOfPriorProfessionalExperience
+				,s.YearsOfPriorTeachingExperience
+				,s.HighlyQualifiedTeacher
+				,COALESCE(d_sc.CodeValue,'N/A') as StaffClassificationDescriptor_CodeValue
+				,COALESCE(d_sc.Description,'N/A') as StaffClassificationDescriptor_Description
+				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffMainInfoModifiedDate
+				--Making sure the first time, the ValidFrom is set to beginning of time 
+				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (s.LastModifiedDate)
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      seoaa.BeginDate 
+				END AS ValidFrom
+				,case when seoaa.EndDate IS null then  '12/31/9999' else seoaa.EndDate  END AS ValidTo
+				,case when seoaa.EndDate IS NULL OR seoaa.EndDate > GETDATE() THEN  1 else 0 end AS IsCurrent 
+		--SELECT distinct *
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff s 
+			  INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationAssignmentAssociation seoaa ON s.StaffUSI = seoaa.StaffUSI
+			  --sex	 
+			  left JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
+			  left join [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
+			  left join [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CitizenshipStatusType cst on s.CitizenshipStatusTypeId = cst.CitizenshipStatusTypeId
+			  left join [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_le on s.HighestCompletedLevelOfEducationDescriptorId = d_le.DescriptorId
+			  LEFT JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StaffElectronicMail sem ON s.StaffUSI = sem.StaffUSI
+			 															  AND sem.PrimaryEmailAddressIndicator = 1
+			  LEFT JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
+			  left join [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_sc on seoaa.StaffClassificationDescriptorId = d_sc.DescriptorId
+			 
+		WHERE 
+			(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate)
+
+						
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		
+		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+		
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+	
+	END CATCH;
+END;
+GO
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStaff_PopulateProduction]
+@LineageKey INT,
+@LastDateLoaded DATETIME
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	    
+		BEGIN TRANSACTION;   
+				 
+	     
+		--empty row technique
+		--fact table should not have null foreign keys references
+		--this empty record will be used in those cases
+		IF NOT EXISTS (SELECT 1 
+		               FROM dbo.DimStaff WHERE _sourceKey = '')
+				BEGIN
+				   INSERT INTO [dbo].DimStaff
+				   (
+				       _sourceKey,
+				       PrimaryElectronicMailAddress,
+				       PrimaryElectronicMailTypeDescriptor_CodeValue,
+				       PrimaryElectronicMailTypeDescriptor_Description,
+				       StaffUniqueId,
+				       PersonalTitlePrefix,
+				       FirstName,
+				       MiddleName,
+				       MiddleInitial,
+				       LastSurname,
+				       FullName,
+				       GenerationCodeSuffix,
+				       MaidenName,
+				       BirthDate,
+				       StaffAge,
+				       SexType_Code,
+				       SexType_Description,
+				       SexType_Male_Indicator,
+				       SexType_Female_Indicator,
+				       SexType_NotSelected_Indicator,
+				       HighestLevelOfEducationDescriptorDescriptor_CodeValue,
+				       HighestLevelOfEducationDescriptorDescriptor_Description,
+				       YearsOfPriorProfessionalExperience,
+				       YearsOfPriorTeachingExperience,
+				       HighlyQualifiedTeacher_Indicator,
+				       StaffClassificationDescriptor_CodeValue,
+				       StaffClassificationDescriptor_CodeDescription,
+				       ValidFrom,
+				       ValidTo,
+				       IsCurrent,
+				       LineageKey
+				   )
+				   VALUES
+				   (   N'',       -- _sourceKey - nvarchar(50)
+				       N'N/A',       -- PrimaryElectronicMailAddress - nvarchar(128)
+				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
+				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
+				       N'N/A',       -- StaffUniqueId - nvarchar(32)
+				       N'N/A',       -- PersonalTitlePrefix - nvarchar(30)
+				       N'N/A',       -- FirstName - nvarchar(75)
+				       N'N/A',       -- MiddleName - nvarchar(75)
+				       '',        -- MiddleInitial - char(1)
+				       N'N/A',       -- LastSurname - nvarchar(75)
+				       N'N/A',       -- FullName - nvarchar(50)
+				       N'N/A',       -- GenerationCodeSuffix - nvarchar(10)
+				       N'N/A',       -- MaidenName - nvarchar(75)
+				       GETDATE(), -- BirthDate - date
+				       0,         -- StaffAge - int
+				       N'',       -- SexType_Code - nvarchar(15)
+				       N'',       -- SexType_Description - nvarchar(100)
+				       0,      -- SexType_Male_Indicator - bit
+				       0,      -- SexType_Female_Indicator - bit
+				       1,      -- SexType_NotSelected_Indicator - bit
+				       N'',       -- HighestLevelOfEducationDescriptorDescriptor_CodeValue - nvarchar(100)
+				       N'',       -- HighestLevelOfEducationDescriptorDescriptor_Description - nvarchar(100)
+				       NULL,      -- YearsOfPriorProfessionalExperience - decimal(5, 2)
+				       NULL,      -- YearsOfPriorTeachingExperience - decimal(5, 2)
+				       NULL,      -- HighlyQualifiedTeacher_Indicator - bit
+				       N'',       -- StaffClassificationDescriptor_CodeValue - nvarchar(100)
+				       N'',       -- StaffClassificationDescriptor_CodeDescription - nvarchar(100)
+				      '07/01/2015', -- ValidFrom - datetime
+					  '9999-12-31', -- ValidTo - datetime
+					   0,      -- IsCurrent - bit
+					  -1          -- LineageKey - int
+				       )
+				END
+
+		
+		--staging table holds newer records. 
+		--the matching prod records will be valid until the date in which the newest data change was identified		
+		UPDATE prod
+		SET prod.ValidTo = stage.ValidFrom
+		FROM 
+			[dbo].[DimSchool] AS prod
+			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
+		WHERE prod.ValidTo = '12/31/9999'
+
+
+		INSERT INTO dbo.DimStaff
+		(
+		    _sourceKey,
+		    PrimaryElectronicMailAddress,
+		    PrimaryElectronicMailTypeDescriptor_CodeValue,
+		    PrimaryElectronicMailTypeDescriptor_Description,
+		    StaffUniqueId,
+		    PersonalTitlePrefix,
+		    FirstName,
+		    MiddleName,
+		    MiddleInitial,
+		    LastSurname,
+		    FullName,
+		    GenerationCodeSuffix,
+		    MaidenName,
+		    BirthDate,
+		    StaffAge,
+		    SexType_Code,
+		    SexType_Description,
+		    SexType_Male_Indicator,
+		    SexType_Female_Indicator,
+		    SexType_NotSelected_Indicator,
+		    HighestLevelOfEducationDescriptorDescriptor_CodeValue,
+		    HighestLevelOfEducationDescriptorDescriptor_Description,
+		    YearsOfPriorProfessionalExperience,
+		    YearsOfPriorTeachingExperience,
+		    HighlyQualifiedTeacher_Indicator,
+		    StaffClassificationDescriptor_CodeValue,
+		    StaffClassificationDescriptor_CodeDescription,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent,
+		    LineageKey
+		)
+		
+		SELECT 
+		    _sourceKey,
+		    PrimaryElectronicMailAddress,
+		    PrimaryElectronicMailTypeDescriptor_CodeValue,
+		    PrimaryElectronicMailTypeDescriptor_Description,
+		    StaffUniqueId,
+		    PersonalTitlePrefix,
+		    FirstName,
+		    MiddleName,
+		    MiddleInitial,
+		    LastSurname,
+		    FullName,
+		    GenerationCodeSuffix,
+		    MaidenName,
+		    BirthDate,
+		    StaffAge,
+		    SexType_Code,
+		    SexType_Description,
+		    SexType_Male_Indicator,
+		    SexType_Female_Indicator,
+		    SexType_NotSelected_Indicator,
+		    HighestLevelOfEducationDescriptorDescriptor_CodeValue,
+		    HighestLevelOfEducationDescriptorDescriptor_Description,
+		    YearsOfPriorProfessionalExperience,
+		    YearsOfPriorTeachingExperience,
+		    HighlyQualifiedTeacher_Indicator,
+		    StaffClassificationDescriptor_CodeValue,
+		    StaffClassificationDescriptor_CodeDescription,
+		    ValidFrom,
+		    ValidTo,
+		    IsCurrent,		    
+		    @LineageKey
+		FROM Staging.Staff
+
+		-- updating the EndTime to now and status to Success		
+		UPDATE dbo.ETL_Lineage
+			SET 
+				EndTime = SYSDATETIME(),
+				Status = 'S' -- success
+		WHERE [LineageKey] = @LineageKey;
+	
+	
+		-- Update the LoadDates table with the most current load date
+		UPDATE [dbo].[ETL_IncrementalLoads]
+		SET [LoadDate] = @LastDateLoaded
+		WHERE [TableName] = N'dbo.DimStaff';
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
 
 --Dim Student
 --------------------------------------------------------------------
@@ -3996,7 +4474,7 @@ BEGIN
 
 		DECLARE @currentSchoolYear INT 
 		SELECT TOP (1) @currentSchoolYear =  SchoolYear 
-		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType syt
 		WHERE syt.CurrentSchoolYear = 1;
 		
 

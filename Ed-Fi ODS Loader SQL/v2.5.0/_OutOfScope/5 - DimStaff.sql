@@ -70,7 +70,7 @@ INSERT INTO LongitudinalPOC.[dbo].[DimStaff]
     
 
 select  distinct 
-         'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) AS [_sourceKey]
+        CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.StaffUSI)) AS [_sourceKey]
 		,sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress]
 	    ,emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue]
 	    ,emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description]
@@ -124,7 +124,10 @@ WHERE NOT EXISTS(SELECT 1
 					WHERE 'Ed-Fi|' + Convert(NVARCHAR(MAX),s.StaffUSI) = ds._sourceKey)
 	  AND ssa.SchoolYear IN (2019,2020);
 
-
+	  	SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation WHERE StaffUSI =			14864
+			SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School WHERE SchoolId = 9035
+			SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization WHERE EducationOrganizationId = 9035
+			SELECT * FROM dbo.DimSchool WHERE ShortNameOfInstitution = 'Central Office BPS'
 
 --updatng the lineage table
 UPDATE LongitudinalPOC.[dbo].[Lineage]

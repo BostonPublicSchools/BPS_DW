@@ -11,9 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:ProtectionLevel="2"
-  DTS:VersionBuild="206"
-  DTS:VersionGUID="{FFD08BFB-C43B-4330-BF64-7771CCB0B62C}">
+  DTS:VersionBuild="216"
+  DTS:VersionGUID="{8A0A6447-96C0-4978-8654-28D41BEB7BB4}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -25,16 +24,10 @@
       <DTS:ObjectData>
         <DTS:ConnectionManager
           DTS:ConnectionString="Data Source=10.244.1.135;User ID=LongitudinalPOC;Initial Catalog=EdFiDW;Provider=SQLNCLI11.1;Persist Security Info=True;Auto Translate=False;">
-          <EncryptedData
-            Type="http://www.w3.org/2001/04/xmlenc#Element"
-            Salt="WZoJCtKh3as="
-            IV="npGh328VxqzNtmzfRZpmEw==" xmlns="http://www.w3.org/2001/04/xmlenc#">
-            <EncryptionMethod
-              Algorithm="http://www.w3.org/2001/04/xmlenc#aes256-cbc" />
-            <CipherData>
-              <CipherValue>npGh328VxqzNtmzfRZpmEwWn2xvJOVlYxqYDus0IY9d0miOWPN5xGEso9m8f+gjy0azJmCJord70VZ8c6UIV5sI2MlW7+arWywYHeosSfp7uSkSUgIXhnSdnoveviGW5ipErsWF4yAzNojJBGxQl8eUdRgpCUdLCcJeXgNSyulvMTDxek4nIv8P75URS0Kwz</CipherValue>
-            </CipherData>
-          </EncryptedData>
+          <DTS:Password
+            DTS:Name="Password"
+            Sensitive="1"
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACeqP/o2TxZf1DZUogxEP0HN00/1QK4T8oBd07vydLA0QAAAAAOgAAAAAIAACAAAADtzKbtks5NDU3onIAUpAMxjdKp+L3fM2N0c8aFTqNrwSAAAADyvWMFopChx6H/RhEncT/guTqRCYtbhdXop+gA8tNEFkAAAADiIt3p//qbGQBhS1eHOzBJVdkOWvoeyoo3gU0gPweCZTwm/LGX3hHKj8BXNt704YUJjT1EW86KfzKqdr405hZF</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -108,6 +101,36 @@
       DTS:ObjectName="Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load">
       <DTS:Variables />
       <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Populate Production"
+          DTS:DTSID="{af19cc65-e6cf-42f0-b14c-d429a99f1276}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Derive Staff Access"
+          DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+              SQLTask:SqlStatementSource="Proc_ETL_SatffAccess_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="0"
+                SQLTask:DtsVariableName="User::LineageKey"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="131"
+                SQLTask:ParameterSize="-1" />
+              <SQLTask:ParameterBinding
+                SQLTask:ParameterName="1"
+                SQLTask:DtsVariableName="User::LoadDate"
+                SQLTask:ParameterDirection="Input"
+                SQLTask:DataType="7"
+                SQLTask:ParameterSize="-1" />
+            </SQLTask:SqlTaskData>
+          </DTS:ObjectData>
+        </DTS:Executable>
         <DTS:Executable
           DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
           DTS:CreationName="STOCK:SEQUENCE"
@@ -314,6 +337,214 @@
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint 5"
               DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load" />
+          </DTS:PrecedenceConstraints>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
+          DTS:CreationName="STOCK:SEQUENCE"
+          DTS:Description="Sequence Container"
+          DTS:DTSID="{63edbcf9-7ee5-4599-a754-3a496bcfb099}"
+          DTS:ExecutableType="STOCK:SEQUENCE"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Staff Dimension">
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
+              DTS:CreationName="Microsoft.ExpressionTask"
+              DTS:Description="Expression Task"
+              DTS:DTSID="{b79c194d-e01e-4f29-bda7-2eb3077ac9cb}"
+              DTS:ExecutableType="Microsoft.ExpressionTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Get Date Of Current Load"
+              DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExpressionTask
+                  Expression="@[User::LoadDate]= GETDATE()" />
+              </DTS:ObjectData>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
+              DTS:CreationName="Microsoft.ExecuteSQLTask"
+              DTS:Description="SQL Truncate Staging Tables"
+              DTS:DTSID="{cf50b413-6607-4bec-b814-adf96fa24557}"
+              DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Get Date Of Previous Load"
+              DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <SQLTask:SqlTaskData
+                  SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                  SQLTask:SqlStatementSource="Exec  [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate] ?"
+                  SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                  <SQLTask:ResultBinding
+                    SQLTask:ResultName="0"
+                    SQLTask:DtsVariableName="User::PreviousLoadDate" />
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="0"
+                    SQLTask:DtsVariableName="User::TableName"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="129"
+                    SQLTask:ParameterSize="-1" />
+                </SQLTask:SqlTaskData>
+              </DTS:ObjectData>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
+              DTS:CreationName="Microsoft.ExecuteSQLTask"
+              DTS:Description="Populate Production"
+              DTS:DTSID="{ad038cda-2a98-4bce-8b30-d895a9c37897}"
+              DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Populate Production"
+              DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <SQLTask:SqlTaskData
+                  SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                  SQLTask:SqlStatementSource="Proc_ETL_DimStaff_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="0"
+                    SQLTask:DtsVariableName="User::LineageKey"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="131"
+                    SQLTask:ParameterSize="-1" />
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="1"
+                    SQLTask:DtsVariableName="User::LoadDate"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="7"
+                    SQLTask:ParameterSize="-1" />
+                </SQLTask:SqlTaskData>
+              </DTS:ObjectData>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
+              DTS:CreationName="Microsoft.ExecuteSQLTask"
+              DTS:Description="Populate Staging"
+              DTS:DTSID="{286d75c9-675b-4788-8f72-92e8998ca82b}"
+              DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Populate Staging"
+              DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <SQLTask:SqlTaskData
+                  SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                  SQLTask:SqlStatementSource="Proc_ETL_DimStaff_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="0"
+                    SQLTask:DtsVariableName="User::PreviousLoadDate"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="7"
+                    SQLTask:ParameterSize="-1" />
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="1"
+                    SQLTask:DtsVariableName="User::LoadDate"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="7"
+                    SQLTask:ParameterSize="-1" />
+                </SQLTask:SqlTaskData>
+              </DTS:ObjectData>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
+              DTS:CreationName="Microsoft.ExpressionTask"
+              DTS:Description="Expression Task"
+              DTS:DTSID="{eab41f2e-4bb3-4b5b-8439-a6c0ea9ca24e}"
+              DTS:ExecutableType="Microsoft.ExpressionTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Set Table Name"
+              DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <ExpressionTask
+                  Expression="@[User::TableName]=&quot;dbo.DimStaff&quot;" />
+              </DTS:ObjectData>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
+              DTS:CreationName="Microsoft.ExecuteSQLTask"
+              DTS:Description="Execute SQL Task"
+              DTS:DTSID="{6787c2dc-caf2-4904-9464-a6e90a785ee5}"
+              DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Update Lineage Table And Retrieve Key"
+              DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+              DTS:ThreadHint="0">
+              <DTS:Variables />
+              <DTS:ObjectData>
+                <SQLTask:SqlTaskData
+                  SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                  SQLTask:SqlStatementSource="EXEC [dbo].[Proc_ETL_Lineage_GetKey] ?,?"
+                  SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                  <SQLTask:ResultBinding
+                    SQLTask:ResultName="0"
+                    SQLTask:DtsVariableName="User::LineageKey" />
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="0"
+                    SQLTask:DtsVariableName="$Package::LoadType"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="130"
+                    SQLTask:ParameterSize="-1" />
+                  <SQLTask:ParameterBinding
+                    SQLTask:ParameterName="1"
+                    SQLTask:DtsVariableName="User::TableName"
+                    SQLTask:ParameterDirection="Input"
+                    SQLTask:DataType="130"
+                    SQLTask:ParameterSize="-1" />
+                </SQLTask:SqlTaskData>
+              </DTS:ObjectData>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:PrecedenceConstraints>
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint]"
+              DTS:CreationName=""
+              DTS:DTSID="{fa686caa-bf9d-4310-92ee-d90c88cf33a8}"
+              DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint"
+              DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key" />
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 1]"
+              DTS:CreationName=""
+              DTS:DTSID="{8aec7f3a-9e50-4c34-a7ba-c9111cdf30fa}"
+              DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint 1"
+              DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load" />
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 3]"
+              DTS:CreationName=""
+              DTS:DTSID="{e7243a57-93b9-4323-a83c-076512a91c62}"
+              DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint 3"
+              DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production" />
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 4]"
+              DTS:CreationName=""
+              DTS:DTSID="{d6506d71-a7d5-4c5b-804e-fcc4dcfa333d}"
+              DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint 4"
+              DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging" />
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 5]"
+              DTS:CreationName=""
+              DTS:DTSID="{b2adda76-fb16-45ec-84b2-e93c65835bff}"
+              DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint 5"
+              DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
         <DTS:Executable
@@ -750,6 +981,22 @@
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 1"
           DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{3879D837-4D84-4910-BFE1-AA9E6C12C047}"
+          DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{83A5688F-6F80-4126-AE53-80CC64EFEA3D}"
+          DTS:From="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access" />
       </DTS:PrecedenceConstraints>
     </DTS:Executable>
     <DTS:Executable
@@ -2708,7 +2955,7 @@
           PanelSize="317,458"
           Size="317,501"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
-          TopLeft="30.5,29.5714285714287" />
+          TopLeft="47.1666666666667,29.5714285714287" />
         <NodeLayout
           Size="267,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
@@ -2849,7 +3096,7 @@
           PanelSize="317,466"
           Size="317,509"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
-          TopLeft="776.638384073329,29.571428571429" />
+          TopLeft="793.305050739996,29.571428571429" />
         <NodeLayout
           Size="268,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Current Load"
@@ -2990,10 +3237,10 @@
           PanelSize="317,468"
           Size="317,511"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension"
-          TopLeft="403.388384073331,27.5375910762467" />
+          TopLeft="420.055050739998,27.5375910762467" />
         <EdgeLayout
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint]"
-          TopLeft="347.5,281.554509823838">
+          TopLeft="364.166666666667,281.554509823838">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -3015,7 +3262,7 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 1]"
-          TopLeft="720.388384073331,283.554509823838">
+          TopLeft="737.055050739998,283.554509823838">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -3035,13 +3282,202 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
+        <NodeLayout
+          Size="268,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
+          TopLeft="29.1964300362663,94.4360946005966" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
+          TopLeft="28.0535728508349,236.325196309716" />
+        <NodeLayout
+          Size="276,44"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
+          TopLeft="24.2142871378787,375.513168854398" />
+        <NodeLayout
+          Size="278,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
+          TopLeft="24.3705371914306,306.261285894113" />
+        <NodeLayout
+          Size="268,47"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="276,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642062,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint]"
+          TopLeft="163.508930050236,136.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,29.8421066154074"
+              Start="0,0"
+              End="0,22.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 1]"
+          TopLeft="164.687501457521,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.046995093712"
+              Start="0,0"
+              End="0,20.546995093712">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.546995093712" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.792412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 4]"
+          TopLeft="164.462055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 5]"
+          TopLeft="163.024553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1118,575"
-          Size="1118,618"
+          PanelSize="317,477"
+          Size="317,520"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
+          TopLeft="1209.16666666667,30.571428571429" />
+        <NodeLayout
+          Size="197,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
+          TopLeft="1645,267" />
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 2]"
+          TopLeft="1110.30505074,287.321428571429">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="98.8616159266708,0"
+              Start="0,0"
+              End="91.3616159266708,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="91.3616159266708,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 3]"
+          TopLeft="1526.16666666667,289.285714285715">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="118.833333333333,0"
+              Start="0,0"
+              End="111.333333333333,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="111.333333333333,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="1922,640"
+          Size="1922,683"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
-          TopLeft="731.25,28.928571428571" />
+          TopLeft="43.25,495.595238095238" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
@@ -4364,21 +4800,33 @@
           PanelSize="1925,1232"
           Size="1925,1275"
           Id="Package\Each of these containers run regardless of whether others succeed"
-          TopLeft="322.5,751.25" />
+          TopLeft="116.166666666667,1299.58333333333" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1287.625,646.928571428571">
+          TopLeft="1004.25,1178.59523809524">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,104.321428571429"
+              EndConnector="74.4166666666667,120.988095238095"
               Start="0,0"
-              End="0,96.821428571429">
+              End="74.4166666666667,113.488095238095">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,96.821428571429" />
+                    End="0,56.4940476190477" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,56.4940476190477"
+                    Point2="0,60.4940476190477"
+                    Point3="4,60.4940476190477" />
+                  <mssgle:LineSegment
+                    End="70.4166666666667,60.4940476190477" />
+                  <mssgle:CubicBezierSegment
+                    Point1="70.4166666666667,60.4940476190477"
+                    Point2="74.4166666666667,60.4940476190477"
+                    Point3="74.4166666666667,64.4940476190477" />
+                  <mssgle:LineSegment
+                    End="74.4166666666667,113.488095238095" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
