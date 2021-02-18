@@ -125,9 +125,9 @@ WHERE NOT EXISTS(SELECT 1
 	  AND ssa.SchoolYear IN (2019,2020);
 
 	  	SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation WHERE StaffUSI =			14864
-			SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School WHERE SchoolId = 9035
-			SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization WHERE EducationOrganizationId = 9035
-			SELECT * FROM dbo.DimSchool WHERE ShortNameOfInstitution = 'Central Office BPS'
+		SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School WHERE SchoolId = 9035
+		SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization WHERE EducationOrganizationId = 9035
+		SELECT * FROM dbo.DimSchool WHERE ShortNameOfInstitution = 'Central Office BPS'
 
 --updatng the lineage table
 UPDATE LongitudinalPOC.[dbo].[Lineage]

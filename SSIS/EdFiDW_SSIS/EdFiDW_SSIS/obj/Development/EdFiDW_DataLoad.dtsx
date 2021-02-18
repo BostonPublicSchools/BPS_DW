@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="216"
-  DTS:VersionGUID="{8A0A6447-96C0-4978-8654-28D41BEB7BB4}">
+  DTS:VersionBuild="220"
+  DTS:VersionGUID="{F80F365E-F887-48EC-B10D-944BD8D28DBE}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAACeqP/o2TxZf1DZUogxEP0HN00/1QK4T8oBd07vydLA0QAAAAAOgAAAAAIAACAAAADtzKbtks5NDU3onIAUpAMxjdKp+L3fM2N0c8aFTqNrwSAAAADyvWMFopChx6H/RhEncT/guTqRCYtbhdXop+gA8tNEFkAAAADiIt3p//qbGQBhS1eHOzBJVdkOWvoeyoo3gU0gPweCZTwm/LGX3hHKj8BXNt704YUJjT1EW86KfzKqdr405hZF</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD424vbkYp/LLKVo55A9yNlXTVPu2oD4dqB/P1xRVhaPgAAAAAOgAAAAAIAACAAAAA3gQgO76EZetdkygZK0jRuLD1QuY/JhXKGgKTPmGlFMCAAAABQ2XeeBlIvZMbbH0sDSJhG+oeGNUKXk85EAmLB/2qOq0AAAADiNwadvFfIqPzCV6qXf4wN1khs1RkUoE1yjEjEb+5mh4xT6Ui3ZE9y63WfmA8em3ayVP1g7GSANNIuS/N/+9qs</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -115,7 +115,7 @@
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-              SQLTask:SqlStatementSource="Proc_ETL_SatffAccess_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+              SQLTask:SqlStatementSource="Proc_ETL_DimStaff_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
               <SQLTask:ParameterBinding
                 SQLTask:ParameterName="0"
                 SQLTask:DtsVariableName="User::LineageKey"
@@ -3477,7 +3477,7 @@
           PanelSize="1922,640"
           Size="1922,683"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
-          TopLeft="43.25,495.595238095238" />
+          TopLeft="115.25,495.595238095238" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
@@ -4803,30 +4803,18 @@
           TopLeft="116.166666666667,1299.58333333333" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1004.25,1178.59523809524">
+          TopLeft="1077.45833333333,1178.59523809524">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="74.4166666666667,120.988095238095"
+              EndConnector="0,120.988095238095"
               Start="0,0"
-              End="74.4166666666667,113.488095238095">
+              End="0,113.488095238095">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,56.4940476190477" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,56.4940476190477"
-                    Point2="0,60.4940476190477"
-                    Point3="4,60.4940476190477" />
-                  <mssgle:LineSegment
-                    End="70.4166666666667,60.4940476190477" />
-                  <mssgle:CubicBezierSegment
-                    Point1="70.4166666666667,60.4940476190477"
-                    Point2="74.4166666666667,60.4940476190477"
-                    Point3="74.4166666666667,64.4940476190477" />
-                  <mssgle:LineSegment
-                    End="74.4166666666667,113.488095238095" />
+                    End="0,113.488095238095" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

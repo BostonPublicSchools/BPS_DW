@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="218"
-  DTS:VersionGUID="{6521337A-EDF4-4412-8444-0CBD92B4515F}">
+  DTS:VersionBuild="221"
+  DTS:VersionGUID="{CB44DC95-2038-49E8-9DBF-780448CE3C89}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABVzCSWddy2NYKWAVSRardZNAJS8vjFroCYTmD5HZiluQAAAAAOgAAAAAIAACAAAADNoUkdAQPxdCAbR5Z3cHeqKyuAB0NMgx/xpv6gnmNqjyAAAABu6OYGPacTwo7qBtrJE6BusHmLDf/NgsaBLbz6zBiMyUAAAABLebaq+OeKHCJ9UE8R5MiwDgRDGKxCDFeTF8JEibdFHq7p0xGz8wP160/6nS5yEevb/pMXioqqajUilFwFO3LH</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD2DyId7QxlkyTcr+9JQqYP+mDISYKUmtC2jqPf5X756gAAAAAOgAAAAAIAACAAAABnwmXzWMfjL7dxwdsYf24iflavE/LbQiKhwnGPEMKYWyAAAACA9OEqKk3XSaSNaluzNgebN6fnUZccPHmwfXHmx9rvtkAAAACkv7ziHTp7esTxQaUzSBxmGFUXpo+APkTtOI8Dwpje5O/TsyvmLArFBmgVUIK5XuB6lKyBpiwTRP4dPP8+Z8e1</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -115,20 +115,7 @@
           <DTS:ObjectData>
             <SQLTask:SqlTaskData
               SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-              SQLTask:SqlStatementSource="Proc_ETL_SatffAccess_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
-              <SQLTask:ParameterBinding
-                SQLTask:ParameterName="0"
-                SQLTask:DtsVariableName="User::LineageKey"
-                SQLTask:ParameterDirection="Input"
-                SQLTask:DataType="131"
-                SQLTask:ParameterSize="-1" />
-              <SQLTask:ParameterBinding
-                SQLTask:ParameterName="1"
-                SQLTask:DtsVariableName="User::LoadDate"
-                SQLTask:ParameterDirection="Input"
-                SQLTask:DataType="7"
-                SQLTask:ParameterSize="-1" />
-            </SQLTask:SqlTaskData>
+              SQLTask:SqlStatementSource="Proc_ETL_StaffAccess_PopulateProduction" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
           </DTS:ObjectData>
         </DTS:Executable>
         <DTS:Executable
@@ -2816,6 +2803,10 @@
       <GraphLayout
         Capacity="256" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
+          Size="197,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
+          TopLeft="1645,267" />
+        <NodeLayout
           Size="276,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load"
           TopLeft="25.1964300362662,94.4360946005966" />
@@ -2956,6 +2947,147 @@
           Size="317,501"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
           TopLeft="47.1666666666667,29.5714285714287" />
+        <NodeLayout
+          Size="268,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
+          TopLeft="29.1964300362663,94.4360946005966" />
+        <NodeLayout
+          Size="275,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
+          TopLeft="28.0535728508349,236.325196309716" />
+        <NodeLayout
+          Size="276,44"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
+          TopLeft="24.2142871378787,375.513168854398" />
+        <NodeLayout
+          Size="278,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
+          TopLeft="24.3705371914306,306.261285894113" />
+        <NodeLayout
+          Size="268,47"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="276,42"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642062,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint]"
+          TopLeft="163.508930050236,136.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,29.8421066154074"
+              Start="0,0"
+              End="0,22.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 1]"
+          TopLeft="164.687501457521,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.046995093712"
+              Start="0,0"
+              End="0,20.546995093712">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.546995093712" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.792412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 4]"
+          TopLeft="164.462055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 5]"
+          TopLeft="163.024553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="317,477"
+          Size="317,520"
+          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
+          TopLeft="1209.16666666667,30.571428571429" />
         <NodeLayout
           Size="267,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
@@ -3282,151 +3414,6 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="268,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
-          TopLeft="29.1964300362663,94.4360946005966" />
-        <NodeLayout
-          Size="275,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
-          TopLeft="28.0535728508349,236.325196309716" />
-        <NodeLayout
-          Size="276,44"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
-          TopLeft="24.2142871378787,375.513168854398" />
-        <NodeLayout
-          Size="278,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
-          TopLeft="24.3705371914306,306.261285894113" />
-        <NodeLayout
-          Size="268,47"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="276,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642062,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint]"
-          TopLeft="163.508930050236,136.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,29.8421066154074"
-              Start="0,0"
-              End="0,22.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,22.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 1]"
-          TopLeft="164.687501457521,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.046995093712"
-              Start="0,0"
-              End="0,20.546995093712">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.546995093712" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 3]"
-          TopLeft="162.792412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 4]"
-          TopLeft="164.462055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
-              Start="0,0"
-              End="0,20.436089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.436089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension.PrecedenceConstraints[Constraint 5]"
-          TopLeft="163.024553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="317,477"
-          Size="317,520"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
-          TopLeft="1209.16666666667,30.571428571429" />
-        <NodeLayout
-          Size="197,42"
-          Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
-          TopLeft="1645,267" />
         <EdgeLayout
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 2]"
           TopLeft="1110.30505074,287.321428571429">
@@ -3477,7 +3464,7 @@
           PanelSize="1922,640"
           Size="1922,683"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
-          TopLeft="95.25,495.595238095238" />
+          TopLeft="115.25,495.595238095238" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
@@ -4803,30 +4790,18 @@
           TopLeft="116.166666666667,1299.58333333333" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1056.25,1178.59523809524">
+          TopLeft="1077.45833333333,1178.59523809524">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="22.4166666666667,120.988095238095"
+              EndConnector="0,120.988095238095"
               Start="0,0"
-              End="22.4166666666667,113.488095238095">
+              End="0,113.488095238095">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,56.4940476190477" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,56.4940476190477"
-                    Point2="0,60.4940476190477"
-                    Point3="4,60.4940476190477" />
-                  <mssgle:LineSegment
-                    End="18.4166666666667,60.4940476190477" />
-                  <mssgle:CubicBezierSegment
-                    Point1="18.4166666666667,60.4940476190477"
-                    Point2="22.4166666666667,60.4940476190477"
-                    Point3="22.4166666666667,64.4940476190477" />
-                  <mssgle:LineSegment
-                    End="22.4166666666667,113.488095238095" />
+                    End="0,113.488095238095" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
