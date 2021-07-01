@@ -3804,6 +3804,7 @@ BEGIN
 
 		--Staff Current Students
 		---------------------------------------------------------------------------------------
+		/*
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_Derived_StaffCurrentStudents ON [Derived].StaffCurrentStudents;
 
@@ -3873,7 +3874,7 @@ BEGIN
 		
 					 
         CREATE COLUMNSTORE INDEX CSI_Derived_StaffCurrentStudents  ON [Derived].StaffCurrentStudents ( [StaffKey],StudentKey)		
-
+		*/
 	    DROP TABLE IF EXISTS #currentYearStaff_DistrictAdmins;
 		DROP TABLE IF EXISTS #currentYearStaff_SchoolAdmins;
 		DROP TABLE IF EXISTS #currentYearStaff_Teachers;
@@ -4136,12 +4137,14 @@ BEGIN
 					WHEN seoa.HispanicLatinoEthnicity = 1 THEN 'Latinx'
 					ELSE COALESCE(sr.RaceCodes,'N/A')
 			   END AS StateRaceCode,
-			   sr.Race_AmericanIndianAlaskanNative_Indicator,
-			   sr.Race_Asian_Indicator,
 
-			   sr.Race_BlackAfricaAmerican_Indicator,
-			   sr.Race_NativeHawaiianPacificIslander_Indicator,
-			   sr.Race_White_Indicator,
+			   COALESCE(sr.Race_AmericanIndianAlaskanNative_Indicator,0) AS Race_AmericanIndianAlaskanNative_Indicator,
+			   COALESCE(sr.Race_Asian_Indicator,0) AS Race_Asian_Indicator ,
+			   COALESCE(sr.Race_BlackAfricaAmerican_Indicator,0) AS Race_BlackAfricaAmerican_Indicator ,
+			   COALESCE(sr.Race_NativeHawaiianPacificIslander_Indicator,0) AS Race_NativeHawaiianPacificIslander_Indicator ,
+			   COALESCE(sr.Race_White_Indicator,0) AS Race_White_Indicator ,
+			   
+			   
 			   CASE WHEN sr.RaceCount > 1 AND COALESCE(seoa.HispanicLatinoEthnicity,0) = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, 
 			   sr.Race_ChooseNotRespond_Indicator,
 			   sr.Race_Other_Indicator,
@@ -4166,14 +4169,21 @@ BEGIN
 								   WHERE spas.StudentUSI = s.StudentUSI									 
 										 AND GETDATE() BETWEEN spas.BeginDate AND COALESCE(spas.ServiceEndDate,'12/31/9999')
 						   ) THEN 1 ELSE 0 End AS Homeless_Indicator,
-				CASE WHEN EXISTS (
-							       SELECT 1
-								   FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.[StudentProgramAssociationService] spas
-										INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d ON spas.ProgramTypeDescriptorId = d.DescriptorId 
-																											   AND CHARINDEX('504 Plan', d.CodeValue ,1) = 0								   
-								   WHERE spas.StudentUSI = s.StudentUSI									 
-										 AND GETDATE() BETWEEN spas.BeginDate AND COALESCE(spas.ServiceEndDate,'12/31/9999')
-						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
+			   CASE WHEN EXISTS (  SELECT 1
+										FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociationSpecialEducationProgramService spas
+											INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d
+												ON spas.ProgramTypeDescriptorId = d.DescriptorId
+												   AND CHARINDEX('504 Plan', d.CodeValue, 1) = 0
+											INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].[studentindividualeducationplan].[StudentSpecialEducationProgramAssociationExtension] sspe
+												ON sspe.StudentUSI = spas.StudentUSI
+												   AND spas.ProgramEducationOrganizationId = sspe.ProgramEducationOrganizationId
+												   AND spas.ProgramName = sspe.ProgramName
+												   AND spas.ProgramTypeDescriptorId = sspe.ProgramTypeDescriptorId
+												   AND spas.BeginDate = sspe.BeginDate
+										WHERE spas.StudentUSI = Student.StudentUSI
+											  AND GETDATE()
+											  BETWEEN spas.BeginDate AND COALESCE(spas.ServiceEndDate, '12/31/9999')
+											  AND sspe.IEPExitDate IS NULL) THEN 1 ELSE 0 END AS IEP_Indicator,
 	   
 			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
 			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,

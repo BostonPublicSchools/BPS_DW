@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="221"
-  DTS:VersionGUID="{CB44DC95-2038-49E8-9DBF-780448CE3C89}">
+  DTS:VersionBuild="228"
+  DTS:VersionGUID="{410A6C18-ABCF-4807-9D22-6E824F8BAE17}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAtjTGioWlYEGuthS9zP2lGwAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAD2DyId7QxlkyTcr+9JQqYP+mDISYKUmtC2jqPf5X756gAAAAAOgAAAAAIAACAAAABnwmXzWMfjL7dxwdsYf24iflavE/LbQiKhwnGPEMKYWyAAAACA9OEqKk3XSaSNaluzNgebN6fnUZccPHmwfXHmx9rvtkAAAACkv7ziHTp7esTxQaUzSBxmGFUXpo+APkTtOI8Dwpje5O/TsyvmLArFBmgVUIK5XuB6lKyBpiwTRP4dPP8+Z8e1</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYdVM1yoOc0+Iwr7iqF3digAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABRiHMRTx4jOiv1EIhQ5rfySVZ11W4ckXJ2NP3AxunzLwAAAAAOgAAAAAIAACAAAAAHod9vvd8OtYqP4l8CU4Oq2M7T1IyW8SNMXGycPLIXPSAAAADuneCBRHlYFkLq2NR4D3I/bPjS5bbioFeCGmFetxY6GEAAAABgVqzpYjFxNMQ57A1E3rcYcPc5MBeAnB6ashpVNsqpsJ143sNnFmRXDypNgeMBupGU9fGq9UdWEtbfZGpHwLcg</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -1876,27 +1876,27 @@
           DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades"
           DTS:CreationName="STOCK:SEQUENCE"
           DTS:Description="Sequence Container"
-          DTS:DTSID="{F91C2FB3-FB9E-4CE0-A299-756E3538E2F0}"
+          DTS:DTSID="{3e833e5e-9179-450d-928b-d071d12b1263}"
           DTS:ExecutableType="STOCK:SEQUENCE"
           DTS:LocaleID="-1"
           DTS:ObjectName="Course Grades">
           <DTS:Variables />
           <DTS:Executables>
             <DTS:Executable
-              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
-              DTS:DTSID="{8B579A78-C099-46FF-8084-5BFC166B72D6}"
+              DTS:DTSID="{70b8a878-f248-4927-bb05-c2b16d754862}"
               DTS:ExecutableType="STOCK:SEQUENCE"
               DTS:LocaleID="-1"
-              DTS:ObjectName="Dim Course">
+              DTS:ObjectName="Dim GradingPeriod">
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
-                  DTS:DTSID="{BB877822-3884-464B-99F7-DBC7D4EDD4B3}"
+                  DTS:DTSID="{3db901a8-df86-485d-8d59-5afdacd19c1b}"
                   DTS:ExecutableType="Microsoft.ExpressionTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Current Load"
@@ -1909,10 +1909,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
-                  DTS:DTSID="{23D1AABB-7340-4C21-8CB0-53E1F1A8A322}"
+                  DTS:DTSID="{ba1b103f-e003-4668-9bcf-c94e76b75b19}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Previous Load"
@@ -1937,10 +1937,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
-                  DTS:DTSID="{4FE3C567-E24D-4EC6-8DB4-15A337A0FE49}"
+                  DTS:DTSID="{92a0a536-4e82-4563-b0ad-2a36d294054e}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Production"
@@ -1950,7 +1950,7 @@
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
                       SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-                      SQLTask:SqlStatementSource="Proc_ETL_DimCourse_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      SQLTask:SqlStatementSource="Proc_ETL_DimGradingPeriod_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                       <SQLTask:ParameterBinding
                         SQLTask:ParameterName="0"
                         SQLTask:DtsVariableName="User::LineageKey"
@@ -1967,10 +1967,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
-                  DTS:DTSID="{C543CA49-8A9F-47CB-816B-A1D92090495A}"
+                  DTS:DTSID="{ab372372-7242-45bf-aa0a-d7cdfade7c7b}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Staging"
@@ -1980,7 +1980,7 @@
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
                       SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-                      SQLTask:SqlStatementSource="Proc_ETL_DimCourse_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      SQLTask:SqlStatementSource="Proc_ETL_DimGradingPeriod_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                       <SQLTask:ParameterBinding
                         SQLTask:ParameterName="0"
                         SQLTask:DtsVariableName="User::PreviousLoadDate"
@@ -1997,10 +1997,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
-                  DTS:DTSID="{50E94811-46CC-4579-99CC-945BE35809DA}"
+                  DTS:DTSID="{e59f927b-59a3-4416-a29c-88ef250a9973}"
                   DTS:ExecutableType="Microsoft.ExpressionTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Set Table Name"
@@ -2009,14 +2009,14 @@
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <ExpressionTask
-                      Expression="@[User::TableName]=&quot;dbo.DimCourse&quot;" />
+                      Expression="@[User::TableName]=&quot;dbo.DimGradingPeriod&quot;" />
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
-                  DTS:DTSID="{5809D9B6-4D4A-41FE-A01F-01BAE9A922E7}"
+                  DTS:DTSID="{a49e2b88-b2a3-46af-910f-8d9574412266}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Update Lineage Table And Retrieve Key"
@@ -2049,62 +2049,270 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
-                  DTS:DTSID="{FEEDD8BB-1D04-440C-BBBE-BE527A14F167}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
+                  DTS:DTSID="{67987f98-3a15-4261-bdb2-f19e0817106e}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
-                  DTS:DTSID="{6DF549B1-6778-42FA-A298-B3CB17760ED5}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:DTSID="{e3aac211-be98-4f4d-bceb-cd4a7e58311c}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
-                  DTS:DTSID="{85AA8AA1-1BA4-45C8-B9D3-A6B034DA7F6E}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
+                  DTS:DTSID="{2af87be8-dfde-4dc4-8aa6-04494498e3e7}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
-                  DTS:DTSID="{567B05A1-25F5-491A-A012-2EBB90E4549A}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
+                  DTS:DTSID="{13eb6a2b-dba1-4ed4-9708-39076b2248ec}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
-                  DTS:DTSID="{D7E3E43D-08A8-4513-809C-F79A9499BB8C}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
+                  DTS:DTSID="{4b0e7531-86fe-434d-a6d1-11d1d5f778f1}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
             <DTS:Executable
-              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript"
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
               DTS:CreationName="STOCK:SEQUENCE"
               DTS:Description="Sequence Container"
-              DTS:DTSID="{A607584C-0727-48A6-8261-E30CED6315A7}"
+              DTS:DTSID="{fadbb265-1c2c-44e9-a189-58c923b6febe}"
               DTS:ExecutableType="STOCK:SEQUENCE"
               DTS:LocaleID="-1"
-              DTS:ObjectName="Fcat StudentCourseTranscript">
+              DTS:ObjectName="Dim StudentSection">
               <DTS:Variables />
               <DTS:Executables>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
-                  DTS:DTSID="{F089DD01-0866-450A-A48E-183793B84541}"
+                  DTS:DTSID="{28b43dfa-005c-4293-8772-024831daa39f}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Current Load"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::LoadDate]= GETDATE()" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="SQL Truncate Staging Tables"
+                  DTS:DTSID="{649c0513-3b08-4b86-a7a0-81bde668aa90}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Previous Load"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Exec  [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate] ?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Production"
+                  DTS:DTSID="{eb84adcb-86e8-428e-9579-382dc098ec17}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Production"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_DimStudentSection_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::LineageKey"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="131"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Staging"
+                  DTS:DTSID="{c9626509-f5dd-4c74-9e7b-c5d354d57fdb}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Staging"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_DimStudentSection_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{d253cac4-1a6b-4035-8543-8b40aa557768}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Set Table Name"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::TableName]=&quot;dbo.DimStudentSection&quot;" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Execute SQL Task"
+                  DTS:DTSID="{6ec48375-18e6-455a-ba33-92e4646856fb}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Update Lineage Table And Retrieve Key"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="1">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="EXEC [dbo].[Proc_ETL_Lineage_GetKey] ?,?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::LineageKey" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="$Package::LoadType"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+              <DTS:PrecedenceConstraints>
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{5d31ca44-db8e-44ec-bfb9-ed2015274d1e}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 1]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{b56252a1-9461-4b43-96f4-7578a386724b}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 1"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 3]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{57ed46e4-4fe4-49ee-9c2d-6bd1596a46e7}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 3"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 4]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{d105d2e5-32c7-48e9-a4cd-f5aa6228060c}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 4"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 5]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{eee9f1c7-63f9-44fc-bbf5-49c29e17a6b3}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 5"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load" />
+              </DTS:PrecedenceConstraints>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades"
+              DTS:CreationName="STOCK:SEQUENCE"
+              DTS:Description="Sequence Container"
+              DTS:DTSID="{e94e8d38-3e81-4dc7-b7fc-b9fa9d7e8033}"
+              DTS:ExecutableType="STOCK:SEQUENCE"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Fcat StudentCourseGrades">
+              <DTS:Variables />
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{f2244bc8-a882-4477-9dc8-c7cceae274b9}"
                   DTS:ExecutableType="Microsoft.ExpressionTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Current Load"
@@ -2117,10 +2325,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Previous Load"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="SQL Truncate Staging Tables"
-                  DTS:DTSID="{E2587EC1-25CF-4A1F-9F12-A0F8FE61D265}"
+                  DTS:DTSID="{5c5cc880-2348-441c-9784-d5d1e840c79c}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Previous Load"
@@ -2145,10 +2353,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Production"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Production"
-                  DTS:DTSID="{3E799FFB-C9A7-4915-9CAB-C9F14A9F655D}"
+                  DTS:DTSID="{9bf20825-025e-4a52-a500-a70fad10dcfd}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Production"
@@ -2158,7 +2366,7 @@
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
                       SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseTranscript_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseGrade_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                       <SQLTask:ParameterBinding
                         SQLTask:ParameterName="0"
                         SQLTask:DtsVariableName="User::LineageKey"
@@ -2175,10 +2383,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Staging"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Populate Staging"
-                  DTS:DTSID="{FD1C51D8-C1B3-49FA-86F0-52517B46C9C4}"
+                  DTS:DTSID="{ea3f5b0d-0747-46a3-9361-29d37009757e}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Staging"
@@ -2188,7 +2396,7 @@
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
                       SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
-                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseTranscript_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseGrade_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
                       <SQLTask:ParameterBinding
                         SQLTask:ParameterName="0"
                         SQLTask:DtsVariableName="User::PreviousLoadDate"
@@ -2205,10 +2413,10 @@
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Set Table Name"
                   DTS:CreationName="Microsoft.ExpressionTask"
                   DTS:Description="Expression Task"
-                  DTS:DTSID="{EC36E0BC-469C-4CE4-A555-719064059F07}"
+                  DTS:DTSID="{af4eef22-6ca0-4e8a-9654-648c4682e958}"
                   DTS:ExecutableType="Microsoft.ExpressionTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Set Table Name"
@@ -2217,14 +2425,14 @@
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <ExpressionTask
-                      Expression="@[User::TableName]=&quot;dbo.FactStudentCourseTranscript&quot;" />
+                      Expression="@[User::TableName]=&quot;dbo.FactStudentCourseGrade&quot;" />
                   </DTS:ObjectData>
                 </DTS:Executable>
                 <DTS:Executable
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Update Lineage Table And Retrieve Key"
                   DTS:CreationName="Microsoft.ExecuteSQLTask"
                   DTS:Description="Execute SQL Task"
-                  DTS:DTSID="{17AC4249-7E20-498E-8AB4-D4C410E30614}"
+                  DTS:DTSID="{2f352200-5a7a-44b9-a4fa-ab39c41ba222}"
                   DTS:ExecutableType="Microsoft.ExecuteSQLTask"
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Update Lineage Table And Retrieve Key"
@@ -2257,45 +2465,45 @@
               </DTS:Executables>
               <DTS:PrecedenceConstraints>
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint]"
                   DTS:CreationName=""
-                  DTS:DTSID="{17045312-CD5F-4A6F-BDE2-5BCAE7EBF1B0}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:DTSID="{10db33e1-10c8-4017-aa1d-28caae23890c}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Update Lineage Table And Retrieve Key" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 1]"
                   DTS:CreationName=""
-                  DTS:DTSID="{95E8F764-8A3D-4490-8D69-295C55DC9A6E}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:DTSID="{c142717e-ca81-4c9b-a49d-8317d5694889}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Update Lineage Table And Retrieve Key"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 1"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Previous Load" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 3]"
                   DTS:CreationName=""
-                  DTS:DTSID="{187A1567-261E-47B3-B451-C1DDFF286003}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:DTSID="{95e37b5c-45b4-4b4f-ba16-4943164beae5}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Staging"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 3"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Production" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 4]"
                   DTS:CreationName=""
-                  DTS:DTSID="{6ADEA8E1-147F-4D61-A18E-9A09CB71CF64}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:DTSID="{aefa092d-3d2f-48af-a947-51aa330fdde6}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Previous Load"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 4"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Staging" />
                 <DTS:PrecedenceConstraint
-                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 5]"
                   DTS:CreationName=""
-                  DTS:DTSID="{7D9AA083-915C-4CF6-B08D-3722FB7D5492}"
-                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:DTSID="{73e2754c-ccec-4ac5-ba59-b713dbf50fa7}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Set Table Name"
                   DTS:LogicalAnd="True"
                   DTS:ObjectName="Constraint 5"
-                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load" />
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load" />
               </DTS:PrecedenceConstraints>
             </DTS:Executable>
           </DTS:Executables>
@@ -2303,11 +2511,19 @@
             <DTS:PrecedenceConstraint
               DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
-              DTS:DTSID="{4C9B0289-4FF8-465E-933D-DB48FF1515DB}"
-              DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
+              DTS:DTSID="{a8d79bec-9d87-41c8-bbe0-6bdcdac03af4}"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades" />
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint 1]"
+              DTS:CreationName=""
+              DTS:DTSID="{96A64D04-5FA4-4EB8-BC62-8BB2C2C9F4B9}"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint 1"
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
         <DTS:Executable
@@ -2748,8 +2964,455 @@
               DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline" />
           </DTS:PrecedenceConstraints>
         </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts"
+          DTS:CreationName="STOCK:SEQUENCE"
+          DTS:Description="Sequence Container"
+          DTS:DTSID="{F91C2FB3-FB9E-4CE0-A299-756E3538E2F0}"
+          DTS:ExecutableType="STOCK:SEQUENCE"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Transcripts">
+          <DTS:Variables />
+          <DTS:Executables>
+            <DTS:Executable
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course"
+              DTS:CreationName="STOCK:SEQUENCE"
+              DTS:Description="Sequence Container"
+              DTS:DTSID="{8B579A78-C099-46FF-8084-5BFC166B72D6}"
+              DTS:ExecutableType="STOCK:SEQUENCE"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Dim Course">
+              <DTS:Variables />
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{BB877822-3884-464B-99F7-DBC7D4EDD4B3}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Current Load"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::LoadDate]= GETDATE()" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Previous Load"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="SQL Truncate Staging Tables"
+                  DTS:DTSID="{23D1AABB-7340-4C21-8CB0-53E1F1A8A322}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Previous Load"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Exec  [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate] ?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Production"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Production"
+                  DTS:DTSID="{4FE3C567-E24D-4EC6-8DB4-15A337A0FE49}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Production"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_DimCourse_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::LineageKey"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="131"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Staging"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Staging"
+                  DTS:DTSID="{C543CA49-8A9F-47CB-816B-A1D92090495A}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Staging"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_DimCourse_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Set Table Name"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{50E94811-46CC-4579-99CC-945BE35809DA}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Set Table Name"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::TableName]=&quot;dbo.DimCourse&quot;" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Execute SQL Task"
+                  DTS:DTSID="{5809D9B6-4D4A-41FE-A01F-01BAE9A922E7}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Update Lineage Table And Retrieve Key"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="EXEC [dbo].[Proc_ETL_Lineage_GetKey] ?,?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::LineageKey" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="$Package::LoadType"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+              <DTS:PrecedenceConstraints>
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{FEEDD8BB-1D04-440C-BBBE-BE527A14F167}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Update Lineage Table And Retrieve Key" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 1]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{6DF549B1-6778-42FA-A298-B3CB17760ED5}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Update Lineage Table And Retrieve Key"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 1"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Previous Load" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 3]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{85AA8AA1-1BA4-45C8-B9D3-A6B034DA7F6E}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Staging"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 3"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Production" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 4]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{567B05A1-25F5-491A-A012-2EBB90E4549A}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Previous Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 4"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Staging" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 5]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{D7E3E43D-08A8-4513-809C-F79A9499BB8C}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Set Table Name"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 5"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load" />
+              </DTS:PrecedenceConstraints>
+            </DTS:Executable>
+            <DTS:Executable
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript"
+              DTS:CreationName="STOCK:SEQUENCE"
+              DTS:Description="Sequence Container"
+              DTS:DTSID="{A607584C-0727-48A6-8261-E30CED6315A7}"
+              DTS:ExecutableType="STOCK:SEQUENCE"
+              DTS:LocaleID="-1"
+              DTS:ObjectName="Fcat StudentCourseTranscript">
+              <DTS:Variables />
+              <DTS:Executables>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{F089DD01-0866-450A-A48E-183793B84541}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Current Load"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::LoadDate]= GETDATE()" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="SQL Truncate Staging Tables"
+                  DTS:DTSID="{E2587EC1-25CF-4A1F-9F12-A0F8FE61D265}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Get Date Of Previous Load"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Exec  [dbo].[Proc_ETL_IncrementalLoads_GetLastLoadedDate] ?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="129"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Production"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Production"
+                  DTS:DTSID="{3E799FFB-C9A7-4915-9CAB-C9F14A9F655D}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Production"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseTranscript_PopulateProduction ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::LineageKey"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="131"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Populate Staging"
+                  DTS:DTSID="{FD1C51D8-C1B3-49FA-86F0-52517B46C9C4}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Populate Staging"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="Proc_ETL_FactStudentCourseTranscript_PopulateStaging ?,?" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="User::PreviousLoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::LoadDate"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="7"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:CreationName="Microsoft.ExpressionTask"
+                  DTS:Description="Expression Task"
+                  DTS:DTSID="{EC36E0BC-469C-4CE4-A555-719064059F07}"
+                  DTS:ExecutableType="Microsoft.ExpressionTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Set Table Name"
+                  DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <ExpressionTask
+                      Expression="@[User::TableName]=&quot;dbo.FactStudentCourseTranscript&quot;" />
+                  </DTS:ObjectData>
+                </DTS:Executable>
+                <DTS:Executable
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:CreationName="Microsoft.ExecuteSQLTask"
+                  DTS:Description="Execute SQL Task"
+                  DTS:DTSID="{17AC4249-7E20-498E-8AB4-D4C410E30614}"
+                  DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+                  DTS:LocaleID="-1"
+                  DTS:ObjectName="Update Lineage Table And Retrieve Key"
+                  DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
+                  DTS:ThreadHint="0">
+                  <DTS:Variables />
+                  <DTS:ObjectData>
+                    <SQLTask:SqlTaskData
+                      SQLTask:Connection="{46DE2D29-D400-49EB-A40B-C6859B59274F}"
+                      SQLTask:SqlStatementSource="EXEC [dbo].[Proc_ETL_Lineage_GetKey] ?,?"
+                      SQLTask:ResultType="ResultSetType_SingleRow" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask">
+                      <SQLTask:ResultBinding
+                        SQLTask:ResultName="0"
+                        SQLTask:DtsVariableName="User::LineageKey" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="0"
+                        SQLTask:DtsVariableName="$Package::LoadType"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                      <SQLTask:ParameterBinding
+                        SQLTask:ParameterName="1"
+                        SQLTask:DtsVariableName="User::TableName"
+                        SQLTask:ParameterDirection="Input"
+                        SQLTask:DataType="130"
+                        SQLTask:ParameterSize="-1" />
+                    </SQLTask:SqlTaskData>
+                  </DTS:ObjectData>
+                </DTS:Executable>
+              </DTS:Executables>
+              <DTS:PrecedenceConstraints>
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{17045312-CD5F-4A6F-BDE2-5BCAE7EBF1B0}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Current Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{95E8F764-8A3D-4490-8D69-295C55DC9A6E}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 1"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{187A1567-261E-47B3-B451-C1DDFF286003}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Staging"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 3"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Production" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{6ADEA8E1-147F-4D61-A18E-9A09CB71CF64}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 4"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Staging" />
+                <DTS:PrecedenceConstraint
+                  DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+                  DTS:CreationName=""
+                  DTS:DTSID="{7D9AA083-915C-4CF6-B08D-3722FB7D5492}"
+                  DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Set Table Name"
+                  DTS:LogicalAnd="True"
+                  DTS:ObjectName="Constraint 5"
+                  DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Current Load" />
+              </DTS:PrecedenceConstraints>
+            </DTS:Executable>
+          </DTS:Executables>
+          <DTS:PrecedenceConstraints>
+            <DTS:PrecedenceConstraint
+              DTS:refId="Package\Each of these containers run regardless of whether others succeed\Transcripts.PrecedenceConstraints[Constraint]"
+              DTS:CreationName=""
+              DTS:DTSID="{4C9B0289-4FF8-465E-933D-DB48FF1515DB}"
+              DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course"
+              DTS:LogicalAnd="True"
+              DTS:ObjectName="Constraint"
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript" />
+          </DTS:PrecedenceConstraints>
+        </DTS:Executable>
       </DTS:Executables>
       <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{0685532C-D709-4AA9-AA82-7A3DFFF875B6}"
+          DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades"
+          DTS:Value="2" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
           DTS:CreationName=""
@@ -2775,7 +3438,7 @@
           DTS:From="Package\Each of these containers run regardless of whether others succeed\Assessment"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint 5"
-          DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Transcripts"
           DTS:Value="2" />
       </DTS:PrecedenceConstraints>
     </DTS:Executable>
@@ -2803,15 +3466,15 @@
       <GraphLayout
         Capacity="256" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="197,42"
+          Size="196.8,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
           TopLeft="1645,267" />
         <NodeLayout
-          Size="276,43"
+          Size="276,43.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load"
           TopLeft="25.1964300362662,94.4360946005966" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -2819,15 +3482,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Populate Production"
           TopLeft="24.2142871378787,375.513168854398" />
         <NodeLayout
-          Size="278,42"
+          Size="278.4,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="268,47"
+          Size="268,47.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="280,42"
+          Size="280,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -2943,16 +3606,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,458"
-          Size="317,501"
+          PanelSize="316.8,457.6"
+          Size="316.8,500.8"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
           TopLeft="47.1666666666667,29.5714285714287" />
         <NodeLayout
-          Size="268,42"
+          Size="268,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
           TopLeft="29.1964300362663,94.4360946005966" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -2960,15 +3623,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
           TopLeft="24.2142871378787,375.513168854398" />
         <NodeLayout
-          Size="278,42"
+          Size="278.4,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="268,47"
+          Size="268,47.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="276,42"
+          Size="276,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642062,166.278201216004" />
         <EdgeLayout
@@ -3084,32 +3747,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,477"
-          Size="317,520"
+          PanelSize="316.8,476.8"
+          Size="316.8,520"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
           TopLeft="1209.16666666667,30.571428571429" />
         <NodeLayout
-          Size="267,43"
+          Size="267.2,43.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="266,42"
+          Size="265.6,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Previous Load"
           TopLeft="30.5535728508349,236.325196309716" />
         <NodeLayout
-          Size="269,44"
+          Size="268.8,44"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="268,42"
+          Size="268,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Staging"
           TopLeft="31.8705371914306,305.011285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="271,42"
+          Size="271.2,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3225,16 +3888,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,466"
-          Size="317,509"
+          PanelSize="316.8,465.6"
+          Size="316.8,508.8"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
           TopLeft="793.305050739996,29.571428571429" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="264,42"
+          Size="264,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -3242,15 +3905,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="270,42"
+          Size="270.4,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3366,8 +4029,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,468"
-          Size="317,511"
+          PanelSize="316.8,468"
+          Size="316.8,511.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension"
           TopLeft="420.055050739998,27.5375910762467" />
         <EdgeLayout
@@ -3461,32 +4124,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1922,640"
-          Size="1922,683"
+          PanelSize="1921.6,640"
+          Size="1921.6,683.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
-          TopLeft="115.25,495.595238095238" />
+          TopLeft="249.773804178314,503.023809582846" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="269,44"
+          Size="268.8,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3602,16 +4265,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment"
           TopLeft="52.3214285714289,19.6428571428571" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="267,42"
+          Size="267.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
@@ -3619,15 +4282,15 @@
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642062,166.278201216004" />
         <EdgeLayout
@@ -3743,8 +4406,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,477"
-          Size="317,520"
+          PanelSize="316.8,476.8"
+          Size="316.8,520"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore"
           TopLeft="55.5714285714284,570.357142857143" />
         <EdgeLayout
@@ -3772,16 +4435,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="418,1157"
-          Size="418,1200"
+          PanelSize="417.6,1156.8"
+          Size="417.6,1200"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment"
-          TopLeft="1021.03571428571,7.10714285713993" />
+          TopLeft="1051.5912686271,12.8849206808352" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="269,42"
+          Size="268.8,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -3789,15 +4452,15 @@
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="276,42"
+          Size="276,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3913,32 +4576,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory"
           TopLeft="58,23.9285714285713" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
           TopLeft="25.5535728508349,236.325196309716" />
         <NodeLayout
-          Size="270,44"
+          Size="270.4,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4054,8 +4717,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay"
           TopLeft="59.4642857142858,576.071428571428" />
         <EdgeLayout
@@ -4083,48 +4746,48 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="422,1159"
-          Size="422,1202"
+          PanelSize="422.4,1159.2"
+          Size="422.4,1201.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance"
           TopLeft="24.3214285714288,12.4642857142899" />
         <NodeLayout
-          Size="268,43"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Current Load"
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="269,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Get Date Of Previous Load"
+          Size="268.8,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="273,44"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Production"
+          Size="272.8,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="271,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Populate Staging"
-          TopLeft="24.3705371914307,306.261285894113" />
+          Size="271.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Staging"
+          TopLeft="26.9499021683005,309.15017480596" />
         <NodeLayout
-          Size="266,47"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Set Table Name"
+          TopLeft="28.8526771282118,24.3893103810526" />
         <NodeLayout
-          Size="275,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Update Lineage Table And Retrieve Key"
+          TopLeft="28.2023823505479,167.516296463939" />
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint]"
+          TopLeft="163.749406193407,137.636094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
+              EndConnector="0,29.8802018633421"
               Start="0,0"
-              End="0,21.3421066154074">
+              End="0,22.3802018633421">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,21.3421066154074" />
+                    End="0,22.3802018633421" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4134,19 +4797,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.93750145752,208.278201216004">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 1]"
+          TopLeft="164.127977600691,209.116296463939">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937119"
+              EndConnector="0,27.2088998457773"
               Start="0,0"
-              End="0,20.5469950937119">
+              End="0,19.7088998457773">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.5469950937119" />
+                    End="0,19.7088998457773" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4156,19 +4819,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 3]"
-          TopLeft="162.167412164655,348.261285894113">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 3]"
+          TopLeft="163.45709465309,350.75017480596">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
+              EndConnector="0,24.7629940484375"
               Start="0,0"
-              End="0,19.751882960285">
+              End="0,17.2629940484375">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,19.751882960285" />
+                    End="0,17.2629940484375" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4178,19 +4841,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 4]"
-          TopLeft="161.212055021133,278.325196309716">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 4]"
+          TopLeft="162.501737509568,277.925196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
+              EndConnector="0,31.2249784962444"
               Start="0,0"
-              End="0,20.436089584397">
+              End="0,23.7249784962444">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,20.436089584397" />
+                    End="0,23.7249784962444" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4200,19 +4863,19 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.674553582239,71.5893103810526">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
+              EndConnector="0,22.846784219544"
               Start="0,0"
-              End="0,16.9912286754677">
+              End="0,15.346784219544">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,16.9912286754677" />
+                    End="0,15.346784219544" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4224,48 +4887,48 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim Course"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
           TopLeft="52.5,22.5" />
         <NodeLayout
-          Size="268,43"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load"
+          TopLeft="28.8869061794371,93.197999352662" />
         <NodeLayout
-          Size="267,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+          Size="267.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Previous Load"
           TopLeft="28.9464299936917,238.825196309716" />
         <NodeLayout
-          Size="270,44"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Production"
+          Size="270.4,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="276,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Populate Staging"
+          Size="276,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="266,47"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Set Table Name"
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint]"
+          TopLeft="163.154168121822,136.397999352662">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
+              EndConnector="0,29.880201863342"
               Start="0,0"
-              End="0,21.3421066154074">
+              End="0,22.380201863342">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,21.3421066154074" />
+                    End="0,22.380201863342" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4275,7 +4938,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 1]"
           TopLeft="162.883930028949,208.278201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4297,7 +4960,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 3]"
           TopLeft="162.667412164655,348.261285894113">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4319,7 +4982,7 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 4]"
           TopLeft="162.408483592561,280.825196309716">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4341,7 +5004,182 @@
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades.PrecedenceConstraints[Constraint 5]"
+          TopLeft="162.269791653824,70.1448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,23.0531334275331"
+              Start="0,0"
+              End="0,15.5531334275331">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,15.5531334275331" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="316.8,476.8"
+          Size="316.8,520"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades"
+          TopLeft="265.908721935497,602.880952656457" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
+          TopLeft="210.9,539.3">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="161.94205526883,63.5809526564572"
+              Start="0,0"
+              End="161.94205526883,56.0809526564572">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,33.956870229081" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,33.956870229081"
+                    Point2="0,37.956870229081"
+                    Point3="4,37.956870229081" />
+                  <mssgle:LineSegment
+                    End="157.94205526883,37.956870229081" />
+                  <mssgle:CubicBezierSegment
+                    Point1="157.94205526883,37.956870229081"
+                    Point2="161.94205526883,37.956870229081"
+                    Point3="161.94205526883,41.956870229081" />
+                  <mssgle:LineSegment
+                    End="161.94205526883,56.0809526564572" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <NodeLayout
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="268.8,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
+          TopLeft="28.0535728508348,236.325196309716" />
+        <NodeLayout
+          Size="272.8,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="271.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.93750145752,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.167412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.212055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 5]"
           TopLeft="161.774553582239,69.9448659251289">
           <EdgeLayout.Curve>
             <mssgle:Curve
@@ -4365,24 +5203,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,477"
-          Size="317,520"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseTranscript"
-          TopLeft="58.9642857142858,568.214285714285" />
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
+          TopLeft="492.510315205433,29.5158730716303" />
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
-          TopLeft="214.232142857143,539.5">
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint 1]"
+          TopLeft="650.910315205433,546.31587307163">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,28.7142857142851"
+              EndConnector="-175.134926603269,56.5650795848269"
               Start="0,0"
-              End="0,21.2142857142851">
+              End="-175.134926603269,49.0650795848269">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,21.2142857142851" />
+                    End="0,29.7684997722484" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,29.7684997722484"
+                    Point2="0,33.7684997722484"
+                    Point3="-4,33.7684997722484" />
+                  <mssgle:LineSegment
+                    End="-171.134926603269,33.7684997722484" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-171.134926603269,33.7684997722484"
+                    Point2="-175.134926603269,33.7684997722484"
+                    Point3="-175.134926603269,37.7684997722484" />
+                  <mssgle:LineSegment
+                    End="-175.134926603269,49.0650795848269" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4394,32 +5244,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="416,1160"
-          Size="416,1203"
+          PanelSize="877.6,1176.8"
+          Size="877.6,1220"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades"
-          TopLeft="1489.85714285714,6.98809523809689" />
+          TopLeft="2053.96975866695,17.0555556473905" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="269,42"
+          Size="268.8,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
-          Size="269,44"
+          Size="268.8,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4535,32 +5385,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,474"
-          Size="317,517"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident"
           TopLeft="52.3214285714287,20.8928571428573" />
         <NodeLayout
-          Size="268,43"
+          Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268,42"
+          Size="268,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
           TopLeft="29.3035728508348,236.325196309716" />
         <NodeLayout
-          Size="269,43"
+          Size="268.8,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,42"
+          Size="272,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="266,47"
+          Size="265.6,47.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275,42"
+          Size="275.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4676,8 +5526,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="317,485"
-          Size="317,528"
+          PanelSize="316.8,484.8"
+          Size="316.8,528"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline"
           TopLeft="51.6428571428571,570.535714285714" />
         <EdgeLayout
@@ -4705,103 +5555,462 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="406,1159"
-          Size="406,1202"
+          PanelSize="406.4,1158.4"
+          Size="406.4,1201.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline"
-          TopLeft="522.535714285714,11.0357142857097" />
+          TopLeft="550.313490959702,16.8134921094054" />
+        <NodeLayout
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="268.8,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Previous Load"
+          TopLeft="28.0535728508348,236.325196309716" />
+        <NodeLayout
+          Size="272.8,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="271.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
-          TopLeft="446.321428571429,612.75">
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="76.214285714285,0"
+              EndConnector="0,28.8421066154074"
               Start="0,0"
-              End="68.714285714285,0">
+              End="0,21.3421066154074">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="68.714285714285,0" />
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.93750145752,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.167412164655,348.261285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.251882960285"
+              Start="0,0"
+              End="0,19.751882960285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.751882960285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.212055021133,278.325196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.936089584397"
+              Start="0,0"
+              End="0,20.436089584397">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.436089584397" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course"
+          TopLeft="52.5,22.5" />
+        <NodeLayout
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="267.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load"
+          TopLeft="28.9464299936917,238.825196309716" />
+        <NodeLayout
+          Size="270.4,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Production"
+          TopLeft="27.9642871378787,376.751264102333" />
+        <NodeLayout
+          Size="276,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.883930028949,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30.5469950937119"
+              Start="0,0"
+              End="0,23.0469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.0469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.767412164655,347.861285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8899782082202"
+              Start="0,0"
+              End="0,21.3899782082202">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3899782082202" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
+          TopLeft="162.408483592561,280.825196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25.4360895843971"
+              Start="0,0"
+              End="0,17.9360895843971">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.9360895843971" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="316.8,476.8"
+          Size="316.8,520"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript"
+          TopLeft="58.9642857142858,568.214285714285" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts.PrecedenceConstraints[Constraint]"
+          TopLeft="214.132142857143,539.3">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.914285714285"
+              Start="0,0"
+              End="0,21.414285714285">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.414285714285" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="416,1160"
+          Size="416,1203.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Transcripts"
+          TopLeft="1536.68253782186,14.003968309727" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint]"
+          TopLeft="1952.68253782186,615.603968309727">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="101.28722084509,11.4515873376635"
+              Start="0,0"
+              End="93.7872208450904,11.4515873376635">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="46.6436104225452,0" />
+                  <mssgle:CubicBezierSegment
+                    Point1="46.6436104225452,0"
+                    Point2="50.6436104225452,0"
+                    Point3="50.6436104225452,4" />
+                  <mssgle:LineSegment
+                    End="50.6436104225452,7.45158733766345" />
+                  <mssgle:CubicBezierSegment
+                    Point1="50.6436104225452,7.45158733766345"
+                    Point2="50.6436104225452,11.4515873376635"
+                    Point3="54.6436104225452,11.4515873376635" />
+                  <mssgle:LineSegment
+                    End="93.7872208450904,11.4515873376635" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="9.0526897321425,5,50.60890625,11.609375"
+              BoundingBox="25.3391572975452,-17.609375,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
+          TopLeft="446.721428571429,615.438888911848">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="103.592062388273,0"
+              Start="0,0"
+              End="96.0920623882735,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="96.0920623882735,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="22.7415780691367,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 4]"
-          TopLeft="928.535714285714,609.571428571425">
+          TopLeft="956.713490959702,615.24920639512">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="92.4999999999964,0"
+              EndConnector="94.8777776673954,0"
               Start="0,0"
-              End="84.9999999999964,0">
+              End="87.3777776673954,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="84.9999999999964,0" />
+                    End="87.3777776673954,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="17.1955468749982,5,50.60890625,11.609375"
+              BoundingBox="18.3844357086977,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 5]"
-          TopLeft="1439.03571428571,607.797619047618">
+          TopLeft="1469.1912686271,614.244444495281">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="50.8214285714298,0"
+              EndConnector="67.4912691947602,0"
               Start="0,0"
-              End="43.3214285714298,0">
+              End="59.9912691947602,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="43.3214285714298,0" />
+                    End="59.9912691947602,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="-3.6437388392851,5,50.60890625,11.609375"
+              BoundingBox="4.6911814723801,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1925,1232"
-          Size="1925,1275"
+          PanelSize="2945.6,1650.4"
+          Size="2945.6,1693.6"
           Id="Package\Each of these containers run regardless of whether others succeed"
-          TopLeft="116.166666666667,1299.58333333333" />
+          TopLeft="23.1111148088071,1303.50396828512" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1077.45833333333,1178.59523809524">
+          TopLeft="1210.57380417831,1186.22380958285">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,120.988095238095"
+              EndConnector="285.337310630493,117.280158702278"
               Start="0,0"
-              End="0,113.488095238095">
+              End="285.337310630493,109.780158702278">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,113.488095238095" />
+                    End="0,54.640079351139" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,54.640079351139"
+                    Point2="0,58.640079351139"
+                    Point3="4,58.640079351139" />
+                  <mssgle:LineSegment
+                    End="281.337310630493,58.640079351139" />
+                  <mssgle:CubicBezierSegment
+                    Point1="281.337310630493,58.640079351139"
+                    Point2="285.337310630493,58.640079351139"
+                    Point3="285.337310630493,62.640079351139" />
+                  <mssgle:LineSegment
+                    End="285.337310630493,109.780158702278" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
