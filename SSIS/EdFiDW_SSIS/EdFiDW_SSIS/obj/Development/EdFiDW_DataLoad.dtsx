@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="228"
-  DTS:VersionGUID="{410A6C18-ABCF-4807-9D22-6E824F8BAE17}">
+  DTS:VersionBuild="237"
+  DTS:VersionGUID="{CB88E772-7031-46AE-9BC1-A0F4F5EE0AD7}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYdVM1yoOc0+Iwr7iqF3digAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAB3wZZzQ/yRXraRWipjjleCKxgNjA5KdXuxpJ5F8vxemAAAAAAOgAAAAAIAACAAAAAiAQObZ79WoZeVkHf/xHrOIr4M5SHgD7vLJwINvZUdQCAAAADUy82twyAS/pmj7jfUEaOg1QDHj9ofnaln0tuatQWplUAAAACF03m0uEckjyOQEfCqTaZrGHTOeqYUlR9vJjmtAv37Lr9KrZIPJdg/uyZ+3B5fTU5CfJh9I5+vUfZkPlNSYeMr</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYdVM1yoOc0+Iwr7iqF3digAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAB9JUVOrEla8uHsCVMvASwNKDzxKOi7tpaoInljNT6pHAAAAAAOgAAAAAIAACAAAABXbNRV57keEUt2k5RQujvGqiI1d1SU1mzVnjJIMWT2zCAAAAAFHZJvKg1+vb49s+wA3NWZyAm7OP3vRaZWMSrCPH0nR0AAAAAtSRYqyQbDmB0aUyPx7PhaaSOzq+Oq0vKPHBBgCUeLcKNlnPx0pu4LkATF+BHQbC2OP8/rMVW/sohKCTseRs2m</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -1901,7 +1901,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Current Load"
                   DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <ExpressionTask
@@ -1917,7 +1917,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Get Date Of Previous Load"
                   DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
@@ -1945,7 +1945,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Production"
                   DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
@@ -1975,7 +1975,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Populate Staging"
                   DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
@@ -2005,7 +2005,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Set Table Name"
                   DTS:TaskContact="Expression Task;Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <ExpressionTask
@@ -2021,7 +2021,7 @@
                   DTS:LocaleID="-1"
                   DTS:ObjectName="Update Lineage Table And Retrieve Key"
                   DTS:TaskContact="Execute SQL Task; Microsoft Corporation; SQL Server 2019; © 2019 Microsoft Corporation; All Rights Reserved;http://www.microsoft.com/sql/support/default.asp;1"
-                  DTS:ThreadHint="1">
+                  DTS:ThreadHint="0">
                   <DTS:Variables />
                   <DTS:ObjectData>
                     <SQLTask:SqlTaskData
@@ -2511,15 +2511,15 @@
             <DTS:PrecedenceConstraint
               DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
               DTS:CreationName=""
-              DTS:DTSID="{a8d79bec-9d87-41c8-bbe0-6bdcdac03af4}"
+              DTS:DTSID="{2C0C994B-B962-4220-B5F0-0D70B016696C}"
               DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint"
-              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades" />
+              DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection" />
             <DTS:PrecedenceConstraint
               DTS:refId="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint 1]"
               DTS:CreationName=""
-              DTS:DTSID="{96A64D04-5FA4-4EB8-BC62-8BB2C2C9F4B9}"
+              DTS:DTSID="{5660320D-1591-4E69-884D-DD0EE8169EF2}"
               DTS:From="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
               DTS:LogicalAnd="True"
               DTS:ObjectName="Constraint 1"
@@ -3466,9 +3466,9 @@
       <GraphLayout
         Capacity="256" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="196.8,41.6"
+          Size="168.8,41.6"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
-          TopLeft="1645,267" />
+          TopLeft="1643.6111111663,269.888888911848" />
         <NodeLayout
           Size="276,43.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load"
@@ -4101,18 +4101,18 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load.PrecedenceConstraints[Constraint 3]"
-          TopLeft="1526.16666666667,289.285714285715">
+          TopLeft="1525.96666666667,290.630158741638">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="118.833333333333,0"
+              EndConnector="117.644444499631,0"
               Start="0,0"
-              End="111.333333333333,0">
+              End="110.144444499631,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="111.333333333333,0" />
+                    End="110.144444499631,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4127,7 +4127,7 @@
           PanelSize="1921.6,640"
           Size="1921.6,683.2"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
-          TopLeft="249.773804178314,503.023809582846" />
+          TopLeft="1387.27375897813,165.023806896663" />
         <NodeLayout
           Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
@@ -4753,7 +4753,7 @@
         <NodeLayout
           Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
+          TopLeft="29.3630966367059,96.1694279477051" />
         <NodeLayout
           Size="268.8,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load"
@@ -4776,18 +4776,18 @@
           TopLeft="28.2023823505479,167.516296463939" />
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint]"
-          TopLeft="163.749406193407,137.636094600597">
+          TopLeft="164.582739493627,139.369427947705">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,29.8802018633421"
+              EndConnector="0,28.1468685162339"
               Start="0,0"
-              End="0,22.3802018633421">
+              End="0,20.6468685162339">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,22.3802018633421" />
+                    End="0,20.6468685162339" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4864,18 +4864,18 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.674553582239,71.5893103810526">
+          TopLeft="162.507886882459,71.5893103810526">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,22.846784219544"
+              EndConnector="0,24.5801175666525"
               Start="0,0"
-              End="0,15.346784219544">
+              End="0,17.0801175666525">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,15.346784219544" />
+                    End="0,17.0801175666525" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4890,7 +4890,148 @@
           PanelSize="316.8,473.6"
           Size="316.8,516.8"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
-          TopLeft="52.5,22.5" />
+          TopLeft="53.8888888336996,25.6777778030325" />
+        <NodeLayout
+          Size="268,43.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
+          TopLeft="27.6964300362662,94.4360946005966" />
+        <NodeLayout
+          Size="268.8,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
+          TopLeft="28.0535728508348,236.325196309716" />
+        <NodeLayout
+          Size="272.8,44"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production"
+          TopLeft="27.9642871378787,375.513168854398" />
+        <NodeLayout
+          Size="271.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
+          TopLeft="24.3705371914307,306.261285894113" />
+        <NodeLayout
+          Size="265.6,47.2"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
+          TopLeft="28.8526771282112,22.9448659251289" />
+        <NodeLayout
+          Size="275.2,41.6"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
+          TopLeft="25.8214300642061,166.278201216004" />
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint]"
+          TopLeft="162.508930050236,137.436094600597">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.8421066154074"
+              Start="0,0"
+              End="0,21.3421066154074">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.3421066154074" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 1]"
+          TopLeft="162.93750145752,208.278201216004">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.0469950937119"
+              Start="0,0"
+              End="0,20.5469950937119">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5469950937119" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 3]"
+          TopLeft="162.167412164655,347.861285894113">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27.6518829602848"
+              Start="0,0"
+              End="0,20.1518829602848">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.1518829602848" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 4]"
+          TopLeft="161.212055021133,277.925196309716">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28.3360895843971"
+              Start="0,0"
+              End="0,20.8360895843971">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.8360895843971" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 5]"
+          TopLeft="161.774553582239,69.9448659251289">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,24.4912286754677"
+              Start="0,0"
+              End="0,16.9912286754677">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16.9912286754677" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="316.8,473.6"
+          Size="316.8,516.8"
+          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
+          TopLeft="492.510315205433,29.5158730716303" />
         <NodeLayout
           Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load"
@@ -5031,33 +5172,21 @@
           PanelSize="316.8,476.8"
           Size="316.8,520"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades"
-          TopLeft="265.908721935497,602.880952656457" />
+          TopLeft="265.908721935497,609.380952708114" />
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint]"
-          TopLeft="210.9,539.3">
+          TopLeft="370.6888888337,285.996825437331">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="161.94205526883,63.5809526564572"
+              EndConnector="121.821426371733,0"
               Start="0,0"
-              End="161.94205526883,56.0809526564572">
+              End="114.321426371733,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,33.956870229081" />
-                  <mssgle:CubicBezierSegment
-                    Point1="0,33.956870229081"
-                    Point2="0,37.956870229081"
-                    Point3="4,37.956870229081" />
-                  <mssgle:LineSegment
-                    End="157.94205526883,37.956870229081" />
-                  <mssgle:CubicBezierSegment
-                    Point1="157.94205526883,37.956870229081"
-                    Point2="161.94205526883,37.956870229081"
-                    Point3="161.94205526883,41.956870229081" />
-                  <mssgle:LineSegment
-                    End="161.94205526883,56.0809526564572" />
+                    End="114.321426371733,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5066,173 +5195,32 @@
             <EdgeLabelCollection />
           </EdgeLayout.Labels>
         </EdgeLayout>
-        <NodeLayout
-          Size="268,43.2"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
-          TopLeft="27.6964300362662,94.4360946005966" />
-        <NodeLayout
-          Size="268.8,41.6"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
-          TopLeft="28.0535728508348,236.325196309716" />
-        <NodeLayout
-          Size="272.8,44"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production"
-          TopLeft="27.9642871378787,375.513168854398" />
-        <NodeLayout
-          Size="271.2,41.6"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
-          TopLeft="24.3705371914307,306.261285894113" />
-        <NodeLayout
-          Size="265.6,47.2"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
-          TopLeft="28.8526771282112,22.9448659251289" />
-        <NodeLayout
-          Size="275.2,41.6"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
-          TopLeft="25.8214300642061,166.278201216004" />
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint]"
-          TopLeft="162.508930050236,137.436094600597">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.8421066154074"
-              Start="0,0"
-              End="0,21.3421066154074">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,21.3421066154074" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.93750145752,208.278201216004">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,28.0469950937119"
-              Start="0,0"
-              End="0,20.5469950937119">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.5469950937119" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 3]"
-          TopLeft="162.167412164655,348.261285894113">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.251882960285"
-              Start="0,0"
-              End="0,19.751882960285">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,19.751882960285" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 4]"
-          TopLeft="161.212055021133,278.325196309716">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,27.936089584397"
-              Start="0,0"
-              End="0,20.436089584397">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,20.436089584397" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection.PrecedenceConstraints[Constraint 5]"
-          TopLeft="161.774553582239,69.9448659251289">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="0,24.4912286754677"
-              Start="0,0"
-              End="0,16.9912286754677">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="0,16.9912286754677" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <EdgeLabelCollection />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <ContainerLayout
-          HeaderHeight="43"
-          IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
-          Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
-          TopLeft="492.510315205433,29.5158730716303" />
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades.PrecedenceConstraints[Constraint 1]"
           TopLeft="650.910315205433,546.31587307163">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="-175.134926603269,56.5650795848269"
+              EndConnector="-226.601593269936,63.0650796364838"
               Start="0,0"
-              End="-175.134926603269,49.0650795848269">
+              End="-226.601593269936,55.5650796364838">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,29.7684997722484" />
+                    End="0,27.5325398182419" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,29.7684997722484"
-                    Point2="0,33.7684997722484"
-                    Point3="-4,33.7684997722484" />
+                    Point1="0,27.5325398182419"
+                    Point2="0,31.5325398182419"
+                    Point3="-4,31.5325398182419" />
                   <mssgle:LineSegment
-                    End="-171.134926603269,33.7684997722484" />
+                    End="-222.601593269936,31.5325398182419" />
                   <mssgle:CubicBezierSegment
-                    Point1="-171.134926603269,33.7684997722484"
-                    Point2="-175.134926603269,33.7684997722484"
-                    Point3="-175.134926603269,37.7684997722484" />
+                    Point1="-222.601593269936,31.5325398182419"
+                    Point2="-226.601593269936,31.5325398182419"
+                    Point3="-226.601593269936,35.5325398182419" />
                   <mssgle:LineSegment
-                    End="-175.134926603269,49.0650795848269" />
+                    End="-226.601593269936,55.5650796364838" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5244,10 +5232,10 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="877.6,1176.8"
-          Size="877.6,1220"
+          PanelSize="859.2,1184"
+          Size="859.2,1227.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades"
-          TopLeft="2053.96975866695,17.0555556473905" />
+          TopLeft="2053.96975866695,18.7888889944991" />
         <NodeLayout
           Size="268,43.2"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
@@ -5707,7 +5695,7 @@
         <NodeLayout
           Size="267.2,41.6"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load"
-          TopLeft="28.9464299936917,238.825196309716" />
+          TopLeft="27.7559538505211,241.301386805585" />
         <NodeLayout
           Size="270.4,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Production"
@@ -5748,18 +5736,18 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 1]"
-          TopLeft="162.883930028949,208.278201216004">
+          TopLeft="162.388691957364,207.878201216004">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,30.5469950937119"
+              EndConnector="0,33.423185589581"
               Start="0,0"
-              End="0,23.0469950937119">
+              End="0,25.923185589581">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,23.0469950937119" />
+                    End="0,25.923185589581" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5792,18 +5780,18 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript.PrecedenceConstraints[Constraint 4]"
-          TopLeft="162.408483592561,280.825196309716">
+          TopLeft="161.863245520976,282.901386805585">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="0,25.4360895843971"
+              EndConnector="0,23.3598990885279"
               Start="0,0"
-              End="0,17.9360895843971">
+              End="0,15.8598990885279">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,17.9360895843971" />
+                    End="0,15.8598990885279" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -5876,33 +5864,33 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="101.28722084509,11.4515873376635"
+              EndConnector="101.28722084509,16.784920684772"
               Start="0,0"
-              End="93.7872208450904,11.4515873376635">
+              End="93.7872208450899,16.784920684772">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="46.6436104225452,0" />
+                    End="46.643610422545,0" />
                   <mssgle:CubicBezierSegment
-                    Point1="46.6436104225452,0"
-                    Point2="50.6436104225452,0"
-                    Point3="50.6436104225452,4" />
+                    Point1="46.643610422545,0"
+                    Point2="50.643610422545,0"
+                    Point3="50.643610422545,4" />
                   <mssgle:LineSegment
-                    End="50.6436104225452,7.45158733766345" />
+                    End="50.643610422545,12.784920684772" />
                   <mssgle:CubicBezierSegment
-                    Point1="50.6436104225452,7.45158733766345"
-                    Point2="50.6436104225452,11.4515873376635"
-                    Point3="54.6436104225452,11.4515873376635" />
+                    Point1="50.643610422545,12.784920684772"
+                    Point2="50.643610422545,16.784920684772"
+                    Point3="54.643610422545,16.784920684772" />
                   <mssgle:LineSegment
-                    End="93.7872208450904,11.4515873376635" />
+                    End="93.7872208450899,16.784920684772" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
           </EdgeLayout.Curve>
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
-              BoundingBox="25.3391572975452,-17.609375,50.60890625,11.609375"
+              BoundingBox="25.339157297545,-17.609375,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>
@@ -5981,36 +5969,36 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="2945.6,1650.4"
-          Size="2945.6,1693.6"
+          PanelSize="2938.4,1359.2"
+          Size="2938.4,1402.4"
           Id="Package\Each of these containers run regardless of whether others succeed"
-          TopLeft="23.1111148088071,1303.50396828512" />
+          TopLeft="812.111091960361,1002.83729886339" />
         <EdgeLayout
           Id="Package.PrecedenceConstraints[Constraint]"
-          TopLeft="1210.57380417831,1186.22380958285">
+          TopLeft="2348.07375897813,848.223806896663">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="285.337310630493,117.280158702278"
+              EndConnector="-66.7626670177688,154.613491966731"
               Start="0,0"
-              End="285.337310630493,109.780158702278">
+              End="-66.7626670177688,147.113491966731">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="0,54.640079351139" />
+                    End="0,73.3067459833653" />
                   <mssgle:CubicBezierSegment
-                    Point1="0,54.640079351139"
-                    Point2="0,58.640079351139"
-                    Point3="4,58.640079351139" />
+                    Point1="0,73.3067459833653"
+                    Point2="0,77.3067459833653"
+                    Point3="-4,77.3067459833653" />
                   <mssgle:LineSegment
-                    End="281.337310630493,58.640079351139" />
+                    End="-62.7626670177688,77.3067459833653" />
                   <mssgle:CubicBezierSegment
-                    Point1="281.337310630493,58.640079351139"
-                    Point2="285.337310630493,58.640079351139"
-                    Point3="285.337310630493,62.640079351139" />
+                    Point1="-62.7626670177688,77.3067459833653"
+                    Point2="-66.7626670177688,77.3067459833653"
+                    Point3="-66.7626670177688,81.3067459833653" />
                   <mssgle:LineSegment
-                    End="285.337310630493,109.780158702278" />
+                    End="-66.7626670177688,147.113491966731" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>

@@ -1044,6 +1044,8 @@ BEGIN
 
   		CONSTRAINT PK_DimGradingPeriod PRIMARY KEY (GradingPeriodKey)    
 	);
+	CREATE NONCLUSTERED INDEX DimGradingPeriod_CoveringIndex ON dbo.DimGradingPeriod( [_sourceKey], ValidFrom, ValidTo) INCLUDE (GradingPeriodKey);
+	
 
 END
 
@@ -1075,6 +1077,8 @@ BEGIN
   		CONSTRAINT PK_StagingGradingPeriod PRIMARY KEY (GradingPeriodKey)    
 	);
 
+	
+
 END;
 GO
 
@@ -1103,7 +1107,7 @@ BEGIN
 
   		CONSTRAINT PK_DimStudentSection PRIMARY KEY (StudentSectionKey)    
 	);
-
+	CREATE NONCLUSTERED INDEX DimStudentSection_CoveringIndex ON dbo.DimStudentSection( [_sourceKey], ValidFrom, ValidTo) INCLUDE (StudentSectionKey);
 END
 
 --StudentSection - staging
@@ -1364,7 +1368,7 @@ if NOT EXISTS (select 1
 			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentCourseGrade
 (
-  [_sourceKey] NVARCHAR(50) NOT NULL,
+  [_sourceKey] NVARCHAR(500) NOT NULL,
   TimeKey INT NOT NULL,   
   GradingPeriodKey INT NOT NULL,
   StudentSectionKey INT NOT NULL,  
@@ -1386,25 +1390,32 @@ if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'StudentCourseGrade' 
 			   AND TABLE_SCHEMA = 'Staging')
-CREATE TABLE Staging.StudentCourseGrade
-(
-  StudentCourseGradetKey BIGINT IDENTITY(1,1) NOT NULL,
-  [_sourceKey] NVARCHAR(500) NOT NULL,  
-  TimeKey INT NULL,   
-  GradingPeriodKey INT NULL,
-  StudentSectionKey INT NULL,  
-  LetterGradeEarned NVARCHAR(10) NULL,
-  NumericGradeEarned DECIMAL(9,2) NULL,
+BEGIN
+	CREATE TABLE Staging.StudentCourseGrade
+	(
+	  StudentCourseGradetKey BIGINT IDENTITY(1,1) NOT NULL,
+	  [_sourceKey] NVARCHAR(500) NOT NULL,  
+	  TimeKey INT NULL,   
+	  GradingPeriodKey INT NULL,
+	  StudentSectionKey INT NULL,  
+	  LetterGradeEarned NVARCHAR(10) NULL,
+	  NumericGradeEarned DECIMAL(9,2) NULL,
 
-  [ModifiedDate] [datetime] NULL,
+	  [ModifiedDate] [datetime] NULL,
   
-  _sourceGradingPeriodey NVARCHAR(500) NULL,
-  _sourceStudentSectionKey NVARCHAR(500) NULL, 
+	  _sourceGradingPeriodey NVARCHAR(500) NULL,
+	  _sourceStudentSectionKey NVARCHAR(500) NULL, 
 
-  CONSTRAINT PK_StagingStudentCourseGrade PRIMARY KEY (StudentCourseGradetKey ASC)
+	  CONSTRAINT PK_StagingStudentCourseGrade PRIMARY KEY (StudentCourseGradetKey ASC)
   
-);
+	);
+
+	CREATE NONCLUSTERED INDEX [Staging_StudentCourseGrade__SourceGradingPeriodey] ON Staging.StudentCourseGrade (_sourceGradingPeriodey);
+	CREATE NONCLUSTERED INDEX [Staging_StudentCourseGrade__SourceStudentSectionKey] ON Staging.StudentCourseGrade (_sourceStudentSectionKey);
+	
+END
 GO
+  
 
 
 
@@ -7062,7 +7073,7 @@ BEGIN
 			
 		--declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT 
-		    CONCAT_WS('|','Ed-Fi',ssa.StudentUSI,ssa.SchoolId,ssa.LocalCourseCode,ssa.SchoolYear,ssa.UniqueSectionCode,td.CodeValue ) [_sourceKey],
+		    CONCAT_WS('|','Ed-Fi',ssa.StudentUSI,ssa.SchoolId,ssa.LocalCourseCode,ssa.SchoolYear,ssa.UniqueSectionCode,td.CodeValue,CONVERT(NVARCHAR, ssa.BeginDate, 112) ) [_sourceKey],			
 			ds.StudentKey,
 			dschool.SchoolKey,
 			dc.CourseKey,
@@ -9040,7 +9051,7 @@ BEGIN
 				                                                                         AND g.SequenceOfCourse = gp.PeriodSequence
 																						 AND g.SchoolId = gp.SchoolId
 																						 AND g.SchoolYear = dbo.Func_ETL_GetSchoolYear(gp.BeginDate) 
-				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS td ON gp.GradingPeriodDescriptorId = td.DescriptorId
+				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS td ON g.TermDescriptorId = td.DescriptorId
 		WHERE gt.CodeValue = 'Grading Period'
 		      AND g.SchoolYear >= 2019 
 		      AND (
@@ -9095,14 +9106,14 @@ BEGIN
 		 
 
 		--updating staging keys
-		UPDATE s 
+		UPDATE s
 		SET  s.TimeKey = (
 								SELECT TOP (1) dt.TimeKey
 								FROM dbo.DimTime dt										
 								WHERE EXISTS (SELECT 1 
 								              FROM [dbo].[DimStudentSection] dss
 											  WHERE dt.SchoolKey = dss.SchoolKey
-											    AND s._sourceCourseKey = dss._sourceKey									
+											    AND s.[_sourceStudentSectionKey] = dss._sourceKey									
 												AND s.[ModifiedDate] >= dss.[ValidFrom]
 												AND s.[ModifiedDate] < dss.[ValidTo]
 												AND dt.SchoolDate = dss.StudentSectionBeginDate
@@ -9115,15 +9126,15 @@ BEGIN
 								WHERE s.[_sourceGradingPeriodey] = dgp._sourceKey									
 									AND s.[ModifiedDate] >= dgp.[ValidFrom]
 									AND s.[ModifiedDate] < dgp.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
+								ORDER BY dgp.[ValidFrom] DESC
 							),
 			s.[StudentSectionKey] = (
 								SELECT TOP (1) dss.StudentSectionKey
 								FROM dbo.DimStudentSection dss
-								WHERE s._sourceCourseKey = dss._sourceKey									
+								WHERE s.[_sourceStudentSectionKey] = dss._sourceKey									
 									AND s.[ModifiedDate] >= dss.[ValidFrom]
 									AND s.[ModifiedDate] < dss.[ValidTo]
-								ORDER BY dc.[ValidFrom] DESC
+								ORDER BY dss.[ValidFrom] DESC
 							)													             
         FROM Staging.StudentCourseGrade s;
 
@@ -9157,8 +9168,8 @@ BEGIN
          )
          
 		SELECT DISTINCT 
-		      [_sourceKey]
-			  [TimeKey]
+		      [_sourceKey],
+			  [TimeKey],
 			  GradingPeriodKey,
               StudentSectionKey,
               LetterGradeEarned,
@@ -9191,7 +9202,7 @@ BEGIN
 		SET [LoadDate] = @LastDateLoaded
 		WHERE [TableName] = N'dbo.FactStudentCourseGrade';
 
-		
+	
 	    
 		COMMIT TRANSACTION;		
 	END TRY
