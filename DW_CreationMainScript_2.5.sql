@@ -1,5 +1,12 @@
+IF NOT EXISTS(SELECT * FROM sys.databases WHERE name = 'EdFiDW')
+ BEGIN
+   CREATE DATABASE EdFiDW
+ END
+GO
+
 USE EdFiDW
 GO
+
 DECLARE @dropExistingTables BIT = 1
 
 --creating schemas  if they do not exist
@@ -191,7 +198,8 @@ BEGIN
 	  ValidFrom DATETIME NOT NULL,
 	  ValidTo DATETIME NOT NULL,
 	  IsCurrent BIT NOT NULL,  
-	  [LineageKey] INT NOT NULL,
+	  IsLatest BIT NOT NULL,  
+	  LineageKey INT NOT NULL,
 
 	  CONSTRAINT PK_DimSchool PRIMARY KEY (SchoolKey)  
 	);
@@ -236,10 +244,10 @@ CREATE TABLE Staging.School
   OperationalStatusTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
   OperationalStatusTypeDescriptor_Description NVARCHAR(1024) NOT NULL,
   
-  SchoolNameModifiedDate [datetime] NOT NULL,
-  SchoolOperationalStatusTypeModifiedDate [DATETIME] NOT NULL,
-  SchoolCategoryModifiedDate [datetime] NOT NULL,
-  SchoolTitle1StatusModifiedDate [datetime] NOT NULL,
+  SchoolNameModifiedDate DATETIME NOT NULL,
+  SchoolOperationalStatusTypeModifiedDate DATETIME NOT NULL,
+  SchoolCategoryModifiedDate DATETIME NOT NULL,
+  SchoolTitle1StatusModifiedDate DATETIME NOT NULL,
 
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
@@ -313,15 +321,14 @@ BEGIN
 	  ValidFrom DATETIME NOT NULL,
 	  ValidTo DATETIME NOT NULL,
 	  IsCurrent BIT NOT NULL,  
-	  [LineageKey] INT NOT NULL,
+	  IsLatest BIT NOT NULL,   
+	  LineageKey INT NOT NULL,
 
 	  CONSTRAINT PK_DimTime PRIMARY KEY (TimeKey),  
 	  CONSTRAINT FK_DimTime_SchoolKey FOREIGN KEY (SchoolKey) REFERENCES [dbo].[DimSchool] (SchoolKey)
 	);
-
-	CREATE NONCLUSTERED INDEX DimTime_CoveringIndex
-	  ON dbo.DimTime (SchoolDate, ValidFrom)
-	INCLUDE ( ValidTo, TimeKey);
+		
+	CREATE NONCLUSTERED INDEX DimTime_CoveringIndex ON dbo.DimTime( SchoolKey, ValidFrom, ValidTo) INCLUDE (TimeKey);
 END;
 
 
@@ -375,7 +382,7 @@ CREATE TABLE Staging.[Time]
   FederalHoliday_Indicator BIT NOT NULL, --  True,False
   
   --all these vary by school
-  SchoolSourceKey NVARCHAR(50) NULL,  
+  SchoolKey INT NULL,  
   DayOfSchoolYear SMALLINT NULL, -- 1 - 180 - based on SIS(ODS) school calendar
   SchoolCalendarEventType_CodeValue NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
   SchoolCalendarEventType_Description NVARCHAR(50) NULL, -- Emergency day,Instructional day,Teacher only day
@@ -384,9 +391,11 @@ CREATE TABLE Staging.[Time]
   SchoolTermDescriptor_Description NVARCHAR(50) NULL, -- Year Round,First Quarter, First Trimester, Fall Semester, Fourth Quarter, etc SELECT * FROM v25_EdFi_Ods_Sandbox_populatedSandbox.edfi.Descriptor where namespace = 'http://ed-fi.org/Descriptor/TermDescriptor.xml'
 
   
-  SchoolSessisonModifiedDate [datetime] NOT NULL,
-  CalendarEventTypeModifiedDate [DATETIME] NOT NULL,
+  SchoolSessionModifiedDate DATETIME NOT NULL,
+  CalendarEventTypeModifiedDate DATETIME NOT NULL,
       
+  _sourceSchoolKey NVARCHAR(50) NULL,  
+
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
   IsCurrent BIT NOT NULL
@@ -405,19 +414,23 @@ BEGIN
 	  StaffKey INT NOT NULL IDENTITY(1,1),
 	  [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
   
-	  PrimaryElectronicMailAddress [nvarchar](128) NULL,
-	  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-	  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+	  PrimaryElectronicMailAddress NVARCHAR(128) NULL,
+	  PrimaryElectronicMailTypeDescriptor_CodeValue NVARCHAR(128) NULL, -- Home/Personal, Organization, Other, Work
+	  PrimaryElectronicMailTypeDescriptor_Description NVARCHAR(128) NULL,
   
-	  [StaffUniqueId] [nvarchar](32) NOT NULL,
-	  [PersonalTitlePrefix] [nvarchar](30) NULL,
-	  [FirstName] [nvarchar](75) NOT NULL,
-	  [MiddleName] [nvarchar](75) NULL,
+	  EducationOrganizationId INT NOT NULL,
+	  ShortNameOfInstitution nvarchar(500) NULL,
+	  NameOfInstitution nvarchar(500) NOT NULL,
+
+	  [StaffUniqueId] NVARCHAR(32) NOT NULL,
+	  [PersonalTitlePrefix] NVARCHAR(30) NULL,
+	  [FirstName] NVARCHAR(75) NOT NULL,
+	  [MiddleName] NVARCHAR(75) NULL,
 	  [MiddleInitial] CHAR(1) NULL,
 	  [LastSurname] nvarchar(75) NOT NULL,
 	  [FullName] NVARCHAR(50) NOT NULL,
-	  [GenerationCodeSuffix] [nvarchar](10) NULL,
-	  [MaidenName] [nvarchar](75) NULL,  
+	  [GenerationCodeSuffix] NVARCHAR(10) NULL,
+	  [MaidenName] NVARCHAR(75) NULL,  
 	  [BirthDate] DATE NULL,
 	  [StaffAge] INT NULL,  
   
@@ -431,7 +444,7 @@ BEGIN
 	  [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
 	  [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
 	  [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
-	  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
+	  [HighlyQualifiedTeacher_Indicator] BIT NULL,
     
 	  [StaffClassificationDescriptor_CodeValue]  NVARCHAR(100)  NULL, 
 	  [StaffClassificationDescriptor_CodeDescription]  NVARCHAR(100)  NULL, 
@@ -439,15 +452,16 @@ BEGIN
 	  ValidFrom DATETIME NOT NULL, 
 	  ValidTo DATETIME NOT NULL, 
 	  IsCurrent BIT NOT NULL,    
-	  [LineageKey] INT NOT NULL,
+	  IsLatest BIT NOT NULL,
+	  LineageKey INT NOT NULL,
 
 	  CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)  
-	);
-	CREATE NONCLUSTERED INDEX DimSatff_CoveringIndex
-		  ON dbo.DimStaff(_sourceKey, ValidFrom)
-		INCLUDE ( ValidTo, StaffKey);
+	);	
+	CREATE NONCLUSTERED INDEX DimStaff_CoveringIndex ON dbo.DimStaff( [_sourceKey], ValidFrom, ValidTo) INCLUDE (StaffKey);
 END
---staff - staging
+
+
+--Staff - staging
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
              WHERE TABLE_NAME = 'Staff' 
@@ -457,46 +471,52 @@ CREATE TABLE Staging.Staff
   StaffKey INT NOT NULL IDENTITY(1,1),
   [_sourceKey] NVARCHAR(50) NOT NULL,  --'EdFi|StaffUSI'
   
-  PrimaryElectronicMailAddress [nvarchar](128) NULL,
-  PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-  PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
-    
-  [StaffUniqueId] [nvarchar](32) NOT NULL,
-  [PersonalTitlePrefix] [nvarchar](30) NULL,
-  [FirstName] [nvarchar](75) NOT NULL,
-  [MiddleName] [nvarchar](75) NULL,
+  PrimaryElectronicMailAddress NVARCHAR(128) NULL,
+  PrimaryElectronicMailTypeDescriptor_CodeValue NVARCHAR(128) NULL, -- Home/Personal, Organization, Other, Work
+  PrimaryElectronicMailTypeDescriptor_Description NVARCHAR(128) NULL,
+
+  EducationOrganizationId INT NOT NULL,
+  ShortNameOfInstitution nvarchar(500) NOT NULL,
+  NameOfInstitution nvarchar(500) NOT NULL,
+
+  [StaffUniqueId] NVARCHAR(32) NOT NULL,
+  [PersonalTitlePrefix] NVARCHAR(30) NULL,
+  [FirstName] NVARCHAR(75) NOT NULL,
+  [MiddleName] NVARCHAR(75) NULL,
   [MiddleInitial] CHAR(1) NULL,
   [LastSurname] nvarchar(75) NOT NULL,
   [FullName] NVARCHAR(50) NOT NULL,
-  [GenerationCodeSuffix] [nvarchar](10) NULL,
-  [MaidenName] [nvarchar](75) NULL,  
+  [GenerationCodeSuffix] NVARCHAR(10) NULL,
+  [MaidenName] NVARCHAR(75) NULL,  
   [BirthDate] DATE NULL,
   [StaffAge] INT NULL,  
   
   SexType_Code NVARCHAR(15) NOT NULL,
   SexType_Description NVARCHAR(100) NOT NULL,    
   SexType_Male_Indicator BIT NOT NULL,
-  SexType_Female_Indicator BIT NOT NULL,
+  SexType_Female_Indicator BIT NOT NULL,  
   SexType_NotSelected_Indicator BIT NOT NULL,
      
   [HighestLevelOfEducationDescriptorDescriptor_CodeValue] NVARCHAR(100)  NULL, 
   [HighestLevelOfEducationDescriptorDescriptor_Description] NVARCHAR(100)  NULL, 
   [YearsOfPriorProfessionalExperience] [decimal](5, 2) NULL,
   [YearsOfPriorTeachingExperience] [decimal](5, 2) NULL,  
-  [HighlyQualifiedTeacher_Indicator] [bit] NULL,
+  [HighlyQualifiedTeacher_Indicator] BIT NULL,
     
   [StaffClassificationDescriptor_CodeValue]  NVARCHAR(100)  NULL, 
   [StaffClassificationDescriptor_CodeDescription]  NVARCHAR(100)  NULL, 
   
-  StaffMainInfoModifiedDate [datetime] NOT NULL,  
+  StaffMainInfoModifiedDate DATETIME NOT NULL,  
+  StaffEdOrgAssignmentModifiedDate DATETIME NOT NULL,  
+  StaffEdOrgEmploymentModifiedDate DATETIME NOT NULL,    
 
   ValidFrom DATETIME NOT NULL, 
   ValidTo DATETIME NOT NULL, 
-  IsCurrent BIT NOT NULL  
-
+  IsCurrent BIT NOT NULL,   
   CONSTRAINT PK_DimStaff PRIMARY KEY (StaffKey)   
 );
 GO
+
 
 --Student - prod
 if NOT EXISTS (select 1
@@ -506,85 +526,84 @@ if NOT EXISTS (select 1
 BEGIN
 	CREATE TABLE dbo.DimStudent
 	(
-		[StudentKey] [int] IDENTITY(1,1) NOT NULL, 
-		[_sourceKey] [nvarchar](50) NOT NULL,
+		[StudentKey] INT IDENTITY(1,1) NOT NULL, 
+		[_sourceKey] NVARCHAR(50) NOT NULL,
 
-		[StudentUniqueId] [nvarchar](32) NULL,
-		[StateId] [nvarchar](32) NULL,
+		[StudentUniqueId] NVARCHAR(32) NULL,
+		[StateId] NVARCHAR(32) NULL,
 
-		PrimaryElectronicMailAddress [nvarchar](128) NULL,
-		PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-		PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+		PrimaryElectronicMailAddress NVARCHAR(128) NULL,
+		PrimaryElectronicMailTypeDescriptor_CodeValue NVARCHAR(128) NULL, -- Home/Personal, Organization, Other, Work
+		PrimaryElectronicMailTypeDescriptor_Description NVARCHAR(128) NULL,
 
-		[SchoolKey] [int] NOT NULL,
-		[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
-		[NameOfInstitution] [nvarchar](500) NOT NULL,
-		[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
-		[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,	
+		[SchoolKey] INT NOT NULL,
+		[ShortNameOfInstitution] NVARCHAR(500) NOT NULL,
+		[NameOfInstitution] NVARCHAR(500) NOT NULL,
+		[GradeLevelDescriptor_CodeValue] NVARCHAR(100) NOT NULL,
+		[GradeLevelDescriptor_Description] NVARCHAR(500) NOT NULL,	
 	
-		[FirstName] [nvarchar](100) NOT NULL,
+		[FirstName] NVARCHAR(100) NOT NULL,
 		[MiddleInitial] [char](1) NULL,
-		[MiddleName] [nvarchar](100) NULL,
-		[LastSurname] [nvarchar](100) NOT NULL,
-		[FullName] [nvarchar](500) NOT NULL,
+		[MiddleName] NVARCHAR(100) NULL,
+		[LastSurname] NVARCHAR(100) NOT NULL,
+		[FullName] NVARCHAR(500) NOT NULL,
 		[BirthDate] [date] NOT NULL,
-		[StudentAge] [int] NOT NULL,
-		[GraduationSchoolYear] [int] NULL,
+		[StudentAge] INT NOT NULL,
+		[GraduationSchoolYear] INT NULL,
 	
-		[Homeroom] [nvarchar](500) NULL,
-		[HomeroomTeacher] [nvarchar](500) NULL,
+		[Homeroom] NVARCHAR(500) NULL,
+		[HomeroomTeacher] NVARCHAR(500) NULL,
 
-		[SexType_Code] [nvarchar](100) NOT NULL,
-		[SexType_Description] [nvarchar](100) NOT NULL,
-		[SexType_Male_Indicator] [bit] NOT NULL,
-		[SexType_Female_Indicator] [bit] NOT NULL,
-		[SexType_NotSelected_Indicator] [bit] NOT NULL,
+		[SexType_Code] NVARCHAR(100) NOT NULL,
+		[SexType_Description] NVARCHAR(100) NOT NULL,
+		[SexType_Male_Indicator] BIT NOT NULL,
+		[SexType_Female_Indicator] BIT NOT NULL,
+		[SexType_NotSelected_Indicator] BIT NOT NULL,
 	
-		[RaceCode] [nvarchar](1000) NOT NULL,
-		[RaceDescription] [nvarchar](1000) NOT NULL,
-		[StateRaceCode] [nvarchar](1000) NOT NULL,
-		[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
-		[Race_Asian_Indicator] [bit] NOT NULL,
-		[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
-		[Race_NativeHawaiianPacificIslander_Indicator] [bit] NOT NULL,
-		[Race_White_Indicator] [bit] NOT NULL,
-		[Race_MultiRace_Indicator] [bit] NOT NULL,
-		[Race_ChooseNotRespond_Indicator] [bit] NOT NULL,
-		[Race_Other_Indicator] [bit] NOT NULL,
+		[RaceCode] NVARCHAR(1000) NOT NULL,
+		[RaceDescription] NVARCHAR(1000) NOT NULL,
+		[StateRaceCode] NVARCHAR(1000) NOT NULL,
+		[Race_AmericanIndianAlaskanNative_Indicator] BIT NOT NULL,
+		[Race_Asian_Indicator] BIT NOT NULL,
+		[Race_BlackAfricaAmerican_Indicator] BIT NOT NULL,
+		[Race_NativeHawaiianPacificIslander_Indicator] BIT NOT NULL,
+		[Race_White_Indicator] BIT NOT NULL,
+		[Race_MultiRace_Indicator] BIT NOT NULL,
+		[Race_ChooseNotRespond_Indicator] BIT NOT NULL,
+		[Race_Other_Indicator] BIT NOT NULL,
 
-		[EthnicityCode] [nvarchar](100) NOT NULL,
-		[EthnicityDescription] [nvarchar](100) NOT NULL,
-		[EthnicityHispanicLatino_Indicator] [bit] NOT NULL,
-		[Migrant_Indicator] [bit] NOT NULL,
-		[Homeless_Indicator] [bit] NOT NULL,
-		[IEP_Indicator] [bit] NOT NULL,
-		[English_Learner_Code_Value] [nvarchar](100) NOT NULL,
-		[English_Learner_Description] [nvarchar](100) NOT NULL,
-		[English_Learner_Indicator] [bit] NOT NULL,
-		[Former_English_Learner_Indicator] [bit] NOT NULL,
-		[Never_English_Learner_Indicator] [bit] NOT NULL,
-		[EconomicDisadvantage_Indicator] [bit] NOT NULL,
+		[EthnicityCode] NVARCHAR(100) NOT NULL,
+		[EthnicityDescription] NVARCHAR(100) NOT NULL,
+		[EthnicityHispanicLatino_Indicator] BIT NOT NULL,
+		[Migrant_Indicator] BIT NOT NULL,
+		[Homeless_Indicator] BIT NOT NULL,
+		[IEP_Indicator] BIT NOT NULL,
+		[English_Learner_Code_Value] NVARCHAR(100) NOT NULL,
+		[English_Learner_Description] NVARCHAR(100) NOT NULL,
+		[English_Learner_Indicator] BIT NOT NULL,
+		[Former_English_Learner_Indicator] BIT NOT NULL,
+		[Never_English_Learner_Indicator] BIT NOT NULL,
+		[EconomicDisadvantage_Indicator] BIT NOT NULL,
 	
-		[EntryDate] [datetime2](7) NOT NULL,
-		[EntrySchoolYear] [int] NOT NULL,
-		[EntryCode] [nvarchar](25) NOT NULL,
+		[EntryDate] DATETIME2(7) NOT NULL,
+		[EntrySchoolYear] INT NOT NULL,
+		[EntryCode] NVARCHAR(25) NOT NULL,
 	
-		[ExitWithdrawDate] [datetime2](7) NULL,
-		[ExitWithdrawSchoolYear] [int] NULL,
-		[ExitWithdrawCode] [nvarchar](100) NULL,
+		[ExitWithdrawDate] DATETIME2(7) NULL,
+		[ExitWithdrawSchoolYear] INT NULL,
+		[ExitWithdrawCode] NVARCHAR(100) NULL,
 
-		[ValidFrom] [datetime] NOT NULL,
-		[ValidTo] [datetime] NOT NULL,
-		[IsCurrent] [bit] NOT NULL,
-		[LineageKey] [int] NOT NULL,
+		[ValidFrom] DATETIME NOT NULL,
+		[ValidTo] DATETIME NOT NULL,
+		[IsCurrent] BIT NOT NULL,
+		[IsLatest] BIT NOT NULL,
+		LineageKey INT NOT NULL,
 
 		CONSTRAINT PK_DimStudent PRIMARY KEY (StudentKey)
 		
 	);
 
-	CREATE NONCLUSTERED INDEX DimStudent_CoveringIndex
-	  ON dbo.DimStudent (_sourceKey, ValidFrom)
-	INCLUDE ( ValidTo, StudentKey);
+	CREATE NONCLUSTERED INDEX DimStudent_CoveringIndex ON dbo.DimStudent( [_sourceKey], ValidFrom, ValidTo) INCLUDE (StudentKey);
 
     CREATE NONCLUSTERED INDEX IX_DimStudent_IsCurrent
     ON [dbo].[DimStudent] ([IsCurrent])
@@ -600,79 +619,81 @@ if NOT EXISTS (select 1
 			   AND TABLE_SCHEMA = 'Staging')
 CREATE TABLE Staging.Student
 (
-    [StudentKey] [int] IDENTITY(1,1) NOT NULL, 
-	[_sourceKey] [nvarchar](50) NOT NULL,
+    [StudentKey] INT IDENTITY(1,1) NOT NULL, 
+	[_sourceKey] NVARCHAR(50) NOT NULL,
 
-	[StudentUniqueId] [nvarchar](32) NULL,
-	[StateId] [nvarchar](32) NULL,
+	[StudentUniqueId] NVARCHAR(32) NULL,
+	[StateId] NVARCHAR(32) NULL,
 
-	PrimaryElectronicMailAddress [nvarchar](128) NULL,
-	PrimaryElectronicMailTypeDescriptor_CodeValue [nvarchar](128) NULL, -- Home/Personal, Organization, Other, Work
-	PrimaryElectronicMailTypeDescriptor_Description [nvarchar](128) NULL,
+	PrimaryElectronicMailAddress NVARCHAR(128) NULL,
+	PrimaryElectronicMailTypeDescriptor_CodeValue NVARCHAR(128) NULL, -- Home/Personal, Organization, Other, Work
+	PrimaryElectronicMailTypeDescriptor_Description NVARCHAR(128) NULL,
 
-	[SchoolKey] [int] NOT NULL,
-	[ShortNameOfInstitution] [nvarchar](500) NOT NULL,
-	[NameOfInstitution] [nvarchar](500) NOT NULL,
-	[GradeLevelDescriptor_CodeValue] [nvarchar](100) NOT NULL,
-	[GradeLevelDescriptor_Description] [nvarchar](500) NOT NULL,	
+	[SchoolKey] INT NULL,
+	[ShortNameOfInstitution] NVARCHAR(500) NULL,
+	[NameOfInstitution] NVARCHAR(500) NULL,
+	[GradeLevelDescriptor_CodeValue] NVARCHAR(100) NOT NULL,
+	[GradeLevelDescriptor_Description] NVARCHAR(500) NOT NULL,	
 	
-	[FirstName] [nvarchar](100) NOT NULL,
+	[FirstName] NVARCHAR(100) NOT NULL,
 	[MiddleInitial] [char](1) NULL,
-	[MiddleName] [nvarchar](100) NULL,
-	[LastSurname] [nvarchar](100) NOT NULL,
-	[FullName] [nvarchar](500) NOT NULL,
+	[MiddleName] NVARCHAR(100) NULL,
+	[LastSurname] NVARCHAR(100) NOT NULL,
+	[FullName] NVARCHAR(500) NOT NULL,
 	[BirthDate] [date] NOT NULL,
-	[StudentAge] [int] NOT NULL,
-	[GraduationSchoolYear] [int] NULL,
+	[StudentAge] INT NOT NULL,
+	[GraduationSchoolYear] INT NULL,
 	
-	[Homeroom] [nvarchar](500) NULL,
-	[HomeroomTeacher] [nvarchar](500) NULL,
+	[Homeroom] NVARCHAR(500) NULL,
+	[HomeroomTeacher] NVARCHAR(500) NULL,
 
-	[SexType_Code] [nvarchar](100) NOT NULL,
-	[SexType_Description] [nvarchar](100) NOT NULL,
-	[SexType_Male_Indicator] [bit] NOT NULL,
-	[SexType_Female_Indicator] [bit] NOT NULL,
-	[SexType_NotSelected_Indicator] [bit] NOT NULL,
+	[SexType_Code] NVARCHAR(100) NOT NULL,
+	[SexType_Description] NVARCHAR(100) NOT NULL,
+	[SexType_Male_Indicator] BIT NOT NULL,
+	[SexType_Female_Indicator] BIT NOT NULL,
+	[SexType_NotSelected_Indicator] BIT NOT NULL,
 	
-	[RaceCode] [nvarchar](1000) NOT NULL,
-	[RaceDescription] [nvarchar](1000) NOT NULL,
-	[StateRaceCode] [nvarchar](1000) NOT NULL,
-	[Race_AmericanIndianAlaskanNative_Indicator] [bit] NOT NULL,
-	[Race_Asian_Indicator] [bit] NOT NULL,
-	[Race_BlackAfricaAmerican_Indicator] [bit] NOT NULL,
-	[Race_NativeHawaiianPacificIslander_Indicator] [bit] NOT NULL,
-	[Race_White_Indicator] [bit] NOT NULL,
-	[Race_MultiRace_Indicator] [bit] NOT NULL,
-	[Race_ChooseNotRespond_Indicator] [bit] NOT NULL,
-	[Race_Other_Indicator] [bit] NOT NULL,
+	[RaceCode] NVARCHAR(1000) NOT NULL,
+	[RaceDescription] NVARCHAR(1000) NOT NULL,
+	[StateRaceCode] NVARCHAR(1000) NOT NULL,
+	[Race_AmericanIndianAlaskanNative_Indicator] BIT NOT NULL,
+	[Race_Asian_Indicator] BIT NOT NULL,
+	[Race_BlackAfricaAmerican_Indicator] BIT NOT NULL,
+	[Race_NativeHawaiianPacificIslander_Indicator] BIT NOT NULL,
+	[Race_White_Indicator] BIT NOT NULL,
+	[Race_MultiRace_Indicator] BIT NOT NULL,
+	[Race_ChooseNotRespond_Indicator] BIT NOT NULL,
+	[Race_Other_Indicator] BIT NOT NULL,
 
-	[EthnicityCode] [nvarchar](100) NOT NULL,
-	[EthnicityDescription] [nvarchar](100) NOT NULL,
-	[EthnicityHispanicLatino_Indicator] [bit] NOT NULL,
-	[Migrant_Indicator] [bit] NOT NULL,
-	[Homeless_Indicator] [bit] NOT NULL,
-	[IEP_Indicator] [bit] NOT NULL,
-	[English_Learner_Code_Value] [nvarchar](100) NOT NULL,
-	[English_Learner_Description] [nvarchar](100) NOT NULL,
-	[English_Learner_Indicator] [bit] NOT NULL,
-	[Former_English_Learner_Indicator] [bit] NOT NULL,
-	[Never_English_Learner_Indicator] [bit] NOT NULL,
-	[EconomicDisadvantage_Indicator] [bit] NOT NULL,
+	[EthnicityCode] NVARCHAR(100) NOT NULL,
+	[EthnicityDescription] NVARCHAR(100) NOT NULL,
+	[EthnicityHispanicLatino_Indicator] BIT NOT NULL,
+	[Migrant_Indicator] BIT NOT NULL,
+	[Homeless_Indicator] BIT NOT NULL,
+	[IEP_Indicator] BIT NOT NULL,
+	[English_Learner_Code_Value] NVARCHAR(100) NOT NULL,
+	[English_Learner_Description] NVARCHAR(100) NOT NULL,
+	[English_Learner_Indicator] BIT NOT NULL,
+	[Former_English_Learner_Indicator] BIT NOT NULL,
+	[Never_English_Learner_Indicator] BIT NOT NULL,
+	[EconomicDisadvantage_Indicator] BIT NOT NULL,
 	
-	[EntryDate] [datetime2](7) NOT NULL,
-	[EntrySchoolYear] [int] NOT NULL,
-	[EntryCode] [nvarchar](25) NOT NULL,
+	[EntryDate] DATETIME2(7) NOT NULL,
+	[EntrySchoolYear] INT NOT NULL,
+	[EntryCode] NVARCHAR(25) NOT NULL,
 	
-	[ExitWithdrawDate] [datetime2](7) NULL,
-	[ExitWithdrawSchoolYear] [int] NULL,
-	[ExitWithdrawCode] [nvarchar](100) NULL,
+	[ExitWithdrawDate] DATETIME2(7) NULL,
+	[ExitWithdrawSchoolYear] INT NULL,
+	[ExitWithdrawCode] NVARCHAR(100) NULL,
 
-	StudentMainInfoModifiedDate [datetime] NOT NULL,
-	StudentSchoolAssociationModifiedDate [datetime] NOT NULL,
+	StudentMainInfoModifiedDate DATETIME NOT NULL,
+	StudentSchoolAssociationModifiedDate DATETIME NOT NULL,
 
-	[ValidFrom] [datetime] NOT NULL,
-	[ValidTo] [datetime] NOT NULL,
-	[IsCurrent] [bit] NOT NULL
+	_sourceSchoolKey NVARCHAR(50) NULL,  
+
+	[ValidFrom] DATETIME NOT NULL,
+	[ValidTo] DATETIME NOT NULL,
+	[IsCurrent] BIT NOT NULL
 	
 
     CONSTRAINT PK_StagingStudent PRIMARY KEY (StudentKey)    
@@ -690,8 +711,8 @@ BEGIN
 	  AttendanceEventCategoryKey INT NOT NULL IDENTITY(1,1),
 	  [_sourceKey] NVARCHAR(50) NOT NULL, 
    
-	  AttendanceEventCategoryDescriptor_CodeValue nvarchar(50) NOT NULL,
-	  AttendanceEventCategoryDescriptor_Description nvarchar(1024) NOT NULL,
+	  AttendanceEventCategoryDescriptor_CodeValue NVARCHAR(50) NOT NULL,
+	  AttendanceEventCategoryDescriptor_Description NVARCHAR(1024) NOT NULL,
   
 	  [InAttendance_Indicator] BIT NOT NULL,  
 	  [UnexcusedAbsence_Indicator] BIT NOT NULL,
@@ -702,7 +723,8 @@ BEGIN
 	  ValidFrom DATETIME NOT NULL, 
 	  ValidTo DATETIME NOT NULL, 
 	  IsCurrent BIT NOT NULL,    
-	  [LineageKey] INT NOT NULL,
+	  IsLatest BIT NOT NULL,
+	  LineageKey INT NOT NULL,
 
 	  CONSTRAINT PK_DimAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
 	);
@@ -732,12 +754,12 @@ CREATE TABLE Staging.AttendanceEventCategory
   [Tardy_Indicator] BIT NOT NULL,    
   [EarlyDeparture_Indicator]  BIT NOT NULL,    
   
-  CategoryModifiedDate [datetime] NOT NULL,
+  CategoryModifiedDate DATETIME NOT NULL,
 
   ValidFrom DATETIME NOT NULL, 
   ValidTo DATETIME NOT NULL, 
   IsCurrent BIT NOT NULL,   
-  CONSTRAINT PK_stagingAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
+  CONSTRAINT PK_StagingAttendanceEventCategory PRIMARY KEY (AttendanceEventCategoryKey ASC)  
 );
 GO
 
@@ -776,20 +798,19 @@ BEGIN
 	  IncidentReporterName NVARCHAR(100) NOT NULL ,
 	  ReportedToLawEnforcement_Indicator BIT NOT NULL ,
 	  IncidentCost Money NOT NULL,
-  
+      
 	  ValidFrom DATETIME NOT NULL,
 	  ValidTo DATETIME NOT NULL,
-	  IsCurrent BIT NOT NULL,  
-  
-	  [LineageKey] INT NOT NULL,
+	  IsCurrent BIT NOT NULL,      
+	  IsLatest BIT NOT NULL,  
+	  LineageKey INT NOT NULL,
 
 	  CONSTRAINT PK_DimDisciplineIncident PRIMARY KEY (DisciplineIncidentKey ASC)
 	  
 	);
 
-	CREATE NONCLUSTERED INDEX DimDisciplineIncident_CoveringIndex
-	  ON dbo.DimDisciplineIncident(_sourceKey, ValidFrom)
-	INCLUDE ( ValidTo, DisciplineIncidentKey);
+	
+	CREATE NONCLUSTERED INDEX DimDisciplineIncident_CoveringIndex ON dbo.DimDisciplineIncident( [_sourceKey], ValidFrom, ValidTo) INCLUDE (DisciplineIncidentKey);
 END;
 
 --discipline incident - staging
@@ -802,9 +823,9 @@ CREATE TABLE Staging.DisciplineIncident
   DisciplineIncidentKey INT NOT NULL IDENTITY(1,1),
   [_sourceKey] NVARCHAR(50) NOT NULL, 
   
-  SchoolKey INT NOT NULL,
-  ShortNameOfInstitution nvarchar(500) NOT NULL,
-  NameOfInstitution nvarchar(500) NOT NULL,
+  SchoolKey INT NULL,
+  ShortNameOfInstitution nvarchar(500) NULL,
+  NameOfInstitution nvarchar(500) NULL,
   SchoolYear INT NOT NULL,
   IncidentDate DATE NOT NULL,   
   IncidentTime TIME(7) NOT NULL,   
@@ -827,7 +848,9 @@ CREATE TABLE Staging.DisciplineIncident
   ReportedToLawEnforcement_Indicator BIT NOT NULL ,
   IncidentCost Money NOT NULL,
   
-  IncidentModifiedDate [datetime] NOT NULL,
+  IncidentModifiedDate DATETIME NOT NULL,
+
+  _sourceSchoolKey NVARCHAR(50) NULL,  
 
   ValidFrom DATETIME NOT NULL,
   ValidTo DATETIME NOT NULL,
@@ -846,7 +869,7 @@ BEGIN
 	CREATE TABLE dbo.DimAssessment
 	(
 		AssessmentKey INT NOT NULL IDENTITY(1,1),  
-		[_sourceKey] NVARCHAR(2000) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
+		[_sourceKey] NVARCHAR(500) NOT NULL, -- EdFi|AssessmentIdentifier|ObjectiveAssessment_IdentificationCode|AssessmentReportingMethodDescriptor_CodeValue
 	
 		--assessment 
 		--------------------------------------------------------------------------------------
@@ -873,14 +896,13 @@ BEGIN
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
 		IsCurrent BIT NOT NULL,	
-		[LineageKey] INT NOT NULL,
+		IsLatest BIT NOT NULL,	
+		LineageKey INT NOT NULL,
 
 		CONSTRAINT PK_DimAssessment PRIMARY KEY (AssessmentKey)    
 	);
-
-	CREATE NONCLUSTERED INDEX DimAssessment_CoveringIndex
-	  ON dbo.DimAssessment(_sourceKey, ValidFrom)
-	INCLUDE ( ValidTo, AssessmentKey);
+		
+	CREATE NONCLUSTERED INDEX DimAssessment_CoveringIndex ON dbo.DimAssessment( [_sourceKey], ValidFrom, ValidTo) INCLUDE (AssessmentKey);
 END;
 
 
@@ -917,7 +939,7 @@ BEGIN
 		ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
 		ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
 	    
-		AssessmentModifiedDate [datetime] NOT NULL,
+		AssessmentModifiedDate DATETIME NOT NULL,
 
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
@@ -964,16 +986,15 @@ BEGIN
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
 		IsCurrent BIT NOT NULL,	
-		[LineageKey] INT NOT NULL,
+		IsLatest INT NOT NULL,
+		LineageKey INT NOT NULL,
 
   		CONSTRAINT PK_DimCourse PRIMARY KEY (CourseKey)
     
 	);
+	
 
-
-	CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex
-	  ON dbo.DimCourse(_sourceKey, ValidFrom)
-	INCLUDE ( ValidTo, CourseKey);
+	CREATE NONCLUSTERED INDEX DimCourse_CoveringIndex ON dbo.DimCourse( [_sourceKey], ValidFrom, ValidTo) INCLUDE (CourseKey);
 END
 
 --course - staging
@@ -1008,7 +1029,7 @@ BEGIN
 		SecondaryCourseLevelCharacteristicTypeDescriptor_CodeValue NVARCHAR(50) NOT NULL,
 		SecondaryCourseLevelCharacteristicTypeDescriptor_Description NVARCHAR(50) NOT NULL,
 			
-		CourseModifiedDate [datetime] NOT NULL,
+		CourseModifiedDate DATETIME NOT NULL,
 
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
@@ -1040,7 +1061,8 @@ BEGIN
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
 		IsCurrent BIT NOT NULL,	
-		[LineageKey] INT NOT NULL,
+		IsLatest INT NOT NULL,
+		LineageKey INT NOT NULL,
 
   		CONSTRAINT PK_DimGradingPeriod PRIMARY KEY (GradingPeriodKey)    
 	);
@@ -1062,13 +1084,15 @@ BEGIN
 		GradingPeriodKey INT NOT NULL IDENTITY(1,1),  --surrogate
 		[_sourceKey] NVARCHAR(50) NOT NULL,
 	    GradingPeriodDescriptor_CodeValue NVARCHAR(60) NOT NULL,
-		SchoolKey INT NOT NULL,
+		SchoolKey INT NULL,
 		BeginDate DATE NOT NULL,
 		EndDate DATE NOT NULL,
 		TotalInstructionalDays INT NOT NULL,
 		PeriodSequence INT NOT NULL,
 		
-		ModifiedDate [datetime] NOT NULL,
+		ModifiedDate DATETIME NOT NULL,
+
+		_sourceSchoolKey NVARCHAR(50) NULL,
 
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
@@ -1103,7 +1127,8 @@ BEGIN
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
 		IsCurrent BIT NOT NULL,	
-		[LineageKey] INT NOT NULL,
+		IsLatest BIT NOT NULL,	
+		LineageKey INT NOT NULL,
 
   		CONSTRAINT PK_DimStudentSection PRIMARY KEY (StudentSectionKey)    
 	);
@@ -1121,16 +1146,22 @@ BEGIN
 		StudentSectionKey INT NOT NULL IDENTITY(1,1),  --surrogate
 		[_sourceKey] NVARCHAR(500) NOT NULL,
 	
-		StudentKey INT NOT NULL,
-		SchoolKey INT NOT NULL,
-		CourseKey INT NOT NULL,		
-		StaffKey INT NOT NULL,		
+		StudentKey INT NULL,
+		SchoolKey INT NULL,
+		CourseKey INT NULL,		
+		StaffKey INT NULL,		
+
 		StudentSectionBeginDate DATE NOT NULL,
 		StudentSectionEndDate DATE NOT NULL,
 		SchoolYear INT NOT NULL,
 
-		ModifiedDate [datetime] NOT NULL,
+		ModifiedDate DATETIME NOT NULL,
 		
+		_sourceStudentKey NVARCHAR(50) NULL,  
+		_sourceSchoolKey NVARCHAR(50) NULL,  
+		_sourceCourseKey NVARCHAR(50) NULL,  
+		_sourceStaffKey NVARCHAR(50) NULL,  
+
 		ValidFrom DATETIME NOT NULL, 
 		ValidTo DATETIME NOT NULL, 
 		IsCurrent BIT NOT NULL,	
@@ -1159,7 +1190,7 @@ CREATE TABLE dbo.FactStudentAttendanceByDay
   AttendanceEventCategoryKey INT NOT NULL ,
   AttendanceEventReason nvarchar(500) NOT NULL,
 
-  [LineageKey] INT NOT NULL,
+  LineageKey INT NOT NULL,
 
   CONSTRAINT PK_FactStudentAttendanceByDay PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, AttendanceEventCategoryKey ASC),
   CONSTRAINT FK_FactStudentAttendanceByDay_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
@@ -1184,7 +1215,7 @@ CREATE TABLE Staging.StudentAttendanceByDay
   AttendanceEventCategoryKey INT NULL,
   AttendanceEventReason nvarchar(500) NULL,
   
-  [ModifiedDate] [datetime] NULL,
+  [ModifiedDate] DATETIME NULL,
 
   _sourceStudentKey NVARCHAR(50) NULL,
   _sourceTimeKey DATE NULL,  
@@ -1208,7 +1239,7 @@ CREATE TABLE dbo.FactStudentDiscipline
   SchoolKey INT NOT NULL,
   DisciplineIncidentKey INT NOT NULL,
 
-  [LineageKey] INT NOT NULL,
+  LineageKey INT NOT NULL,
 
   CONSTRAINT PK_FactStudentDiscipline PRIMARY KEY (StudentKey ASC, TimeKey ASC, SchoolKey ASC, DisciplineIncidentKey ASC),
   CONSTRAINT FK_FactStudentDiscipline_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
@@ -1233,7 +1264,7 @@ CREATE TABLE Staging.StudentDiscipline
   SchoolKey INT NULL,
   DisciplineIncidentKey INT NULL,
 
-  [ModifiedDate] [datetime] NULL,
+  [ModifiedDate] DATETIME NULL,
 
   _sourceStudentKey NVARCHAR(50) NULL,
   _sourceTimeKey Date NULL, 
@@ -1260,7 +1291,7 @@ CREATE TABLE dbo.FactStudentAssessmentScore
   DecimalScoreResult FLOAT NULL,
   LiteralScoreResult NVARCHAR(60) NULL,
   
-  [LineageKey] INT NOT NULL,
+  LineageKey INT NOT NULL,
 
   CONSTRAINT PK_FactStudentAssessmentScores PRIMARY KEY (StudentKey ASC, TimeKey ASC, AssessmentKey ASC),
   CONSTRAINT FK_FactStudentAssessmentScores_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
@@ -1290,7 +1321,7 @@ CREATE TABLE Staging.StudentAssessmentScore
   DecimalScoreResult FLOAT NULL,
   LiteralScoreResult NVARCHAR(60) NULL,
   
-  [ModifiedDate] [datetime] NULL,
+  [ModifiedDate] DATETIME NULL,
 
   _sourceStudentKey NVARCHAR(50) NULL,
   _sourceTimeKey Date NULL, 
@@ -1318,7 +1349,7 @@ CREATE TABLE dbo.FactStudentCourseTranscript
   FinalLetterGradeEarned NVARCHAR(10)  NULL,
   FinalNumericGradeEarned DECIMAL(9,2) NULL,
     
-  [LineageKey] INT NOT NULL,
+  LineageKey INT NOT NULL,
 
   CONSTRAINT PK_FactStudentCourseTranscript PRIMARY KEY (StudentKey ASC, TimeKey ASC, CourseKey ASC, SchoolKey ASC),
   CONSTRAINT FK_FactStudentCourseTranscript_StudentKey FOREIGN KEY (StudentKey) REFERENCES dbo.DimStudent(StudentKey),
@@ -1348,7 +1379,7 @@ CREATE TABLE Staging.StudentCourseTranscript
   FinalLetterGradeEarned NVARCHAR(10)  NULL,
   FinalNumericGradeEarned DECIMAL(9,2) NULL,
     
-  [ModifiedDate] [datetime] NULL,
+  [ModifiedDate] DATETIME NULL,
    
   _sourceStudentKey NVARCHAR(50) NULL,
   _sourceSchoolYear int NULL, 
@@ -1375,7 +1406,7 @@ CREATE TABLE dbo.FactStudentCourseGrade
   LetterGradeEarned NVARCHAR(10) NULL,
   NumericGradeEarned DECIMAL(9,2) NULL,
     
-  [LineageKey] INT NOT NULL,
+  LineageKey INT NOT NULL,
 
   CONSTRAINT PK_FactStudentCourseGrade PRIMARY KEY (TimeKey ASC, GradingPeriodKey ASC, StudentSectionKey ASC),
   CONSTRAINT FK_FactStudentCourseGrade_TimeKey FOREIGN KEY (TimeKey) REFERENCES dbo.DimTime(TimeKey),  
@@ -1401,7 +1432,7 @@ BEGIN
 	  LetterGradeEarned NVARCHAR(10) NULL,
 	  NumericGradeEarned DECIMAL(9,2) NULL,
 
-	  [ModifiedDate] [datetime] NULL,
+	  [ModifiedDate] DATETIME NULL,
   
 	  _sourceGradingPeriodey NVARCHAR(500) NULL,
 	  _sourceStudentSectionKey NVARCHAR(500) NULL, 
@@ -1696,9 +1727,6 @@ AS(
 			INNER JOIN dbo.DimStudent ds ON sabd.StudentKey = ds.StudentKey
 			INNER JOIN dbo.DimTime dt ON sabd.TimeKey = dt.TimeKey	 
 			INNER JOIN dbo.DimSchool dsc ON sabd.SchoolKey = dsc.SchoolKey	 			 
-	WHERE 1=1 
-	--AND ds.StudentUniqueId = 341888
-	--AND dt.SchoolDate = '2018-10-26'
 );
 GO
 
@@ -2074,7 +2102,8 @@ SELECT
 
 		ds.ValidFrom,
 		ds.ValidTo,
-		ds.IsCurrent
+		ds.IsCurrent,
+		ds.IsLatest
 		
 		
 FROM dbo.DimStudent ds 		
@@ -2311,9 +2340,9 @@ IF NOT EXISTS (select 1
              WHERE TABLE_NAME = 'ETL_IncrementalLoads' 
 			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE [dbo].[ETL_IncrementalLoads](
-	[LoadDateKey] [int] IDENTITY(1,1) NOT NULL,
-	[TableName] [nvarchar](100) NOT NULL,
-	[LoadDate] [datetime] NOT NULL,
+	[LoadDateKey] INT IDENTITY(1,1) NOT NULL,
+	[TableName] NVARCHAR(100) NOT NULL,
+	[LoadDate] DATETIME NOT NULL,
  CONSTRAINT [PK_LoadDates] PRIMARY KEY CLUSTERED  ([LoadDateKey] ASC)
 ) ON [PRIMARY]
 
@@ -2371,7 +2400,7 @@ BEGIN
 			END;
 
 		-- Select the key of the previously inserted row
-		SELECT MAX([LineageKey]) AS LineageKey
+		SELECT MAX(LineageKey) AS LineageKey
 		FROM dbo.[ETL_Lineage]
 		WHERE 
 			[TableName] = @TableName
@@ -2540,14 +2569,19 @@ BEGIN
 		SELECT  DISTINCT 
 			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.SchoolId)) AS [_sourceKey],
 				eoic_sch.IdentificationCode AS DistrictSchoolCode,
-				eoic.IdentificationCode AS StateSchoolCode,
+				(SELECT TOP 1 eoic.IdentificationCode
+				 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic 
+				        INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_sea ON eoic.EducationOrganizationIdentificationSystemDescriptorId = d_sea.DescriptorId
+			                                                                                       AND d_sea.CodeValue = 'SEA' -- state code
+				 WHERE  edorg.EducationOrganizationId = eoic.EducationOrganizationId
+				        )	AS StateSchoolCode,
 				CASE
-					WHEN eoic_sch.IdentificationCode IN (1291, 1292, 1293, 1294) THEN '1290'
-					when eoic_sch.IdentificationCode IN (1440,1441) THEN '1440' 
-					WHEN eoic_sch.IdentificationCode IN (4192,4192) THEN '4192' 
-					WHEN eoic_sch.IdentificationCode IN (4031,4033) THEN '4033' 
-					WHEN eoic_sch.IdentificationCode IN (1990,1991) THEN '1990' 
-					WHEN eoic_sch.IdentificationCode IN (1140,4391) THEN '1140' 
+					WHEN eoic_sch.IdentificationCode IN ('1291','1292', '1293', '1294') THEN '1290'
+					when eoic_sch.IdentificationCode IN ('1440','1441') THEN '1440' 
+					WHEN eoic_sch.IdentificationCode IN ('4192','4192') THEN '4192' 
+					WHEN eoic_sch.IdentificationCode IN ('4031','4033') THEN '4033' 
+					WHEN eoic_sch.IdentificationCode IN ('1990','1991') THEN '1990' 
+					WHEN eoic_sch.IdentificationCode IN ('1140','4391') THEN '1140' 
 					ELSE eoic_sch.IdentificationCode
 				END AS UmbrellaSchoolCode,
 				edorg.ShortNameOfInstitution, 
@@ -2587,21 +2621,22 @@ BEGIN
 		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
 		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg on s.SchoolId = edorg.EducationOrganizationId
 		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.OperationalStatusType ost ON edorg.OperationalStatusTypeId = ost.OperationalStatusTypeId
-		     LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
+		     INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 																					   
+			 INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_lea ON eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = d_lea.DescriptorId
+			                                                                   AND d_lea.CodeValue = 'LEA' -- local/district code
+
+			 LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategory sc on s.SchoolId = sc.SchoolId
 		     LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolCategoryType sct on sc.SchoolCategoryTypeId = sct.SchoolCategoryTypeId
 		     LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.TitleIPartASchoolDesignationType tIt on s.TitleIPartASchoolDesignationTypeId = tIt.TitleIPartASchoolDesignationTypeId
-		     LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic ON edorg.EducationOrganizationId = eoic.EducationOrganizationId 
-		     																			   AND eoic.EducationOrganizationIdentificationSystemDescriptorId = 433 --state code
-		     LEFT JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode eoic_sch ON edorg.EducationOrganizationId = eoic_sch.EducationOrganizationId 
-																					   AND eoic_sch.EducationOrganizationIdentificationSystemDescriptorId = 428 --district code
-		WHERE 
-			(edorg.LastModifiedDate > @LastLoadDate AND edorg.LastModifiedDate <= @NewLoadDate) OR
-			(ost.LastModifiedDate > @LastLoadDate AND ost.LastModifiedDate <= @NewLoadDate) OR
-			(sct.LastModifiedDate > @LastLoadDate AND sct.LastModifiedDate <= @NewLoadDate) OR
-			(tIt.LastModifiedDate > @LastLoadDate AND tIt.LastModifiedDate <= @NewLoadDate) 	
+
+		     
+		WHERE(edorg.LastModifiedDate > @LastLoadDate AND edorg.LastModifiedDate <= @NewLoadDate) OR
+			 (ost.LastModifiedDate > @LastLoadDate AND ost.LastModifiedDate <= @NewLoadDate) OR
+			 (sct.LastModifiedDate > @LastLoadDate AND sct.LastModifiedDate <= @NewLoadDate) OR
+			 (tIt.LastModifiedDate > @LastLoadDate AND tIt.LastModifiedDate <= @NewLoadDate) 	
 			
-			
-			
+				SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganizationIdentificationCode WHERE EducationOrganizationId = 1
+			    SELECT * FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor WHERE DescriptorId IN (428,432,433)
 		--loading legacy data if it has not been loaded.
 		--load types are ignored as this data will only be loaded once.
 		IF NOT EXISTS(SELECT 1 
@@ -2751,7 +2786,8 @@ BEGIN
 							   ,[ValidFrom]
 							   ,[ValidTo]
 							   ,[IsCurrent]
-							   ,[LineageKey])
+							   ,[IsLatest]
+							   ,LineageKey)
 				    VALUES
 					(   N'',       -- _sourceKey - nvarchar(50)
 						N'N/A',       -- DistrictSchoolCode - nvarchar(10)
@@ -2772,6 +2808,7 @@ BEGIN
 						'07/01/2015', -- ValidFrom - datetime
 						'9999-12-31', -- ValidTo - datetime
 						0,      -- IsCurrent - bit
+						1,      -- IsLatest - bit
 						-1          -- LineageKey - int
 						)
 				    
@@ -2781,7 +2818,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimSchool] AS prod
 			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
@@ -2809,6 +2847,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			IsLatest,
 		    LineageKey
 		)
 		SELECT 
@@ -2831,6 +2870,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			1 AS IsLatest,
 		    @LineageKey
 		FROM Staging.School
 
@@ -2839,7 +2879,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -2906,10 +2946,9 @@ BEGIN
 
 	BEGIN TRY
 
-		  
-
+		--declare @LastLoadDate datetime = '2021-07-27 01:00:02.000' declare @NewLoadDate datetime = getdate()  
 		TRUNCATE TABLE Staging.[Time]
-
+		
 		IF CONVERT(date, @LastLoadDate) < CONVERT(date, getdate())
 		 BEGIN
 
@@ -3154,7 +3193,7 @@ BEGIN
 					   td.Description TermDescriptorDescription,       
 					   cet.CodeValue CalendarEventTypeCodeValue,
 					   cet.Description CalendarEventTypeDescription, 
-					   ses.LastModifiedDate AS SchoolSessisonModifiedDate, -- school sessions changes are ignored for BPS
+					   ses.LastModifiedDate AS SchoolSessionModifiedDate, 
 					   cet.LastModifiedDate AS CalendarEventTypeModifiedDate,
 					   DENSE_RANK() OVER (PARTITION BY ses.SchoolYear, s.SchoolId ORDER BY cd.Date) AS DayOfSchoolYear  INTO #EdFiSchools
 				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.School s
@@ -3209,15 +3248,17 @@ BEGIN
 					   ,[FederalHolidayName]
 					   ,[FederalHoliday_Indicator]
                    
-					   ,SchoolSourceKey
+					   ,SchoolKey
 					   ,DayOfSchoolYear
 					   ,SchoolCalendarEventType_CodeValue
 					   ,SchoolCalendarEventType_Description
 					   ,SchoolTermDescriptor_CodeValue
 					   ,SchoolTermDescriptor_Description
 		           
-					   ,SchoolSessisonModifiedDate
+					   ,SchoolSessionModifiedDate
 					   ,CalendarEventTypeModifiedDate
+
+					   ,_sourceSchoolKey
 
 					   ,[ValidFrom]
 					   ,[ValidTo]
@@ -3254,21 +3295,23 @@ BEGIN
 				  ,nst.[FederalHolidayName]
 				  ,nst.[FederalHoliday_Indicator]
 
-				  ,es.[_sourceKey] AS SchoolSourceKey
+				  ,NULL AS SchoolKey
 				  ,es.DayOfSchoolYear
 				  ,es.CalendarEventTypeCodeValue
 				  ,es.CalendarEventTypeDescription
 				  ,es.TermDescriptorCodeValue
 				  ,es.TermDescriptorDescription	  
 
-				  ,COALESCE(es.SchoolSessisonModifiedDate,'07/01/2015') AS SchoolSessisonModifiedDate -- school sessions are ignore for BPS
+				  ,COALESCE(es.SchoolSessionModifiedDate,'07/01/2015') AS SchoolSessionModifiedDate -- school sessions are ignore for BPS
 				  ,COALESCE(es.CalendarEventTypeModifiedDate,'07/01/2015')  AS CalendarEventTypeModifiedDate
- 
+                  
+				  ,es.[_sourceKey] AS [_sourceSchoolKey]
+
 				  ,CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 							  COALESCE(
 							  (SELECT MAX(t) FROM
 								 (VALUES
-								   (es.SchoolSessisonModifiedDate)
+								   (es.SchoolSessionModifiedDate)
 								 , (es.CalendarEventTypeModifiedDate)                             
 								 ) AS [MaxLastModifiedDate](t)
 							   ),'07/01/2015')
@@ -3334,16 +3377,35 @@ BEGIN
 	    
 		BEGIN TRANSACTION;   
 		
+		--updating staging keys
+		UPDATE t
+		SET t.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE t._sourceSchoolKey = ds._sourceKey									
+										AND t.ValidFrom >= ds.[ValidFrom]
+										AND t.ValidFrom < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE ds._sourceKey = '')
+							      ) 
+        --select *
+		FROM Staging.[Time] t
+		WHERE t._sourceSchoolKey IS NOT NULL; -- schools are not always required
+
+		
 		
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimTime] AS prod
 			INNER JOIN Staging.[Time] AS stage ON prod.SchoolDate = stage.SchoolDate
 		WHERE prod.ValidTo = '12/31/9999'
-
+		
 		INSERT INTO dbo.DimTime
 		(
 		    [SchoolDate]
@@ -3388,7 +3450,8 @@ BEGIN
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
-           ,[LineageKey]
+		   ,[IsLatest]
+           ,LineageKey
 		)
 		SELECT 
 		    st.[SchoolDate]
@@ -3422,7 +3485,7 @@ BEGIN
            ,st.[LeapYear_Indicator]
            ,st.[FederalHolidayName]
            ,st.[FederalHoliday_Indicator]
-           ,ds.SchoolKey		   
+           ,st.SchoolKey		   
 		   ,st.DayOfSchoolYear
            ,st.SchoolCalendarEventType_CodeValue
            ,st.SchoolCalendarEventType_Description
@@ -3432,16 +3495,16 @@ BEGIN
            ,st.[ValidFrom]
            ,st.[ValidTo]
            ,st.[IsCurrent]
+		   ,1 AS [IsLatest]
 		   ,@LineageKey
 		FROM Staging.[Time] st
-		     LEFT JOIN dbo.DimSchool ds ON st.SchoolSourceKey = ds._sourceKey
 
 		-- updating the EndTime to now and status to Success		
 		UPDATE dbo.ETL_Lineage
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -3514,6 +3577,9 @@ BEGIN
 		    PrimaryElectronicMailAddress,
 		    PrimaryElectronicMailTypeDescriptor_CodeValue,
 		    PrimaryElectronicMailTypeDescriptor_Description,
+			EducationOrganizationId,
+            ShortNameOfInstitution,
+            NameOfInstitution,
 		    StaffUniqueId,
 		    PersonalTitlePrefix,
 		    FirstName,
@@ -3537,18 +3603,23 @@ BEGIN
 		    HighlyQualifiedTeacher_Indicator,
 		    StaffClassificationDescriptor_CodeValue,
 		    StaffClassificationDescriptor_CodeDescription,			
-			StaffMainInfoModifiedDate,
+		    StaffMainInfoModifiedDate,			
+            StaffEdOrgAssignmentModifiedDate,  
+            StaffEdOrgEmploymentModifiedDate, 
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent
 		)
 	
-        
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT  DISTINCT 
-			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.StaffUSI)) AS [_sourceKey]
+			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.StaffUniqueId)) AS [_sourceKey]
 				,sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress]
 				,emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue]
 				,emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description]
+				,eo.EducationOrganizationId
+				,COALESCE(eo.ShortNameOfInstitution,'N/A') AS ShortNameOfInstitution
+				,eo.NameOfInstitution
 				,s.StaffUniqueId
 				,s.PersonalTitlePrefix
 				,s.FirstName
@@ -3577,11 +3648,15 @@ BEGIN
 				,COALESCE(d_sc.CodeValue,'N/A') as StaffClassificationDescriptor_CodeValue
 				,COALESCE(d_sc.Description,'N/A') as StaffClassificationDescriptor_Description
 				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffMainInfoModifiedDate
+				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(seoaa.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffEdOrgAssignmentModifiedDate
+				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(seoea.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffEdOrgEmploymentModifiedDate
 				--Making sure the first time, the ValidFrom is set to beginning of time 
 				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
-                               (s.LastModifiedDate)
+                                (s.LastModifiedDate)
+							   ,(seoaa.LastModifiedDate)
+							   ,(seoea.LastModifiedDate)
                              ) AS [MaxLastModifiedDate](t)
                            )
 					ELSE 
@@ -3592,6 +3667,10 @@ BEGIN
 		--SELECT distinct *
 		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s 
 			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationAssignmentAssociation seoaa ON s.StaffUSI = seoaa.StaffUSI
+			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationEmploymentAssociation seoea ON seoaa.StaffUSI = seoea.StaffUSI
+			                                                                                                         AND seoaa.EducationOrganizationId = seoea.EducationOrganizationId
+			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization eo ON seoaa.EducationOrganizationId = eo.EducationOrganizationId
+
 			  --sex	 
 			  left JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
 			  left join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.OldEthnicityType oet on s.OldEthnicityTypeId = oet.OldEthnicityTypeId
@@ -3602,9 +3681,10 @@ BEGIN
 			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
 			  left join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_sc on seoaa.StaffClassificationDescriptorId = d_sc.DescriptorId
 			 
-		WHERE 
-			(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate)
-						
+		WHERE NOT EXISTS(SELECT 1
+			           FROM dbo.DimStaff ds
+					   WHERE CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),s.StaffUniqueId)) = ds._sourceKey)
+		
 	END TRY
 	BEGIN CATCH
 		
@@ -3653,19 +3733,24 @@ BEGIN
 	    
 		BEGIN TRANSACTION;   
 				 
-	     
+	    DECLARE @IsFirstLoad bit = 0;
+
 		--empty row technique
 		--fact table should not have null foreign keys references
 		--this empty record will be used in those cases
 		IF NOT EXISTS (SELECT 1 
 		               FROM dbo.DimStaff WHERE _sourceKey = '')
 				BEGIN
+				   SET @IsFirstLoad = 1;
 				   INSERT INTO [dbo].DimStaff
 				   (
 				       _sourceKey,
 				       PrimaryElectronicMailAddress,
 				       PrimaryElectronicMailTypeDescriptor_CodeValue,
 				       PrimaryElectronicMailTypeDescriptor_Description,
+					   EducationOrganizationId,
+					   ShortNameOfInstitution,
+					   NameOfInstitution,
 				       StaffUniqueId,
 				       PersonalTitlePrefix,
 				       FirstName,
@@ -3692,6 +3777,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -3699,6 +3785,9 @@ BEGIN
 				       N'N/A',       -- PrimaryElectronicMailAddress - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
+					   N'N/A',       -- EducationOrganizationId - int
+					   N'N/A',       -- ShortNameOfInstitution - nvarchar(500)
+					   N'N/A',       -- NameOfInstitution - nvarchar(500)
 				       N'N/A',       -- StaffUniqueId - nvarchar(32)
 				       N'N/A',       -- PersonalTitlePrefix - nvarchar(30)
 				       N'N/A',       -- FirstName - nvarchar(75)
@@ -3725,6 +3814,7 @@ BEGIN
 				      '07/01/2015', -- ValidFrom - datetime
 					  '9999-12-31', -- ValidTo - datetime
 					   0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 					  -1          -- LineageKey - int
 				       )
 				END
@@ -3733,7 +3823,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0 
 		FROM 
 			[dbo].[DimSchool] AS prod
 			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
@@ -3746,6 +3837,9 @@ BEGIN
 		    PrimaryElectronicMailAddress,
 		    PrimaryElectronicMailTypeDescriptor_CodeValue,
 		    PrimaryElectronicMailTypeDescriptor_Description,
+			EducationOrganizationId,
+		    ShortNameOfInstitution,
+			NameOfInstitution,
 		    StaffUniqueId,
 		    PersonalTitlePrefix,
 		    FirstName,
@@ -3772,6 +3866,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			IsLatest,
 		    LineageKey
 		)
 		
@@ -3780,6 +3875,9 @@ BEGIN
 		    PrimaryElectronicMailAddress,
 		    PrimaryElectronicMailTypeDescriptor_CodeValue,
 		    PrimaryElectronicMailTypeDescriptor_Description,
+			EducationOrganizationId,
+		    ShortNameOfInstitution,
+			NameOfInstitution,
 		    StaffUniqueId,
 		    PersonalTitlePrefix,
 		    FirstName,
@@ -3805,16 +3903,48 @@ BEGIN
 		    StaffClassificationDescriptor_CodeDescription,
 		    ValidFrom,
 		    ValidTo,
-		    IsCurrent,		    
+		    IsCurrent,		
+			1 AS IsLatest,
 		    @LineageKey
 		FROM Staging.Staff
+
+		--during the first load, let's set the IsLatest flag
+		--incremental changes will keep this flag up to date after the first load
+		if (@IsFirstLoad = 1)
+		 BEGIN
+		    UPDATE dbo.DimStaff
+			SET IsLatest = 0;
+			
+			;WITH LatestEntry AS
+			(
+				SELECT DISTINCT 
+					   d._sourceKey, 
+					   d.StaffKey AS TheKey, 
+					   d.ValidFrom, 
+					   d.ValidTo,
+					   d.IsLatest,
+					   ROW_NUMBER() OVER (PARTITION BY d._sourceKey ORDER BY d.ValidFrom Desc, d.ValidTo DESC) AS RowRankId
+				FROM dbo.DimStaff d 
+			)
+
+			UPDATE d
+			SET d.IsLatest = 1
+			FROM dbo.DimStaff d
+			WHERE EXISTS (SELECT 1 
+							  FROM LatestEntry le
+							  WHERE d.StaffKey = le.TheKey 
+								AND le.RowRankId = 1);
+		 END
+         
+		
+
 
 		-- updating the EndTime to now and status to Success		
 		UPDATE dbo.ETL_Lineage
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -3858,6 +3988,1013 @@ BEGIN
 END;
 GO
 
+
+--Dim Student
+--------------------------------------------------------------------
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStudent_PopulateStaging]
+@LastLoadDate datetime,
+@NewLoadDate datetime
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+
+		
+		TRUNCATE TABLE Staging.[Student]
+
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
+		SELECT DISTINCT s.StudentUSI INTO #StudentsWithChanges
+		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s		      
+		      INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
+        WHERE  ssa.SchoolYear >= 2019 AND
+			   (
+				(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+				(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+			   )
+
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
+		SELECT DISTINCT 
+			   s.StudentUSI, 
+			   COUNT(sr.StudentUSI) AS RaceCount,
+			   STRING_AGG(rt.CodeValue,',') AS RaceCodes,
+			   STRING_AGG(rt.Description,',') AS RaceDescriptions,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 1) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_AmericanIndianAlaskanNative_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 2) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_Asian_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 3) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_BlackAfricaAmerican_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 5) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_NativeHawaiianPacificIslander_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 7) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_White_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 4) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_ChooseNotRespond_Indicator,
+			   CASE WHEN EXISTS (SELECT 1 
+								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
+									   WHERE s.StudentUSI = sr.StudentUSI
+										 AND sr.RaceTypeId = 6) THEN 1
+			   ELSE 
+				   0	             
+			   END AS Race_Other_Indicator into #StudentRaces    
+
+		FROM  #StudentsWithChanges s     	
+			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
+			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	   
+		GROUP BY s.StudentUSI
+				
+				
+		;WITH StudentHomeRooomByYear AS
+		
+			SELECT DISTINCT std_sa.StudentUSI, 
+							std_sa.SchoolYear, 
+							std_sa.SchoolId,  
+							std_sa.ClassroomIdentificationCode AS HomeRoom,
+							dbo.Func_ETL_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher,
+							ROW_NUMBER() OVER (PARTITION BY std_sa.StudentUSI, 
+															std_sa.SchoolYear, 
+															std_sa.SchoolId ORDER BY staff_sa.BeginDate DESC) AS RowRankId
+			FROM #StudentsWithChanges s
+			     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
+				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
+																										AND std_sa.SchoolYear = staff_sa.SchoolYear
+				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
+			WHERE std_sa.HomeroomIndicator = 1
+				 AND std_sa.SchoolYear >= 2019
+				 AND std_sa.EndDate > GETDATE()
+				 --AND s.StudentUniqueId = 269159 
+				
+					 
+        )
+		
+		INSERT INTO Staging.[Student]
+				   ([_sourceKey]
+				   ,[PrimaryElectronicMailAddress]
+				   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+				   ,[PrimaryElectronicMailTypeDescriptor_Description]
+				   ,[StudentUniqueId]
+				   ,[StateId]
+				   ,[SchoolKey]
+				   ,[ShortNameOfInstitution]
+				   ,[NameOfInstitution]
+				   ,[GradeLevelDescriptor_CodeValue]
+				   ,[GradeLevelDescriptor_Description]
+				   ,[FirstName]
+				   ,[MiddleInitial]
+				   ,[MiddleName]
+				   ,[LastSurname]
+				   ,[FullName]
+				   ,[BirthDate]
+				   ,[StudentAge]
+				   ,[GraduationSchoolYear]
+				   ,[Homeroom]
+				   ,[HomeroomTeacher]
+				   ,[SexType_Code]
+				   ,[SexType_Description]
+				   ,[SexType_Male_Indicator]
+				   ,[SexType_Female_Indicator]
+				   ,[SexType_NotSelected_Indicator]
+				   ,[RaceCode]
+				   ,[RaceDescription]
+				   ,[StateRaceCode]
+				   ,[Race_AmericanIndianAlaskanNative_Indicator]
+				   ,[Race_Asian_Indicator]
+				   ,[Race_BlackAfricaAmerican_Indicator]
+				   ,[Race_NativeHawaiianPacificIslander_Indicator]
+				   ,[Race_White_Indicator]
+				   ,[Race_MultiRace_Indicator]
+				   ,[Race_ChooseNotRespond_Indicator]
+				   ,[Race_Other_Indicator]
+				   ,[EthnicityCode]
+				   ,[EthnicityDescription]
+				   ,[EthnicityHispanicLatino_Indicator]
+				   ,[Migrant_Indicator]
+				   ,[Homeless_Indicator]
+				   ,[IEP_Indicator]
+				   ,[English_Learner_Code_Value]
+				   ,[English_Learner_Description]
+				   ,[English_Learner_Indicator]
+				   ,[Former_English_Learner_Indicator]
+				   ,[Never_English_Learner_Indicator]
+				   ,[EconomicDisadvantage_Indicator]
+				   ,[EntryDate]
+				   ,[EntrySchoolYear]
+				   ,[EntryCode]
+				   ,[ExitWithdrawDate]
+				   ,[ExitWithdrawSchoolYear]
+				   ,[ExitWithdrawCode]	   
+
+				   
+				   ,StudentMainInfoModifiedDate
+	               ,StudentSchoolAssociationModifiedDate
+                   
+				   ,[_sourceSchoolKey]
+
+				   ,[ValidFrom]
+				   ,[ValidTo]
+				   ,[IsCurrent])
+        --DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
+		SELECT distinct
+			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUniqueId)) AS [_sourceKey],
+			   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
+			   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
+			   emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description],
+			   s.StudentUniqueId,       
+			   (SELECT TOP 1  sic.IdentificationCode
+			    FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentIdentificationCode sic 
+				WHERE s.StudentUSI = sic.StudentUSI
+ 				      AND sic.AssigningOrganizationIdentificationCode = 'State') AS StateId,
+       
+			   NULL AS SchoolKey,
+			   NULL AS ShortNameOfInstitution,
+			   NULL AS NameOfInstitution,
+			   gld.CodeValue GradeLevelDescriptor_CodeValue,
+			   gld.Description AS GradeLevelDescriptor_Description,
+
+			   s.FirstName,
+			   LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
+			   s.MiddleName,	   
+			   s.LastSurname,
+			   dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
+			   s.BirthDate,
+			   DATEDIFF(YEAR, s.BirthDate, GetDate()) AS StudentAge,
+			   ssa.GraduationSchoolYear,
+
+			   COALESCE(shrby.Homeroom,'N/A') AS Homeroom,
+			   COALESCE(shrby.HomeroomTeacher,'N/A') AS HomerHomeroomTeacheroom,
+			   
+			   CASE 
+					WHEN sex.CodeValue  = 'Male' THEN 'M'
+					WHEN sex.CodeValue  = 'Female' THEN 'F'
+					ELSE 'NS' -- not selected
+			   END AS SexType_Code,
+			   COALESCE(sex.Description,'Not Selected') AS SexType_Description,
+			   CASE WHEN sex.CodeValue  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
+			   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
+			   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, 
+       
+			   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,	   
+			   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
+			   CASE WHEN sr.RaceCount > 1 AND COALESCE(s.HispanicLatinoEthnicity,0) = 0 THEN 'Multirace' 
+					WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx'
+					ELSE COALESCE(sr.RaceCodes,'N/A')
+			   END AS StateRaceCode,
+			   COALESCE(sr.Race_AmericanIndianAlaskanNative_Indicator,0) AS Race_AmericanIndianAlaskanNative_Indicator,
+			   COALESCE(sr.Race_Asian_Indicator,0) AS Race_Asian_Indicator ,
+			   COALESCE(sr.Race_BlackAfricaAmerican_Indicator,0) AS Race_BlackAfricaAmerican_Indicator ,
+			   COALESCE(sr.Race_NativeHawaiianPacificIslander_Indicator,0) AS Race_NativeHawaiianPacificIslander_Indicator ,
+			   COALESCE(sr.Race_White_Indicator,0) AS Race_White_Indicator ,
+
+			   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, 
+			   sr.Race_ChooseNotRespond_Indicator,
+			   sr.Race_Other_Indicator,
+
+			   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'L' ELSE 'Non-L' END  AS EthnicityCode,
+			   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx' ELSE 'Non Latinx' END  AS EthnicityDescription,
+			   s.HispanicLatinoEthnicity AS EthnicityHispanicLatino_Indicator,
+
+			   CASE WHEN EXISTS (
+							   SELECT 1
+							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentProgramAssociation spa
+							   WHERE CHARINDEX('Migrant', spa.ProgramName,1) > 1
+									 AND spa.StudentUSI = s.StudentUSI
+									 AND GETDATE() BETWEEN spa.BeginDate AND COALESCE(spa.EndDate,'12/31/9999')
+								
+						   ) THEN 1 ELSE 0 End AS Migrant_Indicator,
+			   CASE WHEN EXISTS (
+							   SELECT 1
+							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentProgramAssociation spa
+							   WHERE CHARINDEX('Homeless', spa.ProgramName,1) > 1
+									 AND spa.StudentUSI = s.StudentUSI
+									 AND GETDATE() BETWEEN spa.BeginDate AND COALESCE(spa.EndDate,'12/31/9999')
+									 AND spa.EndDate IS NULL
+						   ) THEN 1 ELSE 0 End AS Homeless_Indicator,
+				CASE WHEN EXISTS (
+							   SELECT 1 
+							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociation spa
+							   WHERE CHARINDEX('504 Plan', spa.ProgramName,1) = 0
+									 AND spa.StudentUSI = s.StudentUSI
+									 AND GETDATE() BETWEEN spa.IEPBeginDate AND COALESCE(spa.IEPEndDate,'12/31/9999')
+									 
+						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
+	   
+			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
+			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
+			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
+			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Formerly Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
+			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'NotLimited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
+
+			   COALESCE(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
+	   
+			   --entry
+			   ssa.EntryDate,
+			   dbo.Func_ETL_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
+			   COALESCE(eglrt.CodeValue,'N/A') AS EntryCode,
+       
+			   --exit
+			   ssa.ExitWithdrawDate,
+			   dbo.Func_ETL_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
+			   ewt.CodeValue ExitWithdrawCode,              
+
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolCategoryModifiedDate,
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(ssa.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolTitle1StatusModifiedDate,
+
+			   CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),ssa.SchoolId)) AS [_sourceSchoolKey],
+			   
+			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN
+				           (SELECT MAX(t) FROM
+                             (VALUES
+                               (s.LastModifiedDate)
+                             , (ssa.LastModifiedDate)                                                    
+                             ) AS [MaxLastModifiedDate](t)
+                           )
+					ELSE 
+					      ssa.EntryDate
+			   END AS ValidFrom,
+			   CASE WHEN ssa.ExitWithdrawDate is NULL OR ssa.ExitWithdrawDate >= GETDATE() then '12/31/9999'  else ssa.ExitWithdrawDate END  AS ValidTo,
+			   CASE WHEN (ssa.ExitWithdrawDate is NULL OR ssa.ExitWithdrawDate >= GETDATE()) 
+			             AND 
+						 EXISTS(SELECT 1 
+						        FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt 
+								WHERE syt.CurrentSchoolYear = 1 
+								  AND syt.SchoolYear = ssa.SchoolYear) then 1 
+                     ELSE 0 
+			   END AS IsCurrent
+			   	
+		--select ssa.*
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId			
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
+
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawType ewt ON ewtd.ExitWithdrawTypeId = ewt.ExitWithdrawTypeId
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentElectronicMail sem ON s.StudentUSI = sem.StudentUSI
+																		   AND sem.PrimaryEmailAddressIndicator = 1
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
+			
+
+			--lunch
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor food ON s.SchoolFoodServicesEligibilityDescriptorId = food.DescriptorId
+			--sex
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
+			
+			--lep
+			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
+	
+			--races
+			LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUSI
+			
+			--homeroom
+			LEFT JOIN StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
+												   AND ssa.SchoolId = shrby.SchoolId
+												   AND ssa.SchoolYear = shrby.SchoolYear
+												   AND shrby.RowRankId = 1
+	
+		WHERE ssa.SchoolYear >= 2019 AND
+		     (
+			   (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
+			   (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
+			 )
+			 
+		DROP TABLE #StudentRaces, #StudentsWithChanges;
+				
+			
+			
+		--loading legacy data if it has not been loaded.
+		--load types are ignored as this data will only be loaded once.
+		IF NOT EXISTS(SELECT 1 
+		              FROM dbo.DimStudent 
+					  WHERE CHARINDEX('LegacyDW',_sourceKey,1) > 0)
+			BEGIN
+			    ;WITH HomelessStudentsByYear AS (
+				--Sch year 2015:
+				  SELECT studentno, 2016 AS schyear
+				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2015Final] 
+				  WHERE McKinneyVento = 'Y'
+				  UNION ALL 
+				--Sch year 2016:
+				  SELECT studentno, 2017 AS schyear
+				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2016Final] 
+				  WHERE McKinneyVento = 'Y'  
+				  UNION ALL
+				--Sch year 2017:
+				  SELECT studentno, 2018 AS schyear
+				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2017Final] 
+				  WHERE McKinneyVento = 'Y'  
+				)
+			   INSERT INTO Staging.[Student]
+				   ([_sourceKey]
+				   ,[PrimaryElectronicMailAddress]
+				   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+				   ,[PrimaryElectronicMailTypeDescriptor_Description]
+				   ,[StudentUniqueId]
+				   ,[StateId]
+				   ,[SchoolKey]
+				   ,[ShortNameOfInstitution]
+				   ,[NameOfInstitution]
+				   ,[GradeLevelDescriptor_CodeValue]
+				   ,[GradeLevelDescriptor_Description]
+				   ,[FirstName]
+				   ,[MiddleInitial]
+				   ,[MiddleName]
+				   ,[LastSurname]
+				   ,[FullName]
+				   ,[BirthDate]
+				   ,[StudentAge]
+				   ,[GraduationSchoolYear]
+				   ,[Homeroom]
+				   ,[HomeroomTeacher]
+				   ,[SexType_Code]
+				   ,[SexType_Description]
+				   ,[SexType_Male_Indicator]
+				   ,[SexType_Female_Indicator]
+				   ,[SexType_NotSelected_Indicator]
+				   ,[RaceCode]
+				   ,[RaceDescription]
+				   ,[StateRaceCode]
+				   ,[Race_AmericanIndianAlaskanNative_Indicator]
+				   ,[Race_Asian_Indicator]
+				   ,[Race_BlackAfricaAmerican_Indicator]
+				   ,[Race_NativeHawaiianPacificIslander_Indicator]
+				   ,[Race_White_Indicator]
+				   ,[Race_MultiRace_Indicator]
+				   ,[Race_ChooseNotRespond_Indicator]
+				   ,[Race_Other_Indicator]
+				   ,[EthnicityCode]
+				   ,[EthnicityDescription]
+				   ,[EthnicityHispanicLatino_Indicator]
+				   ,[Migrant_Indicator]
+				   ,[Homeless_Indicator]
+				   ,[IEP_Indicator]
+				   ,[English_Learner_Code_Value]
+				   ,[English_Learner_Description]
+				   ,[English_Learner_Indicator]
+				   ,[Former_English_Learner_Indicator]
+				   ,[Never_English_Learner_Indicator]
+				   ,[EconomicDisadvantage_Indicator]
+				   ,[EntryDate]
+				   ,[EntrySchoolYear]
+				   ,[EntryCode]
+				   ,[ExitWithdrawDate]
+				   ,[ExitWithdrawSchoolYear]
+				   ,[ExitWithdrawCode]	   
+
+				   
+				   ,StudentMainInfoModifiedDate
+	               ,StudentSchoolAssociationModifiedDate
+                   
+				   ,[_sourceSchoolKey]
+
+				   ,[ValidFrom]
+				   ,[ValidTo]
+				   ,[IsCurrent])
+			   SELECT DISTINCT
+						CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),s.StudentNo)) AS [_sourceKey],
+						null AS [PrimaryElectronicMailAddress],
+						null AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
+						null AS [PrimaryElectronicMailTypeDescriptor_Description],
+
+						s.StudentNo AS [StudentUniqueId],       
+						s.sasid AS StateId,
+       
+						NULL AS SchoolKey,
+						edorg.ShortNameOfInstitution,
+						edorg.NameOfInstitution,
+						s.Grade as GradeLevelDescriptor_CodeValue,
+						s.Grade as GradeLevelDescriptor_Description,
+
+						s.FirstName,
+						LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
+						s.MiddleName,	   
+						s.LastName AS LastSurname,
+						dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastName) AS FullName,
+						s.DOB AS BirthDate,
+						DATEDIFF(YEAR, s.DOB, GetDate()) AS StudentAge,
+						s.YOG AS GraduationSchoolYear,
+
+						s.Homeroom,
+						NULL AS HomeroomTeacher,
+
+						CASE 
+							WHEN s.Sex = 'M' THEN 'M'
+							WHEN s.Sex = 'F' THEN 'F'
+							ELSE 'NS' -- not selected
+						END AS SexType_Code,
+						CASE 
+							WHEN s.Sex = 'M' THEN 'Male'
+							WHEN s.Sex = 'F' THEN 'Female'
+							ELSE 'Not Selected' -- not selected
+						END AS SexType_Description,
+						CASE WHEN s.Sex = 'M' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
+						CASE WHEN s.Sex = 'F' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
+						CASE WHEN s.Sex not in ( 'M','F') THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
+
+						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+							WHEN sdir.IsAsian = 1 THEN 'Asian'
+							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+							WHEN sdir.IsWhite = 1 THEN 'White'
+							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+							ELSE 'Choose Not Respond'
+						END AS RaceCode,
+						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+							WHEN sdir.IsAsian = 1 THEN 'Asian'
+							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+							WHEN sdir.IsWhite = 1 THEN 'White'
+							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+							ELSE 'Choose Not Respond'
+						END AS RaceDescription,
+						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
+							WHEN sdir.IsAsian = 1 THEN 'Asian'
+							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
+							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
+							WHEN sdir.IsWhite = 1 THEN 'White'
+							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
+							ELSE 'Choose Not Respond'
+						END AS StateRaceCode,
+						sdir.IsNatAmer AS Race_AmericanIndianAlaskanNative_Indicator,
+						sdir.IsAsian AS Race_Asian_Indicator,
+						sdir.IsBlack AS Race_BlackAfricaAmerican_Indicator,
+						sdir.IsPacIsland AS Race_NativeHawaiianPacificIslander_Indicator,
+						sdir.IsWhite AS Race_White_Indicator,
+						0 AS Race_MultiRace_Indicator, 
+						CASE WHEN sdir.IsNatAmer = 0 AND
+									sdir.IsAsian = 0 AND 
+									sdir.IsBlack = 0 AND 
+									sdir.IsPacIsland = 0 AND
+									sdir.IsWhite = 0 AND 
+									sdir.IsHispanic = 0 THEN 1 
+									ELSE 0
+						END AS Race_ChooseNotRespond_Indicator,
+						0 AS Race_Other_Indicator,
+
+						CASE WHEN sdir.IsHispanic = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
+						CASE WHEN sdir.IsHispanic = 1 THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
+						sdir.IsHispanic AS EthnicityHispanicLatino_Indicator,
+	   
+						0 AS Migrant_Indicator,
+						CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,	   
+						case WHEN COALESCE(s.SnCode,'None') <> 'None' THEN 1  ELSE 0 END  AS IEP_Indicator,
+	   
+						COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
+						COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
+						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'L' THEN 1 ELSE 0 END [LimitedEnglishProficiency_EnglishLearner_Indicator],
+						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
+						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
+						CASE WHEN COALESCE(s.foodgroup,'None') <> 'None' THEN 1 ELSE 0 END AS EconomicDisadvantage_Indicator,
+       
+						--entry	   
+						CASE WHEN MONTH(s.entdate) >= 7 THEN 
+								DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
+							ELSE 
+								DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
+						END AS EntryDate,
+
+						s.schyear + 1 AS EntrySchoolYear, 
+						COALESCE(s.entcode,'N/A') AS EntryCode,
+       
+						--exit
+						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
+							ELSE s.withdate
+						END AS ExitWithdrawDate,
+						s.schyear + 1 AS ExitWithdrawSchoolYear, 
+						COALESCE(s.withcode,'N/A') AS ExitWithdrawCode,
+				
+						'07/01/2015' AS SchoolCategoryModifiedDate,
+						'07/01/2015' AS SchoolTitle1StatusModifiedDate,
+
+						CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch)) AS [_sourceSchoolKey],
+
+						CASE WHEN MONTH(s.entdate) >= 7 THEN 
+								DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
+							ELSE 
+								DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
+						END AS ValidFrom,
+						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
+						      WHEN s.schyearsequenceno <>  999999 AND s.withdate IS null   THEN s.entdate
+							  ELSE s.withdate
+						END AS ValidTo
+						,0 IsCurrent
+				--select distinct top 1000 *
+				FROM [BPSGranary02].[BPSDW].[dbo].[student] s 
+					--WHERE schyear IN (2017,2016,2015) AND s.StudentNo = '210191' ORDER BY s.StudentNo, s.entdate
+						INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[studentdir] sdir ON s.StudentNo = sdir.studentno		
+						INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg ON s.sch = edorg.EducationOrganizationId
+						LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
+															and s.schyear = hsby.schyear
+				WHERE s.schyear IN (2017,2016,2015)
+						and s.sch between '1000' and '4700'
+				ORDER BY s.StudentNo;
+
+			END
+
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		
+		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+		
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+	END CATCH;
+END;
+GO
+CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStudent_PopulateProduction]
+@LineageKey INT,
+@LastDateLoaded DATETIME
+AS
+BEGIN
+    --added to prevent extra result sets from interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
+	SET DEADLOCK_PRIORITY HIGH;
+	
+	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
+	SET XACT_ABORT ON;
+
+	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
+	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+
+
+
+	BEGIN TRY
+	    
+		BEGIN TRANSACTION;   
+		
+		DECLARE @IsFirstLoad bit = 0;
+		--empty row technique
+		--fact table should not have null foreign keys references
+		--this empty record will be used in those cases
+		IF NOT EXISTS (SELECT 1 
+		               FROM dbo.DimStudent WHERE _sourceKey = '')
+				BEGIN
+				   SET @IsFirstLoad = 1;
+				   INSERT INTO [dbo].DimStudent
+				   (
+				       _sourceKey,
+				       StudentUniqueId,
+				       StateId,
+				       PrimaryElectronicMailAddress,
+				       PrimaryElectronicMailTypeDescriptor_CodeValue,
+				       PrimaryElectronicMailTypeDescriptor_Description,
+				       SchoolKey,
+				       ShortNameOfInstitution,
+				       NameOfInstitution,
+				       GradeLevelDescriptor_CodeValue,
+				       GradeLevelDescriptor_Description,
+				       FirstName,
+				       MiddleInitial,
+				       MiddleName,
+				       LastSurname,
+				       FullName,
+				       BirthDate,
+				       StudentAge,
+				       GraduationSchoolYear,
+				       Homeroom,
+				       HomeroomTeacher,
+				       SexType_Code,
+				       SexType_Description,
+				       SexType_Male_Indicator,
+				       SexType_Female_Indicator,
+				       SexType_NotSelected_Indicator,
+				       RaceCode,
+				       RaceDescription,
+				       StateRaceCode,
+				       Race_AmericanIndianAlaskanNative_Indicator,
+				       Race_Asian_Indicator,
+				       Race_BlackAfricaAmerican_Indicator,
+				       Race_NativeHawaiianPacificIslander_Indicator,
+				       Race_White_Indicator,
+				       Race_MultiRace_Indicator,
+				       Race_ChooseNotRespond_Indicator,
+				       Race_Other_Indicator,
+				       EthnicityCode,
+				       EthnicityDescription,
+				       EthnicityHispanicLatino_Indicator,
+				       Migrant_Indicator,
+				       Homeless_Indicator,
+				       IEP_Indicator,
+				       English_Learner_Code_Value,
+				       English_Learner_Description,
+				       English_Learner_Indicator,
+				       Former_English_Learner_Indicator,
+				       Never_English_Learner_Indicator,
+				       EconomicDisadvantage_Indicator,
+				       EntryDate,
+				       EntrySchoolYear,
+				       EntryCode,
+				       ExitWithdrawDate,
+				       ExitWithdrawSchoolYear,
+				       ExitWithdrawCode,
+				       ValidFrom,
+				       ValidTo,
+				       IsCurrent,
+					   IsLatest,
+				       LineageKey
+				   )
+				   VALUES
+				   (   N'',           -- _sourceKey - nvarchar(50)
+				       N'N/A',           -- StudentUniqueId - nvarchar(32)
+				       N'N/A',           -- StateId - nvarchar(32)
+				       N'N/A',           -- PrimaryElectronicMailAddress - nvarchar(128)
+				       N'N/A',           -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
+				       N'N/A',           -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
+				       0,             -- SchoolKey - int
+				       N'N/A',           -- ShortNameOfInstitution - nvarchar(500)
+				       N'N/A',           -- NameOfInstitution - nvarchar(500)
+				       N'N/A',           -- GradeLevelDescriptor_CodeValue - nvarchar(100)
+				       N'N/A',           -- GradeLevelDescriptor_Description - nvarchar(500)
+				       N'N/A',           -- FirstName - nvarchar(100)
+				       '',            -- MiddleInitial - char(1)
+				       N'N/A',           -- MiddleName - nvarchar(100)
+				       N'N/A',           -- LastSurname - nvarchar(100)
+				       N'N/A',           -- FullName - nvarchar(500)
+				       GETDATE(),     -- BirthDate - date
+				       0,             -- StudentAge - int
+				       0,             -- GraduationSchoolYear - int
+				       N'N/A',           -- Homeroom - nvarchar(500)
+				       N'N/A',           -- HomeroomTeacher - nvarchar(500)
+				       N'N/A',           -- SexType_Code - nvarchar(100)
+				       N'N/A',           -- SexType_Description - nvarchar(100)
+				       0,          -- SexType_Male_Indicator - bit
+				       0,          -- SexType_Female_Indicator - bit
+				       0,          -- SexType_NotSelected_Indicator - bit
+				       N'N/A',           -- RaceCode - nvarchar(1000)
+				       N'N/A',           -- RaceDescription - nvarchar(1000)
+				       N'N/A',           -- StateRaceCode - nvarchar(1000)
+				       0,          -- Race_AmericanIndianAlaskanNative_Indicator - bit
+				       0,          -- Race_Asian_Indicator - bit
+				       0,          -- Race_BlackAfricaAmerican_Indicator - bit
+				       0,          -- Race_NativeHawaiianPacificIslander_Indicator - bit
+				       0,          -- Race_White_Indicator - bit
+				       0,          -- Race_MultiRace_Indicator - bit
+				       0,          -- Race_ChooseNotRespond_Indicator - bit
+				       0,          -- Race_Other_Indicator - bit
+				       N'N/A',           -- EthnicityCode - nvarchar(100)
+				       N'N/A',           -- EthnicityDescription - nvarchar(100)
+				       0,          -- EthnicityHispanicLatino_Indicator - bit
+				       0,          -- Migrant_Indicator - bit
+				       0,          -- Homeless_Indicator - bit
+				       0,          -- IEP_Indicator - bit
+				       N'',           -- English_Learner_Code_Value - nvarchar(100)
+				       N'',           -- English_Learner_Description - nvarchar(100)
+				       0,          -- English_Learner_Indicator - bit
+				       0,          -- Former_English_Learner_Indicator - bit
+				       0,          -- Never_English_Learner_Indicator - bit
+				       0,          -- EconomicDisadvantage_Indicator - bit
+				       SYSDATETIME(), -- EntryDate - datetime2(7)
+				       0,             -- EntrySchoolYear - int
+				       N'N/A',        -- EntryCode - nvarchar(25)
+				       SYSDATETIME(), -- ExitWithdrawDate - datetime2(7)
+				       0,           -- ExitWithdrawSchoolYear - int
+				       N'N/A',        -- ExitWithdrawCode - nvarchar(100)
+				      '07/01/2015', -- ValidFrom - datetime
+					  '9999-12-31', -- ValidTo - datetime
+					   0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
+					   -1          -- LineageKey - int
+				       )
+				    
+				END
+
+        --updating keys
+		UPDATE t
+		SET t.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE t._sourceSchoolKey = ds._sourceKey									
+										AND t.ValidFrom >= ds.[ValidFrom]
+										AND t.ValidFrom < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE ds._sourceKey = '')
+							      ) 
+        FROM Staging.Student t;
+				
+        --updating school names
+		UPDATE s
+		SET [ShortNameOfInstitution] = ds.ShortNameOfInstitution,
+		    [NameOfInstitution] = ds.NameOfInstitution
+		FROM Staging.Student s
+		     INNER JOIN dbo.DimSchool ds ON s.SchoolKey = ds.SchoolKey;
+
+		--staging table holds newer records. 
+		--the matching prod records will be valid until the date in which the newest data change was identified
+		UPDATE prod
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
+		FROM 
+			[dbo].[DimStudent] AS prod
+			INNER JOIN Staging.Student AS stage ON prod._sourceKey = stage._sourceKey
+		WHERE prod.ValidTo = '12/31/9999'
+
+
+		INSERT INTO dbo.DimStudent
+		(
+		    [_sourceKey]
+           ,[PrimaryElectronicMailAddress]
+		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+		   ,[PrimaryElectronicMailTypeDescriptor_Description]
+           ,[StudentUniqueId]
+           ,[StateId]
+           ,[SchoolKey]
+           ,[ShortNameOfInstitution]
+           ,[NameOfInstitution]
+           ,[GradeLevelDescriptor_CodeValue]
+           ,[GradeLevelDescriptor_Description]
+           ,[FirstName]
+           ,[MiddleInitial]
+           ,[MiddleName]
+           ,[LastSurname]
+           ,[FullName]
+           ,[BirthDate]
+           ,[StudentAge]
+           ,[GraduationSchoolYear]
+           ,[Homeroom]
+           ,[HomeroomTeacher]
+           ,[SexType_Code]
+           ,[SexType_Description]
+           ,[SexType_Male_Indicator]
+           ,[SexType_Female_Indicator]
+           ,[SexType_NotSelected_Indicator]
+           ,[RaceCode]
+           ,[RaceDescription]
+		   ,[StateRaceCode]
+           ,[Race_AmericanIndianAlaskanNative_Indicator]
+           ,[Race_Asian_Indicator]
+           ,[Race_BlackAfricaAmerican_Indicator]
+           ,[Race_NativeHawaiianPacificIslander_Indicator]
+           ,[Race_White_Indicator]
+           ,[Race_MultiRace_Indicator]
+           ,[Race_ChooseNotRespond_Indicator]
+           ,[Race_Other_Indicator]
+           ,[EthnicityCode]
+           ,[EthnicityDescription]
+           ,[EthnicityHispanicLatino_Indicator]
+           ,[Migrant_Indicator]
+           ,[Homeless_Indicator]
+           ,[IEP_Indicator]
+           ,[English_Learner_Code_Value]
+           ,[English_Learner_Description]
+           ,[English_Learner_Indicator]
+           ,[Former_English_Learner_Indicator]
+           ,[Never_English_Learner_Indicator]
+           ,[EconomicDisadvantage_Indicator]
+           ,[EntryDate]
+           ,[EntrySchoolYear]
+           ,[EntryCode]
+           ,[ExitWithdrawDate]
+           ,[ExitWithdrawSchoolYear]
+           ,[ExitWithdrawCode]
+           ,[ValidFrom]
+           ,[ValidTo]
+           ,[IsCurrent]
+		   ,[IsLatest]
+           ,LineageKey
+		)
+		SELECT 
+		    [_sourceKey]
+           ,[PrimaryElectronicMailAddress]
+		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
+		   ,[PrimaryElectronicMailTypeDescriptor_Description]
+           ,[StudentUniqueId]
+           ,[StateId]
+           ,[SchoolKey]
+           ,[ShortNameOfInstitution]
+           ,[NameOfInstitution]
+           ,[GradeLevelDescriptor_CodeValue]
+           ,[GradeLevelDescriptor_Description]
+           ,[FirstName]
+           ,[MiddleInitial]
+           ,[MiddleName]
+           ,[LastSurname]
+           ,[FullName]
+           ,[BirthDate]
+           ,[StudentAge]
+           ,[GraduationSchoolYear]
+           ,[Homeroom]
+           ,[HomeroomTeacher]
+           ,[SexType_Code]
+           ,[SexType_Description]
+           ,[SexType_Male_Indicator]
+           ,[SexType_Female_Indicator]
+           ,[SexType_NotSelected_Indicator]
+           ,[RaceCode]
+           ,[RaceDescription]
+		   ,[StateRaceCode]
+           ,[Race_AmericanIndianAlaskanNative_Indicator]
+           ,[Race_Asian_Indicator]
+           ,[Race_BlackAfricaAmerican_Indicator]
+           ,[Race_NativeHawaiianPacificIslander_Indicator]
+           ,[Race_White_Indicator]
+           ,[Race_MultiRace_Indicator]
+           ,[Race_ChooseNotRespond_Indicator]
+           ,[Race_Other_Indicator]
+           ,[EthnicityCode]
+           ,[EthnicityDescription]
+           ,[EthnicityHispanicLatino_Indicator]
+           ,[Migrant_Indicator]
+           ,[Homeless_Indicator]
+           ,[IEP_Indicator]
+           ,[English_Learner_Code_Value]
+           ,[English_Learner_Description]
+           ,[English_Learner_Indicator]
+           ,[Former_English_Learner_Indicator]
+           ,[Never_English_Learner_Indicator]
+           ,[EconomicDisadvantage_Indicator]
+           ,[EntryDate]
+           ,[EntrySchoolYear]
+           ,[EntryCode]
+           ,[ExitWithdrawDate]
+           ,[ExitWithdrawSchoolYear]
+           ,[ExitWithdrawCode]
+           ,[ValidFrom]
+           ,[ValidTo]
+           ,[IsCurrent]       
+		   ,1 AS [IsLatest]
+		   ,@LineageKey
+		FROM Staging.Student
+
+		--during the first load, let's set the IsLatest flag
+		--incremental changes will keep this flag updated after the first load
+		if (@IsFirstLoad = 1)
+		 BEGIN
+		    --Students
+			UPDATE dbo.DimStudent
+			SET IsLatest = 0;
+
+
+			;WITH LatestEntry AS
+			(
+				SELECT DISTINCT 
+					   d._sourceKey, 
+					   d.StudentKey AS TheKey, 
+					   d.ValidFrom, 
+					   d.ValidTo,
+					   d.IsLatest,
+					   ROW_NUMBER() OVER (PARTITION BY d._sourceKey ORDER BY d.ValidFrom Desc, d.ValidTo DESC) AS RowRankId
+				FROM dbo.DimStudent d 
+			)
+
+			UPDATE d
+			SET d.IsLatest = 1
+			FROM dbo.DimStudent d
+			WHERE EXISTS (SELECT 1 
+							  FROM LatestEntry le
+							  WHERE d.StudentKey = le.TheKey 
+								AND le.RowRankId = 1);
+		 END
+
+		-- updating the EndTime to now and status to Success		
+		UPDATE dbo.ETL_Lineage
+			SET 
+				EndTime = SYSDATETIME(),
+				Status = 'S' -- success
+		WHERE LineageKey = @LineageKey;
+	
+	
+		-- Update the LoadDates table with the most current load date
+		UPDATE [dbo].[ETL_IncrementalLoads]
+		SET [LoadDate] = @LastDateLoaded
+		WHERE [TableName] = N'dbo.DimStudent';
+
+		COMMIT TRANSACTION;		
+	END TRY
+	BEGIN CATCH
+		
+		--constructing exception details
+		DECLARE
+		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
+     
+		DECLARE
+		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
+
+		PRINT @errorDetails;
+		THROW 51000, @errorDetails, 1;
+
+		-- Test XACT_STATE:
+		-- If  1, the transaction is committable.
+		-- If -1, the transaction is uncommittable and should be rolled back.
+		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
+
+		-- Test whether the transaction is uncommittable.
+		IF XACT_STATE( ) = -1
+			BEGIN
+				--The transaction is in an uncommittable state. Rolling back transaction
+				ROLLBACK TRANSACTION;
+			END;
+
+		-- Test whether the transaction is committable.
+		IF XACT_STATE( ) = 1
+			BEGIN
+				--The transaction is committable. Committing transaction
+				COMMIT TRANSACTION;
+			END;
+	END CATCH;
+END;
+GO
 -- Staff Access
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_StaffAccess_PopulateProduction]
 AS
@@ -3887,15 +5024,17 @@ BEGIN
 
 		CREATE TABLE #currentYearStaff_DistrictAdmins(StaffSourceKey NVARCHAR(50))
 		INSERT INTO #currentYearStaff_DistrictAdmins(StaffSourceKey)
-		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StaffUSI))
+		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId))
 		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s ON ssa.StaffUSI = s.StaffUSI
 		WHERE ssa.SchoolYear = @currenSchoolYear
 		  AND ssa.SchoolId = 9035 -- central office BPS;
 
 		CREATE TABLE #currentYearStaff_Teachers(StaffSourceKey NVARCHAR(50))
 		INSERT INTO #currentYearStaff_Teachers(StaffSourceKey)
-		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StaffUSI))
-		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa
+		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId))
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa		
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s ON ssa.StaffUSI = s.StaffUSI
 		WHERE ssa.SchoolYear = @currenSchoolYear
 		  AND EXISTS (SELECT 1
 		                  FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation s_sect_a
@@ -3907,17 +5046,18 @@ BEGIN
 
 		CREATE TABLE #currentYearStaff_SchoolAdmins(StaffSourceKey NVARCHAR(50), SchoolSourceKey NVARCHAR(50))
 		INSERT INTO #currentYearStaff_SchoolAdmins(StaffSourceKey, SchoolSourceKey)
-		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StaffUSI)) ,
+		SELECT DISTINCT CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId)) ,
 		                 CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.SchoolId)) 
-		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSchoolAssociation ssa		
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s ON ssa.StaffUSI = s.StaffUSI
 		WHERE ssa.SchoolYear = @currenSchoolYear
 		  AND ssa.SchoolId <> 9035 -- central office BPS;
 		  AND NOT EXISTS (SELECT 1
 						  FROM  #currentYearStaff_DistrictAdmins da
-						  WHERE  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StaffUSI)) = da.StaffSourceKey)
+						  WHERE  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId)) = da.StaffSourceKey)
 		  AND NOT EXISTS (SELECT 1
 						  FROM  #currentYearStaff_Teachers t
-						  WHERE  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StaffUSI)) = t.StaffSourceKey);
+						  WHERE  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId)) = t.StaffSourceKey);
 
 
 		
@@ -4085,15 +5225,20 @@ BEGIN
 		  			ELSE dst.GradeLevelDescriptor_CodeValue 
 				  end  AS GradeLevel	      
 		FROM dbo.DimStaff ds
-		     INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation  sa_staff ON ds._sourceKey	= CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa_staff.StaffUSI))  
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s ON ds._sourceKey	= CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId))  
+		     INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation  sa_staff ON s.StaffUSI = sa_staff.StaffUSI
 			 INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation sa_stud ON sa_staff.UniqueSectionCode = sa_stud.UniqueSectionCode	
 			                                                                                       AND  sa_staff.SchoolId = sa_stud.SchoolId
 																								   AND  sa_staff.SchoolYear = sa_stud.SchoolYear
-			 INNER JOIN dbo.DimStudent dst ON CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa_stud.StudentUSI)) = dst._sourceKey
+			 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student st ON sa_stud.StudentUSI = st.StudentUSI
+			 INNER JOIN dbo.DimStudent dst ON CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),st.StudentUSI)) = dst._sourceKey
 
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1		  
-		  AND dst.IsCurrent = 1		  
+		  AND dst.IsCurrent = 1		  		    
+		  AND ds.IsLatest = 1
+		  AND dst.IsLatest = 1
+
 		  AND EXISTS (SELECT 1 
 		              FROM #currentYearStaff_Teachers t
 					  WHERE ds._sourceKey = t.StaffSourceKey)
@@ -4105,10 +5250,10 @@ BEGIN
 
 		--Staff Current Students
 		---------------------------------------------------------------------------------------
-		/*
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_Derived_StaffCurrentStudents ON [Derived].StaffCurrentStudents;
 
+		/*
 		TRUNCATE TABLE Derived.StaffCurrentStudents
 
 		--district admins
@@ -4146,7 +5291,7 @@ BEGIN
 			 INNER JOIN dbo.DimStudent dst ON dschool.SchoolKey	 = dst.SchoolKey
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1
-		  AND dst.IsCurrent = 1		  
+		  AND dst.IsCurrent = 1		*/  
 		  
 
 		--teachers
@@ -4159,11 +5304,13 @@ BEGIN
 		       ds.StaffKey,
 			   dst.StudentKey		      
 		FROM dbo.DimStaff ds
-		     INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation  sa_staff ON ds._sourceKey	= CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa_staff.StaffUSI))  
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s ON ds._sourceKey	= CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StaffUniqueId))  
+		     INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation  sa_staff ON s.StaffUSI = sa_staff.StaffUSI		     
 			 INNER join [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation sa_stud ON sa_staff.UniqueSectionCode = sa_stud.UniqueSectionCode	
 			                                                                                       AND  sa_staff.SchoolId = sa_stud.SchoolId
 																								   AND  sa_staff.SchoolYear = sa_stud.SchoolYear
-			 INNER JOIN dbo.DimStudent dst ON CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa_stud.StudentUSI)) = dst._sourceKey
+			 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student st ON sa_stud.StudentUSI = st.StudentUSI
+			 INNER JOIN dbo.DimStudent dst ON CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),st.StudentUSI)) = dst._sourceKey
 
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1		  
@@ -4175,7 +5322,7 @@ BEGIN
 		
 					 
         CREATE COLUMNSTORE INDEX CSI_Derived_StaffCurrentStudents  ON [Derived].StaffCurrentStudents ( [StaffKey],StudentKey)		
-		*/
+		
 	    DROP TABLE IF EXISTS #currentYearStaff_DistrictAdmins;
 		DROP TABLE IF EXISTS #currentYearStaff_SchoolAdmins;
 		DROP TABLE IF EXISTS #currentYearStaff_Teachers;
@@ -4194,998 +5341,6 @@ BEGIN
 		THROW 51000, @errorDetails, 1;
 
 		
-	END CATCH;
-END;
-GO
-
---Dim Student
---------------------------------------------------------------------
-CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStudent_PopulateStaging]
-@LastLoadDate datetime,
-@NewLoadDate datetime
-AS
-BEGIN
-    --added to prevent extra result sets from interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
-	SET DEADLOCK_PRIORITY HIGH;
-	
-	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
-	SET XACT_ABORT ON;
-
-	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
-	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-
-
-
-	BEGIN TRY
-
-		--BEGIN TRANSACTION;   
-
-		TRUNCATE TABLE Staging.[Student]
-
-		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
-		SELECT DISTINCT s.StudentUSI INTO #StudentsWithChanges
-		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s		      
-		      INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
-        WHERE  ssa.SchoolYear >= 2019 AND
-			   (
-				(s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
-				(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
-			   )
-
-		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
-		SELECT DISTINCT 
-			   s.StudentUSI, 
-			   COUNT(sr.StudentUSI) AS RaceCount,
-			   STRING_AGG(rt.CodeValue,',') AS RaceCodes,
-			   STRING_AGG(rt.Description,',') AS RaceDescriptions,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 1) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_AmericanIndianAlaskanNative_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 2) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_Asian_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 3) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_BlackAfricaAmerican_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 5) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_NativeHawaiianPacificIslander_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 7) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_White_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 4) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_ChooseNotRespond_Indicator,
-			   CASE WHEN EXISTS (SELECT 1 
-								 FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr
-									   WHERE s.StudentUSI = sr.StudentUSI
-										 AND sr.RaceTypeId = 6) THEN 1
-			   ELSE 
-				   0	             
-			   END AS Race_Other_Indicator into #StudentRaces    
-
-		FROM  #StudentsWithChanges s     	
-			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentRace sr ON s.StudentUSI = sr.StudentUSI		
-			  LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.RaceType rt ON sr.RaceTypeId = rt.RaceTypeId	   
-		GROUP BY s.StudentUSI
-				
-				
-		--;WITH StudentHomeRooomByYear AS
-		--(
-			SELECT DISTINCT std_sa.StudentUSI, 
-							std_sa.SchoolYear, 
-							std_sa.SchoolId,  
-							std_sa.ClassroomIdentificationCode AS HomeRoom,
-							dbo.Func_ETL_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher,
-							ROW_NUMBER() OVER (PARTITION BY std_sa.StudentUSI, 
-															std_sa.SchoolYear, 
-															std_sa.SchoolId ORDER BY staff_sa.BeginDate DESC) AS RowRankId INTO #StudentHomeRooomByYear
-			FROM #StudentsWithChanges s
-			     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
-				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.UniqueSectionCode = staff_sa.UniqueSectionCode
-																										AND std_sa.SchoolYear = staff_sa.SchoolYear
-				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
-			WHERE std_sa.HomeroomIndicator = 1
-				 AND std_sa.SchoolYear >= 2019
-				 AND std_sa.EndDate > GETDATE()
-				 --AND s.StudentUniqueId = 269159 
-				
-					 
-        --)
-		
-		INSERT INTO Staging.[Student]
-				   ([_sourceKey]
-				   ,[PrimaryElectronicMailAddress]
-				   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
-				   ,[PrimaryElectronicMailTypeDescriptor_Description]
-				   ,[StudentUniqueId]
-				   ,[StateId]
-				   ,[SchoolKey]
-				   ,[ShortNameOfInstitution]
-				   ,[NameOfInstitution]
-				   ,[GradeLevelDescriptor_CodeValue]
-				   ,[GradeLevelDescriptor_Description]
-				   ,[FirstName]
-				   ,[MiddleInitial]
-				   ,[MiddleName]
-				   ,[LastSurname]
-				   ,[FullName]
-				   ,[BirthDate]
-				   ,[StudentAge]
-				   ,[GraduationSchoolYear]
-				   ,[Homeroom]
-				   ,[HomeroomTeacher]
-				   ,[SexType_Code]
-				   ,[SexType_Description]
-				   ,[SexType_Male_Indicator]
-				   ,[SexType_Female_Indicator]
-				   ,[SexType_NotSelected_Indicator]
-				   ,[RaceCode]
-				   ,[RaceDescription]
-				   ,[StateRaceCode]
-				   ,[Race_AmericanIndianAlaskanNative_Indicator]
-				   ,[Race_Asian_Indicator]
-				   ,[Race_BlackAfricaAmerican_Indicator]
-				   ,[Race_NativeHawaiianPacificIslander_Indicator]
-				   ,[Race_White_Indicator]
-				   ,[Race_MultiRace_Indicator]
-				   ,[Race_ChooseNotRespond_Indicator]
-				   ,[Race_Other_Indicator]
-				   ,[EthnicityCode]
-				   ,[EthnicityDescription]
-				   ,[EthnicityHispanicLatino_Indicator]
-				   ,[Migrant_Indicator]
-				   ,[Homeless_Indicator]
-				   ,[IEP_Indicator]
-				   ,[English_Learner_Code_Value]
-				   ,[English_Learner_Description]
-				   ,[English_Learner_Indicator]
-				   ,[Former_English_Learner_Indicator]
-				   ,[Never_English_Learner_Indicator]
-				   ,[EconomicDisadvantage_Indicator]
-				   ,[EntryDate]
-				   ,[EntrySchoolYear]
-				   ,[EntryCode]
-				   ,[ExitWithdrawDate]
-				   ,[ExitWithdrawSchoolYear]
-				   ,[ExitWithdrawCode]	   
-
-				   
-				   ,StudentMainInfoModifiedDate
-	               ,StudentSchoolAssociationModifiedDate
-
-				   ,[ValidFrom]
-				   ,[ValidTo]
-				   ,[IsCurrent])
-        --DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
-		SELECT distinct
-			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.StudentUSI)) AS [_sourceKey],
-			   sem.ElectronicMailAddress AS [PrimaryElectronicMailAddress],
-			   emt.CodeValue AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
-			   emt.Description AS [PrimaryElectronicMailTypeDescriptor_Description],
-			   s.StudentUniqueId,       
-			   sic.IdentificationCode AS StateId,
-       
-			   dschool.SchoolKey,
-			   edorg.ShortNameOfInstitution,
-			   edorg.NameOfInstitution,
-			   gld.CodeValue GradeLevelDescriptor_CodeValue,
-			   gld.Description AS GradeLevelDescriptor_Description,
-
-			   s.FirstName,
-			   LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
-			   s.MiddleName,	   
-			   s.LastSurname,
-			   dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastSurname) AS FullName,
-			   s.BirthDate,
-			   DATEDIFF(YEAR, s.BirthDate, GetDate()) AS StudentAge,
-			   ssa.GraduationSchoolYear,
-
-			   COALESCE(shrby.Homeroom,'N/A') AS Homeroom,
-			   COALESCE(shrby.HomeroomTeacher,'N/A') AS HomerHomeroomTeacheroom,
-			   
-			   CASE 
-					WHEN sex.CodeValue  = 'Male' THEN 'M'
-					WHEN sex.CodeValue  = 'Female' THEN 'F'
-					ELSE 'NS' -- not selected
-			   END AS SexType_Code,
-			   sex.Description AS SexType_Description,
-			   CASE WHEN sex.CodeValue  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
-			   CASE WHEN sex.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
-			   CASE WHEN sex.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, 
-       
-			   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,	   
-			   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
-			   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 'Multirace' 
-					WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx'
-					ELSE COALESCE(sr.RaceCodes,'N/A')
-			   END AS StateRaceCode,
-			   COALESCE(sr.Race_AmericanIndianAlaskanNative_Indicator,0) AS Race_AmericanIndianAlaskanNative_Indicator,
-			   COALESCE(sr.Race_Asian_Indicator,0) AS Race_Asian_Indicator ,
-			   COALESCE(sr.Race_BlackAfricaAmerican_Indicator,0) AS Race_BlackAfricaAmerican_Indicator ,
-			   COALESCE(sr.Race_NativeHawaiianPacificIslander_Indicator,0) AS Race_NativeHawaiianPacificIslander_Indicator ,
-			   COALESCE(sr.Race_White_Indicator,0) AS Race_White_Indicator ,
-
-			   CASE WHEN sr.RaceCount > 1 AND s.HispanicLatinoEthnicity = 0 THEN 1 ELSE 0 END AS Race_MultiRace_Indicator, 
-			   sr.Race_ChooseNotRespond_Indicator,
-			   sr.Race_Other_Indicator,
-
-			   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'L' ELSE 'Non-L' END  AS EthnicityCode,
-			   CASE WHEN s.HispanicLatinoEthnicity = 1 THEN 'Latinx' ELSE 'Non Latinx' END  AS EthnicityDescription,
-			   s.HispanicLatinoEthnicity AS EthnicityHispanicLatino_Indicator,
-
-			   CASE WHEN EXISTS (
-							   SELECT 1
-							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentProgramAssociation spa
-							   WHERE CHARINDEX('Migrant', spa.ProgramName,1) > 1
-									 AND spa.StudentUSI = s.StudentUSI
-									 AND (
-									         spa.EndDate IS NULL
-									      OR spa.EndDate > CAST(GETDATE() AS DATE)
-									     )
-						   ) THEN 1 ELSE 0 End AS Migrant_Indicator,
-			   CASE WHEN EXISTS (
-							   SELECT 1
-							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentProgramAssociation spa
-							   WHERE CHARINDEX('Homeless', spa.ProgramName,1) > 1
-									 AND spa.StudentUSI = s.StudentUSI
-									  AND (
-									         spa.EndDate IS NULL
-									      OR spa.EndDate > CAST(GETDATE() AS DATE)
-									     )
-									 AND spa.EndDate IS NULL
-						   ) THEN 1 ELSE 0 End AS Homeless_Indicator,
-				CASE WHEN EXISTS (
-							   SELECT 1
-							   FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSpecialEducationProgramAssociation spa
-							   WHERE CHARINDEX('504 Plan', spa.ProgramName,1) = 0
-									 AND spa.StudentUSI = s.StudentUSI
-									 AND (
-									         spa.IEPEndDate IS NULL
-									      OR spa.IEPEndDate > CAST(GETDATE() AS DATE)
-									     )
-						   ) THEN 1 ELSE 0 End AS IEP_Indicator,
-	   
-			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
-			   COALESCE(lepd.CodeValue,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
-			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_EnglishLearner_Indicator,
-			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'Formerly Limited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
-			   CASE WHEN COALESCE(lepd.CodeValue,'N/A') = 'NotLimited' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
-
-			   COALESCE(s.EconomicDisadvantaged,0) AS EconomicDisadvantage_Indicator,
-	   
-			   --entry
-			   ssa.EntryDate,
-			   dbo.Func_ETL_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
-			   COALESCE(eglrt.CodeValue,'N/A') AS EntryCode,
-       
-			   --exit
-			   ssa.ExitWithdrawDate,
-			   dbo.Func_ETL_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
-			   ewt.CodeValue ExitWithdrawCode,              
-
-			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolCategoryModifiedDate,
-			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(ssa.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolTitle1StatusModifiedDate,
-
-				
-				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
-				           (SELECT MAX(t) FROM
-                             (VALUES
-                               (s.LastModifiedDate)
-                             , (ssa.LastModifiedDate)                                                    
-                             ) AS [MaxLastModifiedDate](t)
-                           )
-					ELSE 
-					      ssa.EntryDate
-				END AS ValidFrom,
-			   CASE when ssa.ExitWithdrawDate is null then '12/31/9999'  else ssa.ExitWithdrawDate END  AS ValidTo,
-			   case when ssa.ExitWithdrawDate is NULL AND EXISTS(SELECT 1 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt WHERE syt.CurrentSchoolYear = 1 AND syt.SchoolYear = ssa.SchoolYear) then 1 else 0 end AS IsCurrent
-			   	
-		--select ssa.SchoolYear, ssa.ExitWithdrawDate , case  when ssa.ExitWithdrawDate is NULL and EXISTS(SELECT 1 FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt WHERE syt.CurrentSchoolYear = 1 AND syt.SchoolYear = ssa.SchoolYear)   then 1 else 0 end 
-		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa ON s.StudentUSI = ssa.StudentUSI
-			INNER JOIN dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),ssa.SchoolId)   = dschool._sourceKey
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor gld  ON ssa.EntryGradeLevelDescriptorId = gld.DescriptorId			
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization edorg ON ssa.SchoolId = edorg.EducationOrganizationId
-
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EntryGradeLevelReasonType eglrt ON ssa.EntryGradeLevelReasonTypeId = eglrt.EntryGradeLevelReasonTypeId
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawTypeDescriptor ewtd ON ssa.ExitWithdrawTypeDescriptorId = ewtd.ExitWithdrawTypeDescriptorId
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor ewtdd ON ewtd.ExitWithdrawTypeDescriptorId = ewtdd.DescriptorId
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ExitWithdrawType ewt ON ewtd.ExitWithdrawTypeId = ewt.ExitWithdrawTypeId
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentElectronicMail sem ON s.StudentUSI = sem.StudentUSI
-																		   AND sem.PrimaryEmailAddressIndicator = 1
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.ElectronicMailType emt ON sem.ElectronicMailTypeId = emt.ElectronicMailTypeId
-			
-
-			--lunch
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor food ON s.SchoolFoodServicesEligibilityDescriptorId = food.DescriptorId
-			--sex
-			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SexType sex ON s.SexTypeId = sex.SexTypeId
-			--state id
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentIdentificationCode sic ON s.StudentUSI = sic.StudentUSI
-																							   AND sic.AssigningOrganizationIdentificationCode = 'State' 
-			--lep
-			LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor lepd ON s.LimitedEnglishProficiencyDescriptorId = lepd.DescriptorId
-	
-			--races
-			LEFT JOIN #StudentRaces sr ON s.StudentUSI = sr.StudentUSI
-			
-			--homeroom
-			LEFT JOIN #StudentHomeRooomByYear shrby ON  s.StudentUSI = shrby.StudentUSI
-												   AND ssa.SchoolId = shrby.SchoolId
-												   AND ssa.SchoolYear = shrby.SchoolYear
-												   AND shrby.RowRankId = 1
-	
-		WHERE ssa.SchoolYear >= 2019 AND
-		     (
-			   (s.LastModifiedDate > @LastLoadDate AND s.LastModifiedDate <= @NewLoadDate) OR
-			   (ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)			 
-			 )
-			 
-		DROP TABLE #StudentRaces, #StudentHomeRooomByYear, #StudentsWithChanges;
-				
-			
-			
-		--loading legacy data if it has not been loaded.
-		--load types are ignored as this data will only be loaded once.
-		IF NOT EXISTS(SELECT 1 
-		              FROM dbo.DimStudent 
-					  WHERE CHARINDEX('LegacyDW',_sourceKey,1) > 0)
-			BEGIN
-			    ;WITH HomelessStudentsByYear AS (
-				--Sch year 2015:
-				  SELECT studentno, 2016 AS schyear
-				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2015Final] 
-				  WHERE McKinneyVento = 'Y'
-				  UNION ALL 
-				--Sch year 2016:
-				  SELECT studentno, 2017 AS schyear
-				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2016Final] 
-				  WHERE McKinneyVento = 'Y'  
-				  UNION ALL
-				--Sch year 2017:
-				  SELECT studentno, 2018 AS schyear
-				  FROM [BPSGranary02].[RMUStudentBackup].[dbo].[Homeless2017Final] 
-				  WHERE McKinneyVento = 'Y'  
-				)
-			   INSERT INTO Staging.[Student]
-				   ([_sourceKey]
-				   ,[PrimaryElectronicMailAddress]
-				   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
-				   ,[PrimaryElectronicMailTypeDescriptor_Description]
-				   ,[StudentUniqueId]
-				   ,[StateId]
-				   ,[SchoolKey]
-				   ,[ShortNameOfInstitution]
-				   ,[NameOfInstitution]
-				   ,[GradeLevelDescriptor_CodeValue]
-				   ,[GradeLevelDescriptor_Description]
-				   ,[FirstName]
-				   ,[MiddleInitial]
-				   ,[MiddleName]
-				   ,[LastSurname]
-				   ,[FullName]
-				   ,[BirthDate]
-				   ,[StudentAge]
-				   ,[GraduationSchoolYear]
-				   ,[Homeroom]
-				   ,[HomeroomTeacher]
-				   ,[SexType_Code]
-				   ,[SexType_Description]
-				   ,[SexType_Male_Indicator]
-				   ,[SexType_Female_Indicator]
-				   ,[SexType_NotSelected_Indicator]
-				   ,[RaceCode]
-				   ,[RaceDescription]
-				   ,[StateRaceCode]
-				   ,[Race_AmericanIndianAlaskanNative_Indicator]
-				   ,[Race_Asian_Indicator]
-				   ,[Race_BlackAfricaAmerican_Indicator]
-				   ,[Race_NativeHawaiianPacificIslander_Indicator]
-				   ,[Race_White_Indicator]
-				   ,[Race_MultiRace_Indicator]
-				   ,[Race_ChooseNotRespond_Indicator]
-				   ,[Race_Other_Indicator]
-				   ,[EthnicityCode]
-				   ,[EthnicityDescription]
-				   ,[EthnicityHispanicLatino_Indicator]
-				   ,[Migrant_Indicator]
-				   ,[Homeless_Indicator]
-				   ,[IEP_Indicator]
-				   ,[English_Learner_Code_Value]
-				   ,[English_Learner_Description]
-				   ,[English_Learner_Indicator]
-				   ,[Former_English_Learner_Indicator]
-				   ,[Never_English_Learner_Indicator]
-				   ,[EconomicDisadvantage_Indicator]
-				   ,[EntryDate]
-				   ,[EntrySchoolYear]
-				   ,[EntryCode]
-				   ,[ExitWithdrawDate]
-				   ,[ExitWithdrawSchoolYear]
-				   ,[ExitWithdrawCode]	   
-
-				   
-				   ,StudentMainInfoModifiedDate
-	               ,StudentSchoolAssociationModifiedDate
-
-				   ,[ValidFrom]
-				   ,[ValidTo]
-				   ,[IsCurrent])
-			   SELECT DISTINCT
-						CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),s.StudentNo)) AS [_sourceKey],
-						null AS [PrimaryElectronicMailAddress],
-						null AS [PrimaryElectronicMailTypeDescriptor_CodeValue],
-						null AS [PrimaryElectronicMailTypeDescriptor_Description],
-
-						s.StudentNo AS [StudentUniqueId],       
-						s.sasid AS StateId,
-       
-						dschool.SchoolKey,
-						dschool.ShortNameOfInstitution,
-						dschool.NameOfInstitution,
-						s.Grade as GradeLevelDescriptor_CodeValue,
-						s.Grade as GradeLevelDescriptor_Description,
-
-						s.FirstName,
-						LEFT(LTRIM(s.MiddleName),1) AS MiddleInitial,
-						s.MiddleName,	   
-						s.LastName AS LastSurname,
-						dbo.Func_ETL_GetFullName(s.FirstName,s.MiddleName,s.LastName) AS FullName,
-						s.DOB AS BirthDate,
-						DATEDIFF(YEAR, s.DOB, GetDate()) AS StudentAge,
-						s.YOG AS GraduationSchoolYear,
-
-						s.Homeroom,
-						NULL AS HomeroomTeacher,
-
-						CASE 
-							WHEN s.Sex = 'M' THEN 'M'
-							WHEN s.Sex = 'F' THEN 'F'
-							ELSE 'NS' -- not selected
-						END AS SexType_Code,
-						CASE 
-							WHEN s.Sex = 'M' THEN 'Male'
-							WHEN s.Sex = 'F' THEN 'Female'
-							ELSE 'Not Selected' -- not selected
-						END AS SexType_Description,
-						CASE WHEN s.Sex = 'M' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
-						CASE WHEN s.Sex = 'F' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
-						CASE WHEN s.Sex not in ( 'M','F') THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
-
-						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
-							WHEN sdir.IsAsian = 1 THEN 'Asian'
-							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
-							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
-							WHEN sdir.IsWhite = 1 THEN 'White'
-							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
-							ELSE 'Choose Not Respond'
-						END AS RaceCode,
-						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
-							WHEN sdir.IsAsian = 1 THEN 'Asian'
-							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
-							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
-							WHEN sdir.IsWhite = 1 THEN 'White'
-							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
-							ELSE 'Choose Not Respond'
-						END AS RaceDescription,
-						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
-							WHEN sdir.IsAsian = 1 THEN 'Asian'
-							WHEN sdir.IsBlack = 1 THEN 'Black - African American'
-							WHEN sdir.IsPacIsland = 1 THEN 'Native Hawaiian - Pacific Islander'
-							WHEN sdir.IsWhite = 1 THEN 'White'
-							WHEN sdir.IsHispanic = 1 THEN 'Hispanic'
-							ELSE 'Choose Not Respond'
-						END AS StateRaceCode,
-						sdir.IsNatAmer AS Race_AmericanIndianAlaskanNative_Indicator,
-						sdir.IsAsian AS Race_Asian_Indicator,
-						sdir.IsBlack AS Race_BlackAfricaAmerican_Indicator,
-						sdir.IsPacIsland AS Race_NativeHawaiianPacificIslander_Indicator,
-						sdir.IsWhite AS Race_White_Indicator,
-						0 AS Race_MultiRace_Indicator, 
-						CASE WHEN sdir.IsNatAmer = 0 AND
-									sdir.IsAsian = 0 AND 
-									sdir.IsBlack = 0 AND 
-									sdir.IsPacIsland = 0 AND
-									sdir.IsWhite = 0 AND 
-									sdir.IsHispanic = 0 THEN 1 
-									ELSE 0
-						END AS Race_ChooseNotRespond_Indicator,
-						0 AS Race_Other_Indicator,
-
-						CASE WHEN sdir.IsHispanic = 1 THEN 'H' ELSE 'Non-H' END  AS EthnicityCode,
-						CASE WHEN sdir.IsHispanic = 1 THEN 'Hispanic' ELSE 'Non Hispanic' END  AS EthnicityDescription,
-						sdir.IsHispanic AS EthnicityHispanicLatino_Indicator,
-	   
-						0 AS Migrant_Indicator,
-						CASE WHEN hsby.studentno IS NULL THEN 0 ELSE 1 END AS Homeless_Indicator,	   
-						case WHEN COALESCE(s.SnCode,'None') <> 'None' THEN 1  ELSE 0 END  AS IEP_Indicator,
-	   
-						COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_CodeValue,
-						COALESCE(s.Lep_Status,'N/A') AS LimitedEnglishProficiencyDescriptor_Description,
-						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'L' THEN 1 ELSE 0 END [LimitedEnglishProficiency_EnglishLearner_Indicator],
-						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'F' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_Former_Indicator,
-						CASE WHEN COALESCE(s.Lep_Status,'N/A') = 'N' THEN 1 ELSE 0 END AS LimitedEnglishProficiency_NotEnglisLearner_Indicator,
-						CASE WHEN COALESCE(s.foodgroup,'None') <> 'None' THEN 1 ELSE 0 END AS EconomicDisadvantage_Indicator,
-       
-						--entry	   
-						CASE WHEN MONTH(s.entdate) >= 7 THEN 
-								DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
-							ELSE 
-								DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
-						END AS EntryDate,
-
-						s.schyear + 1 AS EntrySchoolYear, 
-						COALESCE(s.entcode,'N/A') AS EntryCode,
-       
-						--exit
-						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
-							ELSE s.withdate
-						END AS ExitWithdrawDate,
-						s.schyear + 1 AS ExitWithdrawSchoolYear, 
-						COALESCE(s.withcode,'N/A') AS ExitWithdrawCode,
-				
-						'07/01/2015' AS SchoolCategoryModifiedDate,
-						'07/01/2015' AS SchoolTitle1StatusModifiedDate,
-
-						CASE WHEN MONTH(s.entdate) >= 7 THEN 
-								DATEADD(YEAR,s.schyear  - YEAR(s.entdate),s.entdate)
-							ELSE 
-								DATEADD(YEAR,s.schyear + 1  - YEAR(s.entdate),s.entdate)
-						END AS ValidFrom,
-						CASE WHEN s.schyearsequenceno =  999999 AND s.withdate IS null   THEN '6/30/' + CAST(s.schyear + 1 AS NVARCHAR(max)) 
-						      WHEN s.schyearsequenceno <>  999999 AND s.withdate IS null   THEN s.entdate
-							  ELSE s.withdate
-						END AS ValidTo
-						,0 IsCurrent
-				--select distinct top 1000 *
-				FROM [BPSGranary02].[BPSDW].[dbo].[student] s 
-					--WHERE schyear IN (2017,2016,2015) AND s.StudentNo = '210191' ORDER BY s.StudentNo, s.entdate
-						INNER JOIN [BPSGranary02].[RAEDatabase].[dbo].[studentdir] sdir ON s.StudentNo = sdir.studentno
-						INNER JOIN dbo.DimSchool dschool ON  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.sch))  = dschool._sourceKey	 
-						LEFT JOIN HomelessStudentsByYear hsby ON s.StudentNo = hsby.studentno 
-															and s.schyear = hsby.schyear
-				WHERE s.schyear IN (2017,2016,2015)
-						and s.sch between '1000' and '4700'
-				ORDER BY s.StudentNo;
-
-			END
-
-			
-
-		--COMMIT TRANSACTION;		
-	END TRY
-	BEGIN CATCH
-		
-		--constructing exception details
-		DECLARE
-		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
-     
-		DECLARE
-		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
-
-		PRINT @errorDetails;
-		THROW 51000, @errorDetails, 1;
-
-		
-		PRINT CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
-		
-		-- Test XACT_STATE:
-		-- If  1, the transaction is committable.
-		-- If -1, the transaction is uncommittable and should be rolled back.
-		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
-
-		---- Test whether the transaction is uncommittable.
-		--IF XACT_STATE( ) = -1
-		--	BEGIN
-		--		--The transaction is in an uncommittable state. Rolling back transaction
-		--		ROLLBACK TRANSACTION;
-		--	END;
-
-		---- Test whether the transaction is committable.
-		--IF XACT_STATE( ) = 1
-		--	BEGIN
-		--		--The transaction is committable. Committing transaction
-		--		COMMIT TRANSACTION;
-		--	END;
-	END CATCH;
-END;
-GO
-CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimStudent_PopulateProduction]
-@LineageKey INT,
-@LastDateLoaded DATETIME
-AS
-BEGIN
-    --added to prevent extra result sets from interfering with SELECT statements.
-	SET NOCOUNT ON;
-
-	--current session wont be the deadlock victim if it is involved in a deadlock with other sessions with the deadlock priority set to LOW
-	SET DEADLOCK_PRIORITY HIGH;
-	
-	--When SET XACT_ABORT is ON, if a Transact-SQL statement raises a run-time error, the entire transaction is terminated and rolled back.
-	SET XACT_ABORT ON;
-
-	--This will allow for dirty reads. By default SQL Server uses "READ COMMITED" 
-	SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
-
-
-
-	BEGIN TRY
-	    
-		BEGIN TRANSACTION;   
-		
-		--empty row technique
-		--fact table should not have null foreign keys references
-		--this empty record will be used in those cases
-		IF NOT EXISTS (SELECT 1 
-		               FROM dbo.DimStudent WHERE _sourceKey = '')
-				BEGIN
-				   INSERT INTO [dbo].DimStudent
-				   (
-				       _sourceKey,
-				       StudentUniqueId,
-				       StateId,
-				       PrimaryElectronicMailAddress,
-				       PrimaryElectronicMailTypeDescriptor_CodeValue,
-				       PrimaryElectronicMailTypeDescriptor_Description,
-				       SchoolKey,
-				       ShortNameOfInstitution,
-				       NameOfInstitution,
-				       GradeLevelDescriptor_CodeValue,
-				       GradeLevelDescriptor_Description,
-				       FirstName,
-				       MiddleInitial,
-				       MiddleName,
-				       LastSurname,
-				       FullName,
-				       BirthDate,
-				       StudentAge,
-				       GraduationSchoolYear,
-				       Homeroom,
-				       HomeroomTeacher,
-				       SexType_Code,
-				       SexType_Description,
-				       SexType_Male_Indicator,
-				       SexType_Female_Indicator,
-				       SexType_NotSelected_Indicator,
-				       RaceCode,
-				       RaceDescription,
-				       StateRaceCode,
-				       Race_AmericanIndianAlaskanNative_Indicator,
-				       Race_Asian_Indicator,
-				       Race_BlackAfricaAmerican_Indicator,
-				       Race_NativeHawaiianPacificIslander_Indicator,
-				       Race_White_Indicator,
-				       Race_MultiRace_Indicator,
-				       Race_ChooseNotRespond_Indicator,
-				       Race_Other_Indicator,
-				       EthnicityCode,
-				       EthnicityDescription,
-				       EthnicityHispanicLatino_Indicator,
-				       Migrant_Indicator,
-				       Homeless_Indicator,
-				       IEP_Indicator,
-				       English_Learner_Code_Value,
-				       English_Learner_Description,
-				       English_Learner_Indicator,
-				       Former_English_Learner_Indicator,
-				       Never_English_Learner_Indicator,
-				       EconomicDisadvantage_Indicator,
-				       EntryDate,
-				       EntrySchoolYear,
-				       EntryCode,
-				       ExitWithdrawDate,
-				       ExitWithdrawSchoolYear,
-				       ExitWithdrawCode,
-				       ValidFrom,
-				       ValidTo,
-				       IsCurrent,
-				       LineageKey
-				   )
-				   VALUES
-				   (   N'',           -- _sourceKey - nvarchar(50)
-				       N'N/A',           -- StudentUniqueId - nvarchar(32)
-				       N'N/A',           -- StateId - nvarchar(32)
-				       N'N/A',           -- PrimaryElectronicMailAddress - nvarchar(128)
-				       N'N/A',           -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
-				       N'N/A',           -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
-				       0,             -- SchoolKey - int
-				       N'N/A',           -- ShortNameOfInstitution - nvarchar(500)
-				       N'N/A',           -- NameOfInstitution - nvarchar(500)
-				       N'N/A',           -- GradeLevelDescriptor_CodeValue - nvarchar(100)
-				       N'N/A',           -- GradeLevelDescriptor_Description - nvarchar(500)
-				       N'N/A',           -- FirstName - nvarchar(100)
-				       '',            -- MiddleInitial - char(1)
-				       N'N/A',           -- MiddleName - nvarchar(100)
-				       N'N/A',           -- LastSurname - nvarchar(100)
-				       N'N/A',           -- FullName - nvarchar(500)
-				       GETDATE(),     -- BirthDate - date
-				       0,             -- StudentAge - int
-				       0,             -- GraduationSchoolYear - int
-				       N'N/A',           -- Homeroom - nvarchar(500)
-				       N'N/A',           -- HomeroomTeacher - nvarchar(500)
-				       N'N/A',           -- SexType_Code - nvarchar(100)
-				       N'N/A',           -- SexType_Description - nvarchar(100)
-				       0,          -- SexType_Male_Indicator - bit
-				       0,          -- SexType_Female_Indicator - bit
-				       0,          -- SexType_NotSelected_Indicator - bit
-				       N'N/A',           -- RaceCode - nvarchar(1000)
-				       N'N/A',           -- RaceDescription - nvarchar(1000)
-				       N'N/A',           -- StateRaceCode - nvarchar(1000)
-				       0,          -- Race_AmericanIndianAlaskanNative_Indicator - bit
-				       0,          -- Race_Asian_Indicator - bit
-				       0,          -- Race_BlackAfricaAmerican_Indicator - bit
-				       0,          -- Race_NativeHawaiianPacificIslander_Indicator - bit
-				       0,          -- Race_White_Indicator - bit
-				       0,          -- Race_MultiRace_Indicator - bit
-				       0,          -- Race_ChooseNotRespond_Indicator - bit
-				       0,          -- Race_Other_Indicator - bit
-				       N'N/A',           -- EthnicityCode - nvarchar(100)
-				       N'N/A',           -- EthnicityDescription - nvarchar(100)
-				       0,          -- EthnicityHispanicLatino_Indicator - bit
-				       0,          -- Migrant_Indicator - bit
-				       0,          -- Homeless_Indicator - bit
-				       0,          -- IEP_Indicator - bit
-				       N'',           -- English_Learner_Code_Value - nvarchar(100)
-				       N'',           -- English_Learner_Description - nvarchar(100)
-				       0,          -- English_Learner_Indicator - bit
-				       0,          -- Former_English_Learner_Indicator - bit
-				       0,          -- Never_English_Learner_Indicator - bit
-				       0,          -- EconomicDisadvantage_Indicator - bit
-				       SYSDATETIME(), -- EntryDate - datetime2(7)
-				       0,             -- EntrySchoolYear - int
-				       N'N/A',        -- EntryCode - nvarchar(25)
-				       SYSDATETIME(), -- ExitWithdrawDate - datetime2(7)
-				       0,           -- ExitWithdrawSchoolYear - int
-				       N'N/A',        -- ExitWithdrawCode - nvarchar(100)
-				      '07/01/2015', -- ValidFrom - datetime
-					  '9999-12-31', -- ValidTo - datetime
-					   0,      -- IsCurrent - bit
-					   -1          -- LineageKey - int
-				       )
-				    
-				END
-
-		--staging table holds newer records. 
-		--the matching prod records will be valid until the date in which the newest data change was identified
-		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom,
-		    prod.IsCurrent = 0
-		FROM 
-			[dbo].[DimStudent] AS prod
-			INNER JOIN Staging.Student AS stage ON prod._sourceKey = stage._sourceKey
-		WHERE prod.ValidTo = '12/31/9999'
-
-
-		INSERT INTO dbo.DimStudent
-		(
-		    [_sourceKey]
-           ,[PrimaryElectronicMailAddress]
-		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
-		   ,[PrimaryElectronicMailTypeDescriptor_Description]
-           ,[StudentUniqueId]
-           ,[StateId]
-           ,[SchoolKey]
-           ,[ShortNameOfInstitution]
-           ,[NameOfInstitution]
-           ,[GradeLevelDescriptor_CodeValue]
-           ,[GradeLevelDescriptor_Description]
-           ,[FirstName]
-           ,[MiddleInitial]
-           ,[MiddleName]
-           ,[LastSurname]
-           ,[FullName]
-           ,[BirthDate]
-           ,[StudentAge]
-           ,[GraduationSchoolYear]
-           ,[Homeroom]
-           ,[HomeroomTeacher]
-           ,[SexType_Code]
-           ,[SexType_Description]
-           ,[SexType_Male_Indicator]
-           ,[SexType_Female_Indicator]
-           ,[SexType_NotSelected_Indicator]
-           ,[RaceCode]
-           ,[RaceDescription]
-		   ,[StateRaceCode]
-           ,[Race_AmericanIndianAlaskanNative_Indicator]
-           ,[Race_Asian_Indicator]
-           ,[Race_BlackAfricaAmerican_Indicator]
-           ,[Race_NativeHawaiianPacificIslander_Indicator]
-           ,[Race_White_Indicator]
-           ,[Race_MultiRace_Indicator]
-           ,[Race_ChooseNotRespond_Indicator]
-           ,[Race_Other_Indicator]
-           ,[EthnicityCode]
-           ,[EthnicityDescription]
-           ,[EthnicityHispanicLatino_Indicator]
-           ,[Migrant_Indicator]
-           ,[Homeless_Indicator]
-           ,[IEP_Indicator]
-           ,[English_Learner_Code_Value]
-           ,[English_Learner_Description]
-           ,[English_Learner_Indicator]
-           ,[Former_English_Learner_Indicator]
-           ,[Never_English_Learner_Indicator]
-           ,[EconomicDisadvantage_Indicator]
-           ,[EntryDate]
-           ,[EntrySchoolYear]
-           ,[EntryCode]
-           ,[ExitWithdrawDate]
-           ,[ExitWithdrawSchoolYear]
-           ,[ExitWithdrawCode]
-           ,[ValidFrom]
-           ,[ValidTo]
-           ,[IsCurrent]
-           ,[LineageKey]
-		)
-		SELECT 
-		    [_sourceKey]
-           ,[PrimaryElectronicMailAddress]
-		   ,[PrimaryElectronicMailTypeDescriptor_CodeValue]
-		   ,[PrimaryElectronicMailTypeDescriptor_Description]
-           ,[StudentUniqueId]
-           ,[StateId]
-           ,[SchoolKey]
-           ,[ShortNameOfInstitution]
-           ,[NameOfInstitution]
-           ,[GradeLevelDescriptor_CodeValue]
-           ,[GradeLevelDescriptor_Description]
-           ,[FirstName]
-           ,[MiddleInitial]
-           ,[MiddleName]
-           ,[LastSurname]
-           ,[FullName]
-           ,[BirthDate]
-           ,[StudentAge]
-           ,[GraduationSchoolYear]
-           ,[Homeroom]
-           ,[HomeroomTeacher]
-           ,[SexType_Code]
-           ,[SexType_Description]
-           ,[SexType_Male_Indicator]
-           ,[SexType_Female_Indicator]
-           ,[SexType_NotSelected_Indicator]
-           ,[RaceCode]
-           ,[RaceDescription]
-		   ,[StateRaceCode]
-           ,[Race_AmericanIndianAlaskanNative_Indicator]
-           ,[Race_Asian_Indicator]
-           ,[Race_BlackAfricaAmerican_Indicator]
-           ,[Race_NativeHawaiianPacificIslander_Indicator]
-           ,[Race_White_Indicator]
-           ,[Race_MultiRace_Indicator]
-           ,[Race_ChooseNotRespond_Indicator]
-           ,[Race_Other_Indicator]
-           ,[EthnicityCode]
-           ,[EthnicityDescription]
-           ,[EthnicityHispanicLatino_Indicator]
-           ,[Migrant_Indicator]
-           ,[Homeless_Indicator]
-           ,[IEP_Indicator]
-           ,[English_Learner_Code_Value]
-           ,[English_Learner_Description]
-           ,[English_Learner_Indicator]
-           ,[Former_English_Learner_Indicator]
-           ,[Never_English_Learner_Indicator]
-           ,[EconomicDisadvantage_Indicator]
-           ,[EntryDate]
-           ,[EntrySchoolYear]
-           ,[EntryCode]
-           ,[ExitWithdrawDate]
-           ,[ExitWithdrawSchoolYear]
-           ,[ExitWithdrawCode]
-           ,[ValidFrom]
-           ,[ValidTo]
-           ,[IsCurrent]           
-		   ,@LineageKey
-		FROM Staging.Student
-
-		--BPS is having data quality issues with exit/withdrawal dates in the ODS
-		--this is patch to overcome the problem and maintain the data clean momentarily
-		--------------------------------------------------------------------------------------------------
-		UPDATE dbo.DimStudent
-		SET IsCurrent = 0;
-
-		DECLARE @currentSchoolYear INT 
-		SELECT TOP (1) @currentSchoolYear =  SchoolYear 
-		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.SchoolYearType syt
-		WHERE syt.CurrentSchoolYear = 1;
-		
-
-		;WITH LatestEntryDatePerStudent AS
-        (
-			SELECT DISTINCT 
-				   ds.StudentUniqueId, 
-				   ds.StudentKey, 
-				   ROW_NUMBER() OVER (PARTITION BY ds.StudentUniqueId ORDER BY ds.EntryDate DESC) AS RowRankId
-			FROM dbo.DimStudent ds 
-			WHERE ds.EntrySchoolYear = @currentSchoolYear
-		)
-
-		UPDATE ds 
-		SET ds.IsCurrent = 1
-		FROM dbo.DimStudent ds 
-		WHERE ds.EntrySchoolYear = @currentSchoolYear
-		      AND EXISTS (SELECT 1 
-			              FROM LatestEntryDatePerStudent ledps 
-						  WHERE ds.StudentKey = ledps.StudentKey 
-						    AND ledps.RowRankId = 1);
-		---------------------------------------------------------------------------------------------------
-
-
-		-- updating the EndTime to now and status to Success		
-		UPDATE dbo.ETL_Lineage
-			SET 
-				EndTime = SYSDATETIME(),
-				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
-	
-	
-		-- Update the LoadDates table with the most current load date
-		UPDATE [dbo].[ETL_IncrementalLoads]
-		SET [LoadDate] = @LastDateLoaded
-		WHERE [TableName] = N'dbo.DimStudent';
-
-		COMMIT TRANSACTION;		
-	END TRY
-	BEGIN CATCH
-		
-		--constructing exception details
-		DECLARE
-		   @errorMessage nvarchar( MAX ) = ERROR_MESSAGE( );		
-     
-		DECLARE
-		   @errorDetails nvarchar( MAX ) = CONCAT('An error had ocurred executing SP:',OBJECT_NAME(@@PROCID),'. Error details: ', @errorMessage);
-
-		PRINT @errorDetails;
-		THROW 51000, @errorDetails, 1;
-
-		-- Test XACT_STATE:
-		-- If  1, the transaction is committable.
-		-- If -1, the transaction is uncommittable and should be rolled back.
-		-- XACT_STATE = 0 means that there is no transaction and a commit or rollback operation would generate an error.
-
-		-- Test whether the transaction is uncommittable.
-		IF XACT_STATE( ) = -1
-			BEGIN
-				--The transaction is in an uncommittable state. Rolling back transaction
-				ROLLBACK TRANSACTION;
-			END;
-
-		-- Test whether the transaction is committable.
-		IF XACT_STATE( ) = 1
-			BEGIN
-				--The transaction is committable. Committing transaction
-				COMMIT TRANSACTION;
-			END;
 	END CATCH;
 END;
 GO
@@ -5229,7 +5384,7 @@ BEGIN
 					,[IsCurrent])
         --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT  DISTINCT 
-			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),d.DescriptorId)) AS [_sourceKey],
+			    CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),d.CodeValue)) AS [_sourceKey],
 				COALESCE(d.CodeValue,'In Attendance') as AttendanceEventCategoryDescriptor_CodeValue,
 				COALESCE(d.CodeValue,'In Attendance') as AttendanceEventCategoryDescriptor_Description,
 				case when COALESCE(d.CodeValue,'In Attendance') in ('In Attendance','Tardy','Early departure') then 1 else 0 end as [InAttendance_Indicator], -- not used
@@ -5325,6 +5480,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -5339,6 +5495,7 @@ BEGIN
 				       '07/01/2015', -- ValidFrom - datetime
 					   '9999-12-31', -- ValidTo - datetime
 					   0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 					   -1          -- LineageKey - int
 				     )
 							  
@@ -5348,7 +5505,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimAttendanceEventCategory] AS prod
 			INNER JOIN Staging.AttendanceEventCategory AS stage ON prod._sourceKey = stage._sourceKey
@@ -5368,6 +5526,7 @@ BEGIN
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
+		   ,[IsLatest]
            ,[LineageKey])
 		SELECT 
 		    [_sourceKey]
@@ -5381,6 +5540,7 @@ BEGIN
            ,[ValidFrom]
            ,[ValidTo]
            ,[IsCurrent]
+		   ,1 AS IsLatest
 		   ,@LineageKey
 		FROM Staging.AttendanceEventCategory
 
@@ -5435,7 +5595,6 @@ GO
 
 --Dim DisciplineIncident
 --------------------------------------------------------------------
---[dbo].[Proc_ETL_DimDisciplineIncident_PopulateStaging]  '2021-02-08 01:01:56.000' , '02/17/2021'
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_DimDisciplineIncident_PopulateStaging]  
 @LastLoadDate datetime,
 @NewLoadDate datetime
@@ -5481,16 +5640,19 @@ BEGIN
 				    ,[IncidentCost]
 
 					,IncidentModifiedDate
+           
+		            ,_sourceSchoolKey
 
 				    ,[ValidFrom]
 				    ,[ValidTo]
-				    ,[IsCurrent])
-        
+				    ,[IsCurrent]
+					)
+        --declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()	
 		SELECT DISTINCT 
 				CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),di.IncidentIdentifier)) AS [_sourceKey],
-				dschool.SchoolKey,
-				dschool.ShortNameOfInstitution,
-				dschool.NameOfInstitution,
+				NULL AS SchoolKey,
+				NULL AS ShortNameOfInstitution,
+				NULL AS NameOfInstitution,
 				dbo.Func_ETL_GetSchoolYear(di.IncidentDate),
 				di.IncidentDate,
 				COALESCE(di.IncidentTime,'00:00:00.0000000') AS IncidentTime,
@@ -5514,6 +5676,8 @@ BEGIN
 				COALESCE(di.IncidentCost,0) AS IncidentCost,
 				
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(di.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS IncidentModifiedDate,
+				
+				CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),di.SchoolId))  AS _sourceSchoolKey,
 
 				--Making sure the first time, the ValidFrom is set to beginning of time 
 				CASE WHEN @LastLoadDate <> '07/01/2015' THEN
@@ -5527,16 +5691,12 @@ BEGIN
 				END AS ValidFrom,
 				'12/31/9999' AS ValidTo,
 				1 AS IsCurrent		
+		--select *
 		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncidentBehavior dib ON di.IncidentIdentifier = dib.IncidentIdentifier
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDisciplineIncident dadi ON di.IncidentIdentifier = dadi.IncidentIdentifier
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineActionDiscipline dad ON dadi.DisciplineActionIdentifier = dad.DisciplineActionIdentifier
-
-				INNER JOIN dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),di.SchoolId)   = dschool._sourceKey
-				INNER JOIN dbo.DimTime dt ON di.IncidentDate = dt.SchoolDate
-												AND dt.SchoolKey is not null   
-												AND dschool.SchoolKey = dt.SchoolKey
-				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dib ON dib.BehaviorDescriptorId   = d_dib.DescriptorId
+                LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dib ON dib.BehaviorDescriptorId   = d_dib.DescriptorId
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.IncidentLocationType d_dil ON di.IncidentLocationTypeId   = d_dil.IncidentLocationTypeId
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dia ON dad.DisciplineDescriptorId   = d_dia.DescriptorId
 				LEFT JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_dirt ON di.ReporterDescriptionDescriptorId   = d_dirt.DescriptorId
@@ -5577,15 +5737,17 @@ BEGIN
 				    ,[IncidentCost]
 
 					,IncidentModifiedDate
+					
+					,_sourceSchoolKey
 
 				    ,[ValidFrom]
 				    ,[ValidTo]
 				    ,[IsCurrent])
 			 SELECT DISTINCT 
 					  CONCAT_WS('|','LegacyDW',Convert(NVARCHAR(MAX),di.[CND_INCIDENT_ID])) AS [_sourceKey],    
-					  dschool.SchoolKey,
-					  dschool.ShortNameOfInstitution,
-					  dschool.NameOfInstitution,
+					  NULL AS SchoolKey,
+				      NULL AS ShortNameOfInstitution,
+				      NULL AS NameOfInstitution,
 					  dbo.Func_ETL_GetSchoolYear(di.[CND_INCIDENT_DATE]) AS [SchoolYear],
 					  di.CND_INCIDENT_DATE AS [IncidentDate],
 					 -- TRY_CAST(di.CND_INCIDENT_TIME AS DATETIME2) ,
@@ -5611,19 +5773,16 @@ BEGIN
 					  0 AS IncidentCost,
 
 					  '07/01/2015' AS IncidentModifiedDate,
-					  
+
+					  CONCAT_WS('|', 'Ed-Fi', Convert(NVARCHAR(MAX),di.[SKL_SCHOOL_ID])) AS _sourceSchoolKey,
+
 					  '07/01/2015' AS ValidFrom,
 					  GETDATE() AS ValidTo,
 					  0 AS IsCurrent		
 					  
 				--select distinct *
-				FROM  [Raw_LegacyDW].[DisciplineIncidents] di
-					  INNER JOIN dbo.DimSchool dschool ON CONCAT_WS('|', 'Ed-Fi', Convert(NVARCHAR(MAX),di.[SKL_SCHOOL_ID]))   = dschool._sourceKey 
-					  INNER JOIN dbo.DimTime dt ON di.CND_INCIDENT_DATE = dt.SchoolDate
-														 AND dt.SchoolKey is not null   
-														 AND dschool.SchoolKey = dt.SchoolKey	
+				FROM  [Raw_LegacyDW].[DisciplineIncidents] di					  
 				WHERE TRY_CAST(di.CND_INCIDENT_DATE AS DATETIME)  BETWEEN '2015-09-01' AND '2018-06-30'
-
 
 			END
 
@@ -5708,6 +5867,7 @@ BEGIN
 					   ValidFrom,
 					   ValidTo,
 					   IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -5735,15 +5895,39 @@ BEGIN
 				       '07/01/2015', -- ValidFrom - datetime
 					   '9999-12-31', -- ValidTo - datetime
 					   0,      -- IsCurrent - bit
-					   -1          -- LineageKey - int
+					   1,      -- IsLatest - bit
+					   -1      -- LineageKey - int
 				       )
 				  
 				END
+        --updating keys
+		UPDATE t
+		SET t.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE t._sourceSchoolKey = ds._sourceKey									
+										AND t.ValidFrom >= ds.[ValidFrom]
+										AND t.ValidFrom < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE ds._sourceKey = '')
+							      ) 
+        FROM Staging.DisciplineIncident t;
+
+		--updating school names
+		UPDATE di
+		SET [ShortNameOfInstitution] = ds.ShortNameOfInstitution,
+		    [NameOfInstitution] = ds.NameOfInstitution
+		FROM Staging.DisciplineIncident di
+		     INNER JOIN dbo.DimSchool ds ON di.SchoolKey = ds.SchoolKey;
+
 
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimDisciplineIncident] AS prod
 			INNER JOIN Staging.DisciplineIncident AS stage ON prod._sourceKey = stage._sourceKey
@@ -5776,6 +5960,7 @@ BEGIN
 		    [ValidFrom],
 		    [ValidTo],
 		    [IsCurrent],
+			[IsLatest],
 			LineageKey
 		)
 		
@@ -5804,6 +5989,7 @@ BEGIN
 			[ValidFrom],
 		    [ValidTo],
 		    [IsCurrent],
+			1 AS [IsLatest],
 		    @LineageKey
 		FROM Staging.DisciplineIncident
 
@@ -5903,7 +6089,7 @@ BEGIN
 			ObjectiveAssessmentScore_Indicator  BIT NOT NULL,
 			ObjectiveAssessmentPerformanceLevel_Indicator  BIT NOT NULL,
 
-			AssessmentModifiedDate [datetime] NOT NULL,
+			AssessmentModifiedDate DATETIME NOT NULL,
 
 			ValidFrom DATETIME NOT NULL, 
 			ValidTo DATETIME NOT NULL, 
@@ -5966,7 +6152,7 @@ BEGIN
 			   0 AS ObjectiveAssessmentPerformanceLevel_Indicator,
 			   
 			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(a.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS AssessmentModifiedDate,
-			   --Making sure the first time, the ValidFrom is set to beginning of time 
+			   --Making sure that the first time, the ValidFrom is set to beginning of time 
 			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
@@ -6256,6 +6442,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -6277,6 +6464,7 @@ BEGIN
 				       '07/01/2015', -- ValidFrom - datetime
 					   '9999-12-31', -- ValidTo - datetime
 					   0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 					   -1          -- LineageKey - int
 				       )
 				   
@@ -6286,7 +6474,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].DimAssessment AS prod
 			INNER JOIN Staging.Assessment AS stage ON prod._sourceKey = stage._sourceKey
@@ -6313,6 +6502,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			IsLatest,
 		    LineageKey
 		)
 		
@@ -6336,6 +6526,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			1 AS IsLatest,
 		    @LineageKey
 		FROM Staging.Assessment
 
@@ -6344,7 +6535,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -6618,6 +6809,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -6639,6 +6831,7 @@ BEGIN
 				      '07/01/2015', -- ValidFrom - datetime
 					   '9999-12-31', -- ValidTo - datetime
 					   0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 					   -1          -- LineageKey - int
 				       )
 				  
@@ -6649,7 +6842,8 @@ BEGIN
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimCourse] AS prod
 			INNER JOIN Staging.Course AS stage ON prod._sourceKey = stage._sourceKey
@@ -6676,6 +6870,7 @@ BEGIN
 			ValidFrom,
 			ValidTo,
 			IsCurrent,
+			IsLatest,
 			LineageKey
 		)
 		
@@ -6698,6 +6893,7 @@ BEGIN
 			ValidFrom,
 			ValidTo,
 			IsCurrent,
+			1 AS IsLatest,
 		    @LineageKey
 		FROM Staging.Course
 
@@ -6706,7 +6902,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -6785,21 +6981,23 @@ BEGIN
 		    TotalInstructionalDays,
 		    PeriodSequence,
 		    ModifiedDate,
+			_sourceSchoolKey,
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent
 		)		
 		--declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT
-		    CONCAT_WS('|','Ed-Fi',CAST(gp.GradingPeriodDescriptorId AS NVARCHAR),CAST(gp.SchoolId AS NVARCHAR),CONVERT(NVARCHAR, gp.BeginDate, 112)) AS [_sourceKey],
+		    CONCAT_WS('|','Ed-Fi',gpd.CodeValue,CAST(gp.SchoolId AS NVARCHAR),CONVERT(NVARCHAR, gp.BeginDate, 112)) AS [_sourceKey],
 			COALESCE(gpd.CodeValue,'N/A') AS GradingPeriodDescriptor_CodeValue,
-			dschool.SchoolKey,
+			NULL AS SchoolKey,
 			gp.BeginDate,
 			gp.EndDate,
 			gp.TotalInstructionalDays,
 			gp.PeriodSequence,
 			CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(gp.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS LastModifiedDate,
 
+			CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),gp.SchoolId))  AS _sourceSchoolKey,
 			--Making sure the first time, the ValidFrom is set to beginning of time 
 			CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				        (SELECT MAX(t) FROM
@@ -6816,8 +7014,8 @@ BEGIN
 		FROM
 			[EDFISQL01].[EdFi_BPS_Production_Ods].edfi.GradingPeriod AS gp
 				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS gpd ON	gp.GradingPeriodDescriptorId = gpd.DescriptorId
-				INNER JOIN dbo.DimSchool dschool ON 'Ed-Fi|' + Convert(NVARCHAR(MAX),gp.SchoolId)   = dschool._sourceKey
-		WHERE gp.BeginDate < GETDATE()		      
+				
+		WHERE gp.BeginDate < GETDATE()		      		      
 		      AND dbo.Func_ETL_GetSchoolYear(gp.BeginDate) >= 2019 
 		      AND (
 			  	    (gp.LastModifiedDate > @LastLoadDate AND gp.LastModifiedDate <= @NewLoadDate)
@@ -6888,6 +7086,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -6901,15 +7100,31 @@ BEGIN
 				      '07/01/2015', -- ValidFrom - datetime
 					  '9999-12-31', -- ValidTo - datetime
 				       0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 				       -1          -- LineageKey - int
 				       )
 				  
 				END
+        --updating keys
+		UPDATE t
+		SET t.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE t._sourceSchoolKey = ds._sourceKey									
+										AND t.ValidFrom >= ds.[ValidFrom]
+										AND t.ValidFrom < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE ds._sourceKey = '')
+							      ) 
+        FROM Staging.GradingPeriod t;
 
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].DimGradingPeriod AS prod
 			INNER JOIN Staging.GradingPeriod AS stage ON prod._sourceKey = stage._sourceKey
@@ -6928,6 +7143,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			IsLatest,
 		    LineageKey
 		)
 	
@@ -6942,6 +7158,7 @@ BEGIN
 			,[ValidFrom]
 			,[ValidTo]
 			,[IsCurrent]
+			,1 AS IsLatest
 		    ,@LineageKey
 		FROM Staging.GradingPeriod
 
@@ -6950,7 +7167,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -7020,11 +7237,11 @@ BEGIN
 		--declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		TRUNCATE TABLE Staging.StudentSection
 		SELECT   DISTINCT 
-            ssa.StudentUSI,
+            s.StudentUniqueId,
             ssa.SchoolId, 
 			ssa.LocalCourseCode,
 			ssa.SchoolYear,
-			staff_sa.StaffUSI,
+			staff.StaffUniqueId,
 			ssa.UniqueSectionCode,
 			ssa.TermDescriptorId,
 			ssa.BeginDate,
@@ -7043,15 +7260,16 @@ BEGIN
 			'12/31/9999' AS ValidTo,
 			1 AS IsCurrent
 			INTO #studentSectionAssociation
-		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation ssa
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s
+		         INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation ssa ON s.StudentUSI = ssa.StudentUSI
 				 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa ON ssa.SchoolId = staff_sa.SchoolId
 																											  AND ssa.LocalCourseCode = staff_sa.LocalCourseCode
 																											  AND ssa.SchoolYear = staff_sa.SchoolYear
 																											  AND ssa.UniqueSectionCode = staff_sa.UniqueSectionCode
-																											  AND ssa.TermDescriptorId = staff_sa.TermDescriptorId
+				  INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI																						  AND ssa.TermDescriptorId = staff_sa.TermDescriptorId
 		WHERE ssa.SchoolYear >= 2019
 				AND (
-			  					(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)
+			  			(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)
    					)
 
 
@@ -7066,6 +7284,12 @@ BEGIN
 		    StudentSectionEndDate,
 		    SchoolYear,
 		    ModifiedDate,
+
+			[_sourceStudentKey],
+			[_sourceSchoolKey],
+			[_sourceCourseKey],
+			[_sourceStaffKey],
+
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent
@@ -7073,16 +7297,22 @@ BEGIN
 			
 		--declare @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate()
 		SELECT 
-		    CONCAT_WS('|','Ed-Fi',ssa.StudentUSI,ssa.SchoolId,ssa.LocalCourseCode,ssa.SchoolYear,ssa.UniqueSectionCode,td.CodeValue,CONVERT(NVARCHAR, ssa.BeginDate, 112) ) [_sourceKey],			
-			ds.StudentKey,
-			dschool.SchoolKey,
-			dc.CourseKey,
-			dstaff.StaffKey,	        
+		    CONCAT_WS('|','Ed-Fi',ssa.StudentUniqueId,ssa.SchoolId,ssa.LocalCourseCode,ssa.StaffUniqueId,ssa.SchoolYear,ssa.UniqueSectionCode,td.CodeValue,CONVERT(NVARCHAR, ssa.BeginDate, 112) ) [_sourceKey],			
+			NULL AS StudentKey,
+			NULL AS SchoolKey,
+			NULL AS CourseKey,
+			NULL AS StaffKey,	        
 	        ssa.BeginDate,
 			ssa.EndDate,
 			ssa.SchoolYear,
 
 			ssa.LastModifiedDate,
+
+			CONCAT_WS('|', 'Ed-Fi', ssa.StudentUniqueId)  AS [_sourceStudentKey],
+			CONCAT_WS('|', 'Ed-Fi', ssa.SchoolId)  AS [_sourceSchoolKey],
+			CONCAT_WS('|', 'Ed-Fi', co.CourseCode) AS [_sourceCourseKey],
+			CONCAT_WS('|', 'Ed-Fi', ssa.StaffUniqueId) AS [_sourceStaffKey],
+
 			ssa.ValidFrom,
 			ssa.ValidTo,
 			ssa.IsCurrent		
@@ -7094,16 +7324,6 @@ BEGIN
 																					   AND ssa.SchoolYear = co.SchoolYear
 																					   AND ssa.TermDescriptorId = co.TermDescriptorId
 		        INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor td ON co.TermDescriptorId = td.DescriptorId
-			
-																									  
-				INNER JOIN dbo.DimStudent ds  ON CONCAT_WS('|', 'Ed-Fi', ssa.StudentUSI)   = ds._sourceKey
-															      AND  ssa.BeginDate BETWEEN ds.ValidFrom AND ds.ValidTo
-				INNER JOIN dbo.DimSchool dschool ON CONCAT_WS('|', 'Ed-Fi', ssa.SchoolId) = dschool._sourceKey
-				                                                  AND  ssa.BeginDate BETWEEN dschool.ValidFrom AND dschool.ValidTo
-				INNER JOIN dbo.DimCourse dc ON CONCAT_WS('|', 'Ed-Fi', co.CourseCode) = dc._sourceKey
-				                                                  AND  ssa.BeginDate BETWEEN dc.ValidFrom AND dc.ValidTo
-				INNER JOIN dbo.DimStaff dstaff ON CONCAT_WS('|', 'Ed-Fi', ssa.StaffUSI) = dstaff._sourceKey
-				                                                  AND  ssa.BeginDate BETWEEN dstaff.ValidFrom AND dstaff.ValidTo
 		
 		DROP TABLE #studentSectionAssociation
 	END TRY
@@ -7173,6 +7393,7 @@ BEGIN
 				       ValidFrom,
 				       ValidTo,
 				       IsCurrent,
+					   IsLatest,
 				       LineageKey
 				   )
 				   VALUES
@@ -7187,15 +7408,66 @@ BEGIN
 				       '07/01/2015', -- ValidFrom - datetime
 					   '9999-12-31', -- ValidTo - datetime
 				       0,      -- IsCurrent - bit
+					   1,      -- IsLatest - bit
 				       -1          -- LineageKey - int
 				       )
 				
 				END
+        --updating staging keys
+		UPDATE s 
+		SET s.StudentKey = COALESCE(
+								(SELECT TOP (1) ds.StudentKey
+								FROM dbo.DimStudent ds
+								WHERE s._sourceStudentKey = ds._sourceKey									
+									AND s.ValidFrom >= ds.[ValidFrom]
+									AND s.ValidFrom < ds.[ValidTo]
+								ORDER BY ds.[ValidFrom] DESC),
+								(SELECT ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE ds._sourceKey = '')
+							),
+			s.SchoolKey = COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE s.[_sourceSchoolKey] = ds._sourceKey									
+										AND s.ValidFrom >= ds.[ValidFrom]
+										AND s.ValidFrom < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+									 FROM dbo.DimSchool ds
+									 WHERE ds._sourceKey = '')
+							      ) ,
+			s.CourseKey = COALESCE(
+								(SELECT TOP (1) dc.CourseKey
+								FROM dbo.DimCourse dc
+								WHERE s._sourceCourseKey = dc._sourceKey									
+									AND s.ValidFrom >= dc.[ValidFrom]
+									AND s.ValidFrom < dc.[ValidTo]
+								ORDER BY dc.[ValidFrom] DESC),
+								(SELECT ds.CourseKey
+								 FROM dbo.DimCourse ds
+								 WHERE ds._sourceKey = '')
+
+							)	,
+			s.StaffKey = COALESCE(
+								(SELECT TOP (1) ds.StaffKey
+								FROM dbo.DimStaff ds
+								WHERE s._sourceCourseKey = ds._sourceKey									
+									AND s.ValidFrom >= ds.[ValidFrom]
+									AND s.ValidFrom < ds.[ValidTo]
+								ORDER BY ds.[ValidFrom] DESC),
+								(SELECT ds.StaffKey
+								 FROM dbo.DimStaff ds
+								 WHERE ds._sourceKey = '')
+							)
+        FROM Staging.StudentSection s;
+
 
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
 		UPDATE prod
-		SET prod.ValidTo = stage.ValidFrom
+		SET prod.ValidTo = stage.ValidFrom,
+		    prod.IsLatest = 0
 		FROM 
 			[dbo].DimStudentSection AS prod
 			INNER JOIN Staging.StudentSection AS stage ON prod._sourceKey = stage._sourceKey
@@ -7215,6 +7487,7 @@ BEGIN
 		    ValidFrom,
 		    ValidTo,
 		    IsCurrent,
+			IsLatest,
 		    LineageKey
 		)
 		
@@ -7230,6 +7503,7 @@ BEGIN
 			  ,[ValidFrom]
 			  ,[ValidTo]
 			  ,[IsCurrent]
+			  ,1 AS [IsLatest]
 		      ,@LineageKey
 		FROM Staging.StudentSection
 
@@ -7238,7 +7512,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -7309,51 +7583,57 @@ BEGIN
 		--DECLARE @LastLoadDate datetime= '07/01/2015' DECLARE @NewLoadDate datetime = GETDATE()
 		TRUNCATE TABLE Staging.StudentAttendanceByDay	
 		CREATE TABLE #StudentsToBeProcessed (StudentUSI INT, 
+		                                     StudentUniqueId NVARCHAR(32), 
 		                                     EventDate DATE ,
 											 LastModifiedDate DATETIME )
 		  
-		CREATE TABLE #AttedanceEventRankedByReason (StudentUSI INT, 
+		CREATE TABLE #AttedanceEventRankedByReason (StudentUSI INT, 		                                            
 		                                            SchoolId INT, 
 													SchoolYear SMALLINT, 
 													EventDate DATE, 
 													LastModifiedDate DATETIME,
-													AttendanceEventCategoryDescriptorId INT,
+													AttendanceEventCategoryDescriptor_CodeValue NVARCHAR(50),
 													AttendanceEventReason NVARCHAR(max) , 
 													RowId INT  )
 	    CREATE TABLE #DistinctAttedanceEvents (StudentUSI INT, 
+		                                       StudentUniqueId NVARCHAR(32), 
 		                                       SchoolId INT, 
 											   SchoolYear SMALLINT, 
 											   EventDate DATE, 
 											   LastModifiedDate DATETIME,
-											   AttendanceEventCategoryDescriptorId INT,
+											   AttendanceEventCategoryDescriptor_CodeValue NVARCHAR(50),
 											   AttendanceEventReason NVARCHAR(max))
 	
 		CREATE NONCLUSTERED INDEX [#AttedanceEventRankedByReason_MainCovering]
 		ON [dbo].[#AttedanceEventRankedByReason] ([StudentUSI],[SchoolId],[EventDate],[RowId])
-		INCLUDE ([AttendanceEventCategoryDescriptorId],[AttendanceEventReason])
+		INCLUDE (AttendanceEventCategoryDescriptor_CodeValue,[AttendanceEventReason])
 
 
 		INSERT INTO #DistinctAttedanceEvents
 		(
 		    StudentUSI,
+			StudentUniqueId,
 		    SchoolId,
 		    SchoolYear,
 		    EventDate,
 			LastModifiedDate,
-		    AttendanceEventCategoryDescriptorId,
+		    AttendanceEventCategoryDescriptor_CodeValue,
 		    AttendanceEventReason
 		)
 		SELECT   DISTINCT 
-					StudentUSI, 
-					SchoolId, 
-					SchoolYear, 
-					EventDate,
-					LastModifiedDate,
-					AttendanceEventCategoryDescriptorId,					
-					LTRIM(RTRIM(COALESCE(AttendanceEventReason,''))) AS AttendanceEventReason 
-		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent
+					ssae.StudentUSI, 
+					s.StudentUniqueId,
+					ssae.SchoolId, 
+					ssae.SchoolYear, 
+					ssae.EventDate,
+					ssae.LastModifiedDate,
+					d_ssae.CodeValue AS AttendanceEventCategoryDescriptor_CodeValue,					
+					LTRIM(RTRIM(COALESCE(ssae.AttendanceEventReason,''))) AS AttendanceEventReason 
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
+		     INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s ON ssae.StudentUSI = s.StudentUSI
+			 INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_ssae ON ssae.AttendanceEventCategoryDescriptorId = d_ssae.DescriptorId
 		WHERE SchoolYear >= 2019
-			AND (LastModifiedDate > @LastLoadDate  AND LastModifiedDate <= @NewLoadDate)
+			AND (ssae.LastModifiedDate > @LastLoadDate  AND ssae.LastModifiedDate <= @NewLoadDate)
 		
 
 		INSERT INTO #AttedanceEventRankedByReason
@@ -7363,7 +7643,7 @@ BEGIN
 			SchoolYear,
 			EventDate,
 			LastModifiedDate,
-			AttendanceEventCategoryDescriptorId,
+			AttendanceEventCategoryDescriptor_CodeValue,
 			AttendanceEventReason,
 			RowId
 		)
@@ -7373,29 +7653,30 @@ BEGIN
 					SchoolYear, 
 					EventDate,
 					LastModifiedDate,
-					AttendanceEventCategoryDescriptorId,
+					AttendanceEventCategoryDescriptor_CodeValue,
 					AttendanceEventReason , 
 					ROW_NUMBER() OVER (PARTITION BY StudentUSI, 
 													SchoolId, 
 													SchoolYear, 
 													EventDate,
-													AttendanceEventCategoryDescriptorId
+													AttendanceEventCategoryDescriptor_CodeValue
 										ORDER BY AttendanceEventReason DESC) AS RowId 
 			FROM #DistinctAttedanceEvents
 
 			
 		IF (@LastLoadDate <> '07/01/2015')
 			BEGIN
-				INSERT INTO #StudentsToBeProcessed (StudentUSI, EventDate, LastModifiedDate)
-				SELECT DISTINCT StudentUSI, EventDate, LastModifiedDate
+				INSERT INTO #StudentsToBeProcessed (StudentUSI, StudentUniqueId, EventDate, LastModifiedDate)
+				SELECT DISTINCT StudentUSI, StudentUniqueId, EventDate, LastModifiedDate
 				FROM #DistinctAttedanceEvents
 			END
 	    ELSE --this first time all students will be processed
 			BEGIN
-				INSERT INTO #StudentsToBeProcessed (StudentUSI, EventDate, LastModifiedDate)
-				SELECT DISTINCT StudentUSI, NULL AS EventDate, NULL AS LastModifiedDate --we don't care about event changes the first this runs. 
-				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation
-				WHERE SchoolYear >= 2019
+				INSERT INTO #StudentsToBeProcessed (StudentUSI, StudentUniqueId, EventDate, LastModifiedDate)
+				SELECT DISTINCT s.StudentUSI, s.StudentUniqueId, NULL AS EventDate, NULL AS LastModifiedDate --we don't care about event changes the first this runs. 
+				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa
+				     INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s ON ssa.StudentUSI = s.StudentUSI
+				WHERE ssa.SchoolYear >= 2019
 			END;
 		
 		
@@ -7415,7 +7696,7 @@ BEGIN
 		    _sourceAttendanceEventCategoryKey
 		)	
 		SELECT DISTINCT         
-				  CONCAT_WS('|',Convert(NVARCHAR(MAX),ssa.StudentUSI),CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
+				  CONCAT_WS('|',stbp.StudentUniqueId,CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
 				  NULL AS StudentKey,
 				  NULL AS TimeKey,	  
 				  NULL AS SchoolKey,  
@@ -7423,10 +7704,10 @@ BEGIN
 				  ISNULL(ssae.AttendanceEventReason,'') AS AttendanceEventReason,
 				  --stbp.LastModifiedDate only makes sense when identifying deltas, the first time we just follow the calendar date
 				  cdce.Date AS ModifiedDate,
-				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.StudentUSI)) AS _sourceStudentKey,
+				  CONCAT_WS('|','Ed-Fi',stbp.StudentUniqueId) AS _sourceStudentKey,
 		          cdce.Date AS _sourceTimeKey,		          
 				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.SchoolId))  AS _sourceSchoolKey,
-		          CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),ssae.AttendanceEventCategoryDescriptorId))  AS _sourceAttendanceEventCategoryKey
+		          CONCAT_WS('|','Ed-Fi', ssae.AttendanceEventCategoryDescriptor_CodeValue)  AS _sourceAttendanceEventCategoryKey
 				  				  
 			--select *  
 			FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 
@@ -7441,7 +7722,8 @@ BEGIN
 				LEFT JOIN #AttedanceEventRankedByReason ssae on ssa.StudentUSI = ssae.StudentUSI
 															   AND ssa.SchoolId = ssae.SchoolId 
 															   AND cda.Date = ssae.EventDate
-															   AND ssae.RowId= 1			
+															   AND ssae.RowId= 1	
+		        
 			WHERE  cdce.Date >= ssa.EntryDate 
 			   AND cdce.Date <= GETDATE()
 			   AND (
@@ -7502,30 +7784,40 @@ BEGIN
       
 	    --updating staging keys
 		UPDATE s 
-		SET s.StudentKey = (
-								SELECT TOP (1) ds.StudentKey
-								FROM dbo.DimStudent ds
-								WHERE s._sourceStudentKey = ds._sourceKey									
+		SET s.StudentKey = COALESCE(
+								(SELECT TOP (1) ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
+								 ORDER BY ds.[ValidFrom] DESC),
+								(SELECT ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE ds._sourceKey = '')
 							),
-			s.TimeKey = (
-							SELECT TOP (1) dt.TimeKey
-							FROM dbo.DimTime dt
+			s.TimeKey =  	COALESCE(
+			                 (SELECT TOP (1) dt.TimeKey
+							  FROM dbo.DimTime dt
 									INNER JOIN dbo.DimSchool ds ON dt.SchoolKey = ds.SchoolKey
-							WHERE s._sourceSchoolKey = ds._sourceKey
-								AND s._sourceTimeKey = dt.SchoolDate
-							ORDER BY dt.SchoolDate
-						),
-			s.SchoolKey = (
-								SELECT TOP (1) ds.SchoolKey
-								FROM dbo.DimSchool ds
-								WHERE s._sourceSchoolKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
-							),		
+							  WHERE s._sourceSchoolKey = ds._sourceKey
+							    AND s._sourceTimeKey = dt.SchoolDate
+							 ORDER BY dt.SchoolDate),
+							 (SELECT TOP (1) dt.TimeKey
+							  FROM dbo.DimTime dt									
+							  WHERE s._sourceTimeKey = dt.SchoolDate
+							 ORDER BY dt.SchoolDate)
+							 ),
+			s.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									FROM dbo.DimSchool ds
+									WHERE s._sourceSchoolKey = ds._sourceKey									
+										AND s.[ModifiedDate] >= ds.[ValidFrom]
+										AND s.[ModifiedDate] < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+										FROM dbo.DimSchool ds
+										WHERE ds._sourceKey = '')
+							      ),		
 			s.AttendanceEventCategoryKey = COALESCE(
 													(
 														SELECT TOP (1) daec.AttendanceEventCategoryKey
@@ -7542,12 +7834,26 @@ BEGIN
 													)  
 										          )     
         FROM Staging.StudentAttendanceByDay s;
+	
+	    DELETE FROM Staging.StudentAttendanceByDay 
+		WHERE TimeKey IS NULL;
+
+	    ;WITH DuplicateKeys AS 
+		(
+		  SELECT [StudentKey], [TimeKey],[SchoolKey],AttendanceEventCategoryKey
+		  FROM  Staging.StudentAttendanceByDay
+		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],AttendanceEventCategoryKey
+		  HAVING COUNT(*) > 1
+		)
 		
-		DELETE FROM Staging.StudentAttendanceByDay
-		WHERE StudentKey IS NULL OR 
-		      TimeKey IS NULL OR
-			  SchoolKey IS NULL OR
-			  AttendanceEventCategoryKey IS NULL;
+		DELETE sd 
+		FROM Staging.StudentAttendanceByDay sd
+		WHERE EXISTS(SELECT 1 
+		             FROM DuplicateKeys dk 
+					 WHERE sd.[StudentKey] = dk.StudentKey
+					   AND sd.[TimeKey] = dk.[TimeKey]
+					   AND sd.[SchoolKey] = dk.[SchoolKey]
+					   AND sd.AttendanceEventCategoryKey = dk.AttendanceEventCategoryKey)
 
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_FactStudentAttendanceByDay ON dbo.FactStudentAttendanceByDay;
@@ -7622,7 +7928,7 @@ BEGIN
 																					ELSE 'In Attendance' 	                                                                   
 																				END = daec.AttendanceEventCategoryDescriptor_CodeValue
  
-				WHERE  a.[Date] BETWEEN '2015-07-01' AND '2018-06-30'
+				WHERE  a.[Date] BETWEEN '2015-07-01' AND '2018-06-30'				
 				   AND a.sch between '1000' and '4700'
 			  END
 
@@ -7862,19 +8168,20 @@ BEGIN
 		)
 		
 		SELECT DISTINCT 
-		       CONCAT_WS('|',Convert(NVARCHAR(MAX),sdia.StudentUSI),di.IncidentIdentifier) AS _sourceKey,
+		       CONCAT_WS('|',s.StudentUniqueId,di.IncidentIdentifier) AS _sourceKey,
 			   NULL AS StudentKey,
 			   NULL AS TimeKey,	  
 			   NULL AS SchoolKey,  
 			   NULL AS DisciplineIncidentKey,  
 			   di.IncidentDate AS ModifiedDate,
-			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sdia.StudentUSI)) AS _sourceStudentKey,
+			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId) AS _sourceStudentKey,
 		       di.IncidentDate AS _sourceTimeKey,		          
 			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),di.SchoolId))  AS _sourceSchoolKey,
 		       CONCAT_WS('|','Ed-Fi', Convert(NVARCHAR(MAX),di.IncidentIdentifier))  AS  _sourceDisciplineIncidentKey
 
 		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.DisciplineIncident di       
 			  INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentDisciplineIncidentAssociation sdia ON di.IncidentIdentifier = sdia.IncidentIdentifier
+			  INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s ON sdia.StudentUSI = s.StudentUSI
 		WHERE di.IncidentDate >= '07/01/2018'	  
 		 AND  (
 		       (di.LastModifiedDate > @LastLoadDate  AND di.LastModifiedDate <= @NewLoadDate)
@@ -7927,46 +8234,74 @@ BEGIN
 		 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = (
-								SELECT TOP (1) ds.StudentKey
-								FROM dbo.DimStudent ds
-								WHERE s._sourceStudentKey = ds._sourceKey									
+		SET s.StudentKey = COALESCE(
+								(SELECT TOP (1) ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
+								 ORDER BY ds.[ValidFrom] DESC),
+								(SELECT ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE ds._sourceKey = '')
 							),
-			s.TimeKey = (
-							SELECT TOP (1) dt.TimeKey
-							FROM dbo.DimTime dt
+			s.TimeKey =  	COALESCE(
+			                 (SELECT TOP (1) dt.TimeKey
+							  FROM dbo.DimTime dt
 									INNER JOIN dbo.DimSchool ds ON dt.SchoolKey = ds.SchoolKey
-							WHERE s._sourceSchoolKey = ds._sourceKey
-								AND s._sourceTimeKey = dt.SchoolDate
-							ORDER BY dt.SchoolDate
-						),
-			s.SchoolKey = (
-								SELECT TOP (1) ds.SchoolKey
-								FROM dbo.DimSchool ds
-								WHERE s._sourceSchoolKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
-							),		
-			s.DisciplineIncidentKey =(
-										SELECT TOP (1) ddi.DisciplineIncidentKey
+							  WHERE s._sourceSchoolKey = ds._sourceKey
+							    AND s._sourceTimeKey = dt.SchoolDate
+							 ORDER BY dt.SchoolDate),
+							 (SELECT TOP (1) dt.TimeKey
+							  FROM dbo.DimTime dt									
+							  WHERE s._sourceTimeKey = dt.SchoolDate
+							 ORDER BY dt.SchoolDate)
+							 ),
+			s.SchoolKey =  COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									FROM dbo.DimSchool ds
+									WHERE s._sourceSchoolKey = ds._sourceKey									
+										AND s.[ModifiedDate] >= ds.[ValidFrom]
+										AND s.[ModifiedDate] < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+										FROM dbo.DimSchool ds
+										WHERE ds._sourceKey = '')
+							      ),		
+			s.DisciplineIncidentKey =COALESCE(
+										(SELECT TOP (1) ddi.DisciplineIncidentKey
 										FROM dbo.DimDisciplineIncident ddi
 										WHERE s._sourceDisciplineIncidentKey = ddi._sourceKey									
 											AND s.[ModifiedDate] >= ddi.[ValidFrom]
 											AND s.[ModifiedDate] < ddi.[ValidTo]
-										ORDER BY ddi.[ValidFrom] DESC
+										ORDER BY ddi.[ValidFrom] DESC),
+										(SELECT ds.DisciplineIncidentKey
+										FROM dbo.DimDisciplineIncident ds
+										WHERE ds._sourceKey = '')
 									)  
 										             
         FROM Staging.StudentDiscipline s;
 		
-		DELETE FROM Staging.StudentDiscipline
-		WHERE StudentKey IS NULL OR 
-		      TimeKey IS NULL OR
-			  SchoolKey IS NULL OR
-			  DisciplineIncidentKey IS NULL;
+		DELETE FROM  Staging.StudentDiscipline
+		WHERE TimeKey IS NULL;
+
+		;WITH DuplicateKeys AS 
+		(
+		  SELECT [StudentKey], [TimeKey],[SchoolKey],[DisciplineIncidentKey]
+		  FROM  Staging.StudentDiscipline
+		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],[DisciplineIncidentKey]
+		  HAVING COUNT(*) > 1
+		)
+		
+		DELETE sd 
+		FROM Staging.StudentDiscipline sd
+		WHERE EXISTS(SELECT 1 
+		             FROM DuplicateKeys dk 
+					 WHERE sd.[StudentKey] = dk.StudentKey
+					   AND sd.[TimeKey] = dk.[TimeKey]
+					   AND sd.[SchoolKey] = dk.[SchoolKey]
+					   AND sd.[DisciplineIncidentKey] = dk.[DisciplineIncidentKey])
+		    
 
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentDiscipline ON dbo.FactStudentDiscipline;
@@ -7986,7 +8321,7 @@ BEGIN
 		   		,[TimeKey]
 		   		,[SchoolKey]
 		   		,[DisciplineIncidentKey]           
-		   		,[LineageKey])
+		   		,LineageKey)
 		SELECT DISTINCT 
 		    _sourceKey,
 		    StudentKey,
@@ -8008,7 +8343,7 @@ BEGIN
 							   ,[TimeKey]
 							   ,[SchoolKey]
 							   ,[DisciplineIncidentKey]           
-							   ,[LineageKey])
+							   ,LineageKey)
 
 					SELECT DISTINCT 
 						   'LegacyDW',
@@ -8036,7 +8371,7 @@ BEGIN
 				,[TimeKey]
 				,[SchoolKey]
 				,[DisciplineIncidentKey]
-				,[LineageKey])
+				,LineageKey)
 				
 
 		-- updating the EndTime to now and status to Success		
@@ -8044,7 +8379,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -8088,7 +8423,7 @@ BEGIN
 			END;
 	END CATCH;
 END;
-GO
+GO 
 
 --Fact StudentAssessmentScore
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_FactStudentAssessmentScore_PopulateStaging]
@@ -8134,7 +8469,7 @@ BEGIN
 		
 		
 		SELECT   DISTINCT 
-			      CONCAT_WS('|',CONVERT(NVARCHAR(MAX),s.StudentUSI),sa.StudentAssessmentIdentifier) AS _sourceKey,				  
+			      CONCAT_WS('|',s.StudentUniqueId, CONVERT(NVARCHAR, sa.AdministrationDate, 112), sa.AssessmentIdentifier,'N/A',armt.CodeValue) AS _sourceKey,				  
 				  NULL AS StudentKey,
 				  NULL AS TimeKey,	  
 				  NULL AS AssessmentKey,
@@ -8143,9 +8478,9 @@ BEGIN
 				  CASE when ascr_rdtt.CodeValue in ('Decimal','Percentage','Percentile')  AND TRY_CAST(sas.Result AS FLOAT)  IS NOT NULL THEN sas.Result ELSE NULL END AS DecimalScoreResult,
 				  CASE when ascr_rdtt.CodeValue not in ('Integer','Decimal','Percentage','Percentile') THEN sas.Result ELSE NULL END AS LiteralScoreResult,
 				  CONVERT(DATE ,sa.AdministrationDate) AS ModifiedDate ,
-				  CONCAT_WS('|','Ed-Fi',CONVERT(NVARCHAR(MAX),s.StudentUSI)) AS  _sourceStudentKey,
+				  CONCAT_WS('|','Ed-Fi',s.StudentUniqueId) AS  _sourceStudentKey,
 				  CONVERT(DATE ,sa.AdministrationDate) AS  _sourceTimeKey,
-				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa.AssessmentIdentifier),'N/A',Convert(NVARCHAR(MAX),armt.CodeValue)) AS  _sourceAssessmentKey
+				  CONCAT_WS('|','Ed-Fi',sa.AssessmentIdentifier,'N/A',armt.CodeValue) AS  _sourceAssessmentKey
 			--select top 1 'Ed-Fi|' + Convert(NVARCHAR(MAX),sa.AssessmentIdentifier)  + '|N/A|' + Convert(NVARCHAR(MAX),armt.CodeValue), sa.AdministrationDate,*  
 			FROM [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].Student s 
       
@@ -8155,7 +8490,7 @@ BEGIN
 				--student assessment score results
 				inner join [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].StudentAssessmentScoreResult sas on sa.StudentAssessmentIdentifier = sas.StudentAssessmentIdentifier
 																and sa.AssessmentIdentifier = sas.AssessmentIdentifier
-
+																and sa.StudentUSI = sas.StudentUSI
 				--assessment 
 				inner join [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].Assessment a on sa.AssessmentIdentifier = a.AssessmentIdentifier 
 
@@ -8167,13 +8502,14 @@ BEGIN
 				
 			WHERE CHARINDEX('MCAS',a.AssessmentIdentifier,1) = 1 
 				 AND sa.AdministrationDate >= '07/01/2018'		
+				 AND sa.AdministrationDate <= GETDATE()
 				 AND  (
 					   (sa.LastModifiedDate > @LastLoadDate  AND sa.LastModifiedDate <= @NewLoadDate)			     
 					  )
 
 		UNION ALL
 		SELECT   DISTINCT 
-			      CONCAT_WS('|',CONVERT(NVARCHAR(MAX),s.StudentUSI),sa.StudentAssessmentIdentifier),
+			      CONCAT_WS('|',s.StudentUniqueId, CONVERT(NVARCHAR, sa.AdministrationDate, 112), sa.AssessmentIdentifier,'N/A',apl_sd.CodeValue) AS _sourceKey,				  
 				  NULL AS StudentKey,
 				  NULL AS TimeKey,	  
 				  NULL AS AssessmentKey,
@@ -8184,7 +8520,7 @@ BEGIN
 				  CONVERT(DATE ,sa.AdministrationDate) AS ModifiedDate ,
 				  CONCAT_WS('|','Ed-Fi',CONVERT(NVARCHAR(MAX),s.StudentUSI)) AS  _sourceStudentKey,
 				  CONVERT(DATE ,sa.AdministrationDate) AS  _sourceTimeKey,
-				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa.AssessmentIdentifier),'N/A',Convert(NVARCHAR(MAX),apl_sd.CodeValue)) AS  _sourceAssessmentKey
+				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),sa.AssessmentIdentifier),'N/A',apl_sd.CodeValue) AS  _sourceAssessmentKey
 			--select top 100 *  
 			FROM [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].Student s 
       
@@ -8193,7 +8529,7 @@ BEGIN
 	
 				inner  join [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].StudentAssessmentPerformanceLevel sapl on sa.StudentAssessmentIdentifier = sapl.StudentAssessmentIdentifier
 																		 and sa.AssessmentIdentifier = sapl.AssessmentIdentifier
-															 --    and apl.PerformanceLevelDescriptorId = sapl.PerformanceLevelDescriptorId
+         															     AND sa.StudentUSI = sapl.StudentUSI
     
 				--assessment 
 				inner join [EDFISQL01].[EdFi_BPS_Production_Ods].[edfi].Assessment a on sa.AssessmentIdentifier = a.AssessmentIdentifier 
@@ -8207,6 +8543,7 @@ BEGIN
 
 			WHERE CHARINDEX('MCAS',a.AssessmentIdentifier,1) = 1           
 				 AND sa.AdministrationDate >= '07/18/2018'
+				 AND sa.AdministrationDate <= GETDATE()
 				 AND  (
 					   (sa.LastModifiedDate > @LastLoadDate  AND sa.LastModifiedDate <= @NewLoadDate)			     
 					  )
@@ -8256,13 +8593,16 @@ BEGIN
 		 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = (
-								SELECT TOP (1) ds.StudentKey
-								FROM dbo.DimStudent ds
-								WHERE s._sourceStudentKey = ds._sourceKey									
+		SET s.StudentKey = COALESCE(
+								(SELECT TOP (1) ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE s._sourceStudentKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
+								 ORDER BY ds.[ValidFrom] DESC),
+								(SELECT ds.StudentKey
+								 FROM dbo.DimStudent ds
+								 WHERE ds._sourceKey = '')
 							),
 			s.TimeKey = (
 							SELECT TOP (1) dt.TimeKey
@@ -8270,21 +8610,38 @@ BEGIN
 							WHERE s._sourceTimeKey = dt.SchoolDate
 							ORDER BY dt.SchoolDate
 						),		
-			s.AssessmentKey =(
-								SELECT TOP (1) da.AssessmentKey
-								FROM dbo.DimAssessment da
-								WHERE s._sourceAssessmentKey = da._sourceKey									
-									AND s.[ModifiedDate] >= da.[ValidFrom]
-									AND s.[ModifiedDate] < da.[ValidTo]
-								ORDER BY da.[ValidFrom] DESC
+			s.AssessmentKey =COALESCE(
+								(SELECT TOP (1) da.AssessmentKey
+								 FROM dbo.DimAssessment da
+								 WHERE s._sourceAssessmentKey = da._sourceKey									
+									 AND s.[ModifiedDate] >= da.[ValidFrom]
+									 AND s.[ModifiedDate] < da.[ValidTo]
+								 ORDER BY da.[ValidFrom] DESC),
+								 (SELECT da.AssessmentKey
+								 FROM dbo.DimAssessment da
+								 WHERE da._sourceKey = '')
+
 						 	 )  										             
         FROM Staging.StudentAssessmentScore s;
 		
-		DELETE FROM Staging.StudentAssessmentScore
-		--SELECT * FROM Staging.StudentAssessmentScore
-		WHERE StudentKey IS NULL OR 
-		      TimeKey IS NULL OR			  
-			  AssessmentKey IS NULL;
+	    DELETE FROM Staging.StudentAssessmentScore 
+		WHERE TimeKey IS NULL
+        
+		;WITH DuplicateKeys AS 
+		(
+		  SELECT [StudentKey], [TimeKey],[AssessmentKey]
+		  FROM  Staging.StudentAssessmentScore
+		  GROUP BY [StudentKey], [TimeKey],[AssessmentKey]
+		  HAVING COUNT(*) > 1
+		)
+		
+		DELETE sd 
+		FROM Staging.StudentAssessmentScore sd
+		WHERE EXISTS(SELECT 1 
+		             FROM DuplicateKeys dk 
+					 WHERE sd.[StudentKey] = dk.StudentKey
+					   AND sd.[TimeKey] = dk.[TimeKey]
+					   AND sd.[AssessmentKey] = dk.[AssessmentKey])
 
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentAssessmentScore ON dbo.FactStudentAssessmentScore;
@@ -8307,7 +8664,7 @@ BEGIN
 						   ,IntegerScoreResult
 						   ,DecimalScoreResult
 						   ,LiteralScoreResult
-						   ,[LineageKey])
+						   ,LineageKey)
 		SELECT DISTINCT 
 		   [_sourceKey],
 		   [StudentKey],
@@ -8357,7 +8714,7 @@ BEGIN
 						   ,IntegerScoreResult
 						   ,DecimalScoreResult
 						   ,LiteralScoreResult
-						   ,[LineageKey])
+						   ,LineageKey)
 
 					SELECT   DISTINCT 
 						  'LegacyDW',
@@ -8369,7 +8726,7 @@ BEGIN
 						  CASE when da.ResultDatatypeTypeDescriptor_CodeValue in ('Decimal','Percentage','Percentile')  AND TRY_CAST(us.scorevalue AS FLOAT)  IS NOT NULL THEN us.scorevalue ELSE NULL END AS DecimalScoreResult,
 						  CASE when da.ResultDatatypeTypeDescriptor_CodeValue not in ('Integer','Decimal','Percentage','Percentile') THEN us.scorevalue ELSE NULL END AS LiteralScoreResult,
 						  --us.*
-						  @lineageKey AS [LineageKey]
+						  @lineageKey AS LineageKey
 					--select top 100 *  
 					FROM UnpivotedScores us
 
@@ -8479,7 +8836,7 @@ BEGIN
 			  ,[IntegerScoreResult]
 			  ,[DecimalScoreResult]
 			  ,[LiteralScoreResult]
-			  ,[LineageKey])
+			  ,LineageKey)
 
 		--Deriving
 		--dropping the columnstore index
@@ -8567,7 +8924,7 @@ BEGIN
 			SET 
 				EndTime = SYSDATETIME(),
 				Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -8660,7 +9017,7 @@ BEGIN
 		)
 		
 		SELECT DISTINCT
-			   CONCAT_WS('|',Convert(NVARCHAR(MAX),ct.StudentUSI),Convert(NVARCHAR(MAX),ct.SchoolYear),Convert(NVARCHAR(MAX),ct.SchoolId),Convert(NVARCHAR(MAX),ct.CourseCode),td.CodeValue) AS _sourceKey,
+			   CONCAT_WS('|',s.StudentUniqueId,Convert(NVARCHAR(MAX),ct.SchoolYear),Convert(NVARCHAR(MAX),ct.SchoolId),Convert(NVARCHAR(MAX),ct.CourseCode),td.CodeValue) AS _sourceKey,
 			   NULL AS StudentKey,
 			   NULL AS TimeKey,	  
 			   NULL AS CourseKey,
@@ -8670,19 +9027,22 @@ BEGIN
 			   ct.FinalLetterGradeEarned,
 			   ct.FinalNumericGradeEarned,			   
 			   ct.LastModifiedDate AS ModifiedDate,
-			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ct.StudentUSI)) AS _sourceStudentKey,
+			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId) AS _sourceStudentKey,
 		       ct.SchoolYear AS _sourceSchoolYear,		          
 			   td.CodeValue AS _sourceTerm,		          
 			   CONCAT_WS('|','Ed-Fi',ct.CourseCode)  AS _sourceCourseKey,
 			   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ct.SchoolId))  AS _sourceSchoolKey
 		--select *  
 		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CourseTranscript ct
+		    INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s ON ct.StudentUSI = s.StudentUSI
 			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor td ON ct.TermDescriptorId = td.DescriptorId
 		WHERE  			
 			  ct.SchoolYear >= 2019			
 			 AND  (
 					   (ct.LastModifiedDate > @LastLoadDate  AND ct.LastModifiedDate <= @NewLoadDate)			     
 				  )
+		
+
 		
 	END TRY
 	BEGIN CATCH
@@ -8734,34 +9094,44 @@ BEGIN
 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = (
-								SELECT TOP (1) ds.StudentKey
-								FROM dbo.DimStudent ds
-								WHERE s._sourceStudentKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
-							),
-			s.SchoolKey = (
-								SELECT TOP (1) ds.SchoolKey
-								FROM dbo.DimSchool ds
-								WHERE s._sourceSchoolKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC
-							),
-			s.CourseKey = (
-								SELECT TOP (1) dc.CourseKey
-								FROM dbo.DimCourse dc
-								WHERE s._sourceCourseKey = dc._sourceKey									
-									AND s.[ModifiedDate] >= dc.[ValidFrom]
-									AND s.[ModifiedDate] < dc.[ValidTo]
-								ORDER BY dc.[ValidFrom] DESC
-							)													             
+		SET s.StudentKey = COALESCE(
+									(SELECT TOP (1) ds.StudentKey
+									 FROM dbo.DimStudent ds
+									 WHERE s._sourceStudentKey = ds._sourceKey									
+										AND s.[ModifiedDate] >= ds.[ValidFrom]
+										AND s.[ModifiedDate] < ds.[ValidTo]
+									 ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.StudentKey
+									 FROM dbo.DimStudent ds
+									 WHERE ds._sourceKey = '')
+							       ),
+			s.SchoolKey = COALESCE(
+									(SELECT TOP (1) ds.SchoolKey
+									FROM dbo.DimSchool ds
+									WHERE s._sourceSchoolKey = ds._sourceKey									
+										AND s.[ModifiedDate] >= ds.[ValidFrom]
+										AND s.[ModifiedDate] < ds.[ValidTo]
+									ORDER BY ds.[ValidFrom] DESC),
+									(SELECT ds.SchoolKey
+										FROM dbo.DimSchool ds
+										WHERE ds._sourceKey = '')
+							      ),	
+			s.CourseKey = COALESCE(
+									(SELECT TOP (1) dc.CourseKey
+									FROM dbo.DimCourse dc
+									WHERE s._sourceSchoolKey = dc._sourceKey									
+										AND s.[ModifiedDate] >= dc.[ValidFrom]
+										AND s.[ModifiedDate] < dc.[ValidTo]
+									ORDER BY dc.[ValidFrom] DESC),
+									(SELECT dc.CourseKey
+										FROM dbo.DimCourse dc
+										WHERE dc._sourceKey = '')
+							      )												             
         FROM Staging.StudentCourseTranscript s;
 
 		--updating the timeKey
 		--this is a special case since we need the min date term
+		--found that some schools have the terms repeated
 		;WITH SchoolTermsFirstDates AS 
 			(
 			  SELECT DISTINCT dt.SchoolKey, 
@@ -8792,15 +9162,31 @@ BEGIN
 												   AND dt.SchoolDate = std.MinTermDate )
 							ORDER BY dt.SchoolDate )
          FROM Staging.StudentCourseTranscript s;
-
-
-		DELETE FROM Staging.StudentCourseTranscript
-		--select * FROM Staging.StudentCourseTranscript
-		WHERE StudentKey IS NULL OR 
-		      TimeKey IS NULL OR
-			  SchoolKey IS NULL OR
-			  CourseKey IS NULL;
 		
+		--we don't have a date associate with the newly identified staging records 
+		--we cannot default unknown TimeKey to specific dates
+		--these must be bad records. Deleting...
+		DELETE FROM Staging.StudentCourseTranscript 
+		WHERE TimeKey IS null
+
+
+		;WITH DuplicateKeys AS 
+		(
+		  SELECT [StudentKey], [TimeKey],[SchoolKey],[CourseKey]
+		  FROM  Staging.StudentCourseTranscript
+		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],[CourseKey]
+		  HAVING COUNT(*) > 1
+		)
+		
+		DELETE sd 
+		FROM Staging.StudentCourseTranscript sd
+		WHERE EXISTS(SELECT 1 
+		             FROM DuplicateKeys dk 
+					 WHERE sd.[StudentKey] = dk.StudentKey
+					   AND sd.[TimeKey] = dk.[TimeKey]
+					   AND sd.[SchoolKey] = dk.[SchoolKey]
+					   AND sd.CourseKey = dk.CourseKey)
+
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentCourseTranscript ON dbo.FactStudentCourseTranscript;		   
 
@@ -8821,7 +9207,7 @@ BEGIN
 						,PossibleCredits 
 						,FinalLetterGradeEarned
 						,FinalNumericGradeEarned
-						,[LineageKey])
+						,LineageKey)
 		SELECT DISTINCT 
 		      [_sourceKey]
 			 ,[StudentKey]
@@ -8832,7 +9218,7 @@ BEGIN
 			 ,PossibleCredits 
 			 ,FinalLetterGradeEarned
 			 ,FinalNumericGradeEarned
-			 ,@LineageKey AS [LineageKey]
+			 ,@LineageKey AS LineageKey
         FROM Staging.StudentCourseTranscript
 		
 		IF (NOT EXISTS(SELECT 1  
@@ -8860,7 +9246,7 @@ BEGIN
 							,PossibleCredits 
 							,FinalLetterGradeEarned
 							,FinalNumericGradeEarned
-							,[LineageKey])
+							,LineageKey)
 		    
 				SELECT DISTINCT
 						'LegacyDW',
@@ -8878,7 +9264,7 @@ BEGIN
 						END AS FinalLetterGradeEarned,
 						CASE WHEN TRY_CAST(scg.FinalMark AS DECIMAL) IS NOT NULL THEN scg.FinalMark ELSE NULL END AS FinalNumericGradeEarned,
 						--dt.SchoolDate, *
-						@lineageKey AS [LineageKey]
+						@lineageKey AS LineageKey
 				--select *  
 				FROM [BPSGranary02].[RAEDatabase].[dbo].[StudentCourseGrade_aspenNewFormat] scg
     
@@ -8939,14 +9325,14 @@ BEGIN
 			,[PossibleCredits]
 			,[FinalLetterGradeEarned]
 			,[FinalNumericGradeEarned]
-			,[LineageKey])
+			,LineageKey)
 			
 		-- updating the EndTime to now and status to Success		
 		UPDATE dbo.ETL_Lineage
 		SET 
 			EndTime = SYSDATETIME(),
 			Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date
@@ -8992,7 +9378,6 @@ BEGIN
 END;
 GO
 
-
 --Fact StudentCourseGrades
 ----------------------------------------------------------------------------------
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_FactStudentCourseGrade_PopulateStaging] 
@@ -9033,7 +9418,7 @@ BEGIN
 		)
 		
 		SELECT DISTINCT
-			   CONCAT_WS('|','Ed-Fi',s.StudentUSI,g.SchoolId,g.LocalCourseCode,g.SchoolYear,g.UniqueSectionCode,td.CodeValue,CONVERT(NVARCHAR, g.BeginDate, 112),gp.GradingPeriodDescriptorId,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceKey,
+			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId,g.SchoolId,g.LocalCourseCode,staff.StaffUniqueId,g.SchoolYear,g.UniqueSectionCode,td_g.CodeValue,CONVERT(NVARCHAR, g.BeginDate, 112),td_gp.CodeValue,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceKey,
 			   NULL AS TimeKey,	  			   
 			   NULL AS GradingPeriodKey,
 			   NULL AS StudentSectionKey,
@@ -9041,7 +9426,7 @@ BEGIN
 			   g.NumericGradeEarned,
 			   g.LastModifiedDate AS ModifiedDate,			   			   
 			   CONCAT_WS('|','Ed-Fi',gp.GradingPeriodDescriptorId,gp.SchoolId,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceGradingPeriodKey,		          
-			   CONCAT_WS('|','Ed-Fi',s.StudentUSI,g.SchoolId,g.LocalCourseCode,g.SchoolYear,g.UniqueSectionCode,td.CodeValue, CONVERT(NVARCHAR, g.BeginDate, 112) ) AS _sourceStudentSectionKey
+			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId,g.SchoolId,g.LocalCourseCode,staff.StaffUniqueId,g.SchoolYear,g.UniqueSectionCode,td_g.CodeValue, CONVERT(NVARCHAR, g.BeginDate, 112) ) AS _sourceStudentSectionKey
 		
 		FROM
 			[EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Grade AS g
@@ -9051,7 +9436,15 @@ BEGIN
 				                                                                         AND g.SequenceOfCourse = gp.PeriodSequence
 																						 AND g.SchoolId = gp.SchoolId
 																						 AND g.SchoolYear = dbo.Func_ETL_GetSchoolYear(gp.BeginDate) 
-				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS td ON g.TermDescriptorId = td.DescriptorId
+				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS td_g ON g.TermDescriptorId = td_g.DescriptorId
+				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor AS td_gp ON	gp.GradingPeriodDescriptorId = td_gp.DescriptorId
+
+				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa ON g.SchoolId = staff_sa.SchoolId
+																									  AND g.LocalCourseCode = staff_sa.LocalCourseCode
+																									  AND g.SchoolYear = staff_sa.SchoolYear
+																									  AND g.UniqueSectionCode = staff_sa.UniqueSectionCode
+				INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI										
+
 		WHERE gt.CodeValue = 'Grading Period'
 		      AND g.SchoolYear >= 2019 
 		      AND (
@@ -9107,7 +9500,7 @@ BEGIN
 
 		--updating staging keys
 		UPDATE s
-		SET  s.TimeKey = (
+		SET  s.TimeKey =    (
 								SELECT TOP (1) dt.TimeKey
 								FROM dbo.DimTime dt										
 								WHERE EXISTS (SELECT 1 
@@ -9120,32 +9513,50 @@ BEGIN
 											  )
 								ORDER BY dt.SchoolDate
 							),
-		     s.[GradingPeriodKey] = (
-								SELECT TOP (1) dgp.GradingPeriodKey
-								FROM dbo.DimGradingPeriod dgp
-								WHERE s.[_sourceGradingPeriodey] = dgp._sourceKey									
-									AND s.[ModifiedDate] >= dgp.[ValidFrom]
-									AND s.[ModifiedDate] < dgp.[ValidTo]
-								ORDER BY dgp.[ValidFrom] DESC
-							),
-			s.[StudentSectionKey] = (
-								SELECT TOP (1) dss.StudentSectionKey
-								FROM dbo.DimStudentSection dss
-								WHERE s.[_sourceStudentSectionKey] = dss._sourceKey									
-									AND s.[ModifiedDate] >= dss.[ValidFrom]
-									AND s.[ModifiedDate] < dss.[ValidTo]
-								ORDER BY dss.[ValidFrom] DESC
-							)													             
+		     s.[GradingPeriodKey] = COALESCE(
+												(SELECT TOP (1) dgp.GradingPeriodKey
+												FROM dbo.DimGradingPeriod dgp
+												WHERE s.[_sourceGradingPeriodey] = dgp._sourceKey									
+													AND s.[ModifiedDate] >= dgp.[ValidFrom]
+													AND s.[ModifiedDate] < dgp.[ValidTo]
+												ORDER BY dgp.[ValidFrom] DESC),
+												(SELECT dgp.GradingPeriodKey
+												FROM dbo.DimGradingPeriod dgp
+												WHERE dgp._sourceKey = '')
+											),
+			s.[StudentSectionKey] = COALESCE(
+												(SELECT TOP (1) dss.StudentSectionKey
+												 FROM dbo.DimStudentSection dss
+												 WHERE s.[_sourceStudentSectionKey] = dss._sourceKey									
+													AND s.[ModifiedDate] >= dss.[ValidFrom]
+													AND s.[ModifiedDate] < dss.[ValidTo]
+												 ORDER BY dss.[ValidFrom] DESC),
+												(SELECT dss.StudentSectionKey
+												 FROM dbo.DimStudentSection dss
+												 WHERE dss._sourceKey = '')
+									       )													             
         FROM Staging.StudentCourseGrade s;
 
 		
-
 		DELETE FROM Staging.[StudentCourseGrade]
-		--select * FROM Staging.StudentCourseTranscript
-		WHERE TimeKey IS NULL OR
-			  GradingPeriodKey IS NULL OR
-			  StudentSectionKey IS NULL;
+		WHERE TimeKey IS NULL;
 		
+		;WITH DuplicateKeys AS 
+		(
+		  SELECT [TimeKey],[GradingPeriodKey],[StudentSectionKey]
+		  FROM  Staging.[StudentCourseGrade]
+		  GROUP BY [TimeKey],[GradingPeriodKey],[StudentSectionKey]
+		  HAVING COUNT(*) > 1
+		)
+		
+		DELETE sd	
+		FROM Staging.[StudentCourseGrade] sd
+		WHERE EXISTS(SELECT 1 
+		             FROM DuplicateKeys dk 
+					 WHERE sd.[TimeKey] = dk.[TimeKey]
+					   AND sd.[GradingPeriodKey] = dk.[GradingPeriodKey]
+					   AND sd.[StudentSectionKey] = dk.[StudentSectionKey])
+
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentCourseGrades ON dbo.FactStudentCourseGrade;		   
 
@@ -9174,7 +9585,7 @@ BEGIN
               StudentSectionKey,
               LetterGradeEarned,
               NumericGradeEarned,
-			  @LineageKey AS [LineageKey]
+			  @LineageKey AS LineageKey
         FROM [Staging].[StudentCourseGrade]
 		
 		
@@ -9194,7 +9605,7 @@ BEGIN
 		SET 
 			EndTime = SYSDATETIME(),
 			Status = 'S' -- success
-		WHERE [LineageKey] = @LineageKey;
+		WHERE LineageKey = @LineageKey;
 	
 	
 		-- Update the LoadDates table with the most current load date

@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="237"
-  DTS:VersionGUID="{CB88E772-7031-46AE-9BC1-A0F4F5EE0AD7}">
+  DTS:VersionBuild="238"
+  DTS:VersionGUID="{9BC55619-4D4D-452F-BD84-65E215258EAA}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYdVM1yoOc0+Iwr7iqF3digAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAB9JUVOrEla8uHsCVMvASwNKDzxKOi7tpaoInljNT6pHAAAAAAOgAAAAAIAACAAAABXbNRV57keEUt2k5RQujvGqiI1d1SU1mzVnjJIMWT2zCAAAAAFHZJvKg1+vb49s+wA3NWZyAm7OP3vRaZWMSrCPH0nR0AAAAAtSRYqyQbDmB0aUyPx7PhaaSOzq+Oq0vKPHBBgCUeLcKNlnPx0pu4LkATF+BHQbC2OP8/rMVW/sohKCTseRs2m</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYdVM1yoOc0+Iwr7iqF3digAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAATfLGzf/ghaUqFvcd5YNRId3/gKGm7C9KsfsepWzn6PQAAAAAOgAAAAAIAACAAAAAt09bCx7u2f7C2i4FI+Jng/AvC+NSO8JJ1KCiZk7O3KiAAAADdH87/5GbkJYrVvPXrzJki+Q5YpRE0va0t+BO65ubTdkAAAACAULEQRiYTxhhRYa5AcAxONParOJK2zQX/TkPjrUDXO8+jQLWECZYPUFAhSpGDZxHv/5vzZz73Jo51PdRtMNWQ</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -3466,15 +3466,15 @@
       <GraphLayout
         Capacity="256" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:mssgm="clr-namespace:Microsoft.SqlServer.Graph.Model;assembly=Microsoft.SqlServer.Graph">
         <NodeLayout
-          Size="168.8,41.6"
+          Size="169,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Derive Staff Access"
           TopLeft="1643.6111111663,269.888888911848" />
         <NodeLayout
-          Size="276,43.2"
+          Size="276,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Current Load"
           TopLeft="25.1964300362662,94.4360946005966" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -3482,15 +3482,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Populate Production"
           TopLeft="24.2142871378787,375.513168854398" />
         <NodeLayout
-          Size="278.4,41.6"
+          Size="278,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="268,47.2"
+          Size="268,47"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="280,41.6"
+          Size="280,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3606,16 +3606,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,457.6"
-          Size="316.8,500.8"
+          PanelSize="317,458"
+          Size="317,501"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\School Dimension"
           TopLeft="47.1666666666667,29.5714285714287" />
         <NodeLayout
-          Size="268,41.6"
+          Size="268,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Current Load"
           TopLeft="29.1964300362663,94.4360946005966" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -3623,15 +3623,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Production"
           TopLeft="24.2142871378787,375.513168854398" />
         <NodeLayout
-          Size="278.4,41.6"
+          Size="278,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="268,47.2"
+          Size="268,47"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="276,41.6"
+          Size="276,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642062,166.278201216004" />
         <EdgeLayout
@@ -3747,32 +3747,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,476.8"
-          Size="316.8,520"
+          PanelSize="317,477"
+          Size="317,520"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Staff Dimension"
           TopLeft="1209.16666666667,30.571428571429" />
         <NodeLayout
-          Size="267.2,43.2"
+          Size="267,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="265.6,41.6"
+          Size="266,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Get Date Of Previous Load"
           TopLeft="30.5535728508349,236.325196309716" />
         <NodeLayout
-          Size="268.8,44"
+          Size="269,44"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="268,41.6"
+          Size="268,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Staging"
           TopLeft="31.8705371914306,305.011285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="271.2,41.6"
+          Size="271,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -3888,16 +3888,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,465.6"
-          Size="316.8,508.8"
+          PanelSize="317,466"
+          Size="317,509"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension"
           TopLeft="793.305050739996,29.571428571429" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="264,41.6"
+          Size="264,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -3905,15 +3905,15 @@
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="270.4,41.6"
+          Size="270,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4029,8 +4029,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,468"
-          Size="316.8,511.2"
+          PanelSize="317,468"
+          Size="317,511"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Time Dimension"
           TopLeft="420.055050739998,27.5375910762467" />
         <EdgeLayout
@@ -4061,14 +4061,14 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="56.2499999999984,0"
+              EndConnector="56.249999999998,0"
               Start="0,0"
-              End="48.7499999999984,0">
+              End="48.749999999998,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="48.7499999999984,0" />
+                    End="48.749999999998,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4083,14 +4083,14 @@
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
-              EndConnector="98.8616159266708,0"
+              EndConnector="98.8616159266739,0"
               Start="0,0"
-              End="91.3616159266708,0">
+              End="91.3616159266739,0">
               <mssgle:Curve.Segments>
                 <mssgle:SegmentCollection
                   Capacity="5">
                   <mssgle:LineSegment
-                    End="91.3616159266708,0" />
+                    End="91.3616159266739,0" />
                 </mssgle:SegmentCollection>
               </mssgle:Curve.Segments>
             </mssgle:Curve>
@@ -4124,32 +4124,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="1921.6,640"
-          Size="1921.6,683.2"
+          PanelSize="1922,640"
+          Size="1922,683"
           Id="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load"
           TopLeft="1387.27375897813,165.023806896663" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="268.8,44"
+          Size="269,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4265,16 +4265,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Dim Assessment"
           TopLeft="52.3214285714289,19.6428571428571" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="267.2,41.6"
+          Size="267,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
@@ -4282,15 +4282,15 @@
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642062,166.278201216004" />
         <EdgeLayout
@@ -4406,8 +4406,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,476.8"
-          Size="316.8,520"
+          PanelSize="317,477"
+          Size="317,520"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment\Fcat StudentAssessmentScore"
           TopLeft="55.5714285714284,570.357142857143" />
         <EdgeLayout
@@ -4435,16 +4435,16 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="417.6,1156.8"
-          Size="417.6,1200"
+          PanelSize="418,1157"
+          Size="418,1200"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment"
           TopLeft="1051.5912686271,12.8849206808352" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268.8,41.6"
+          Size="269,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
@@ -4452,15 +4452,15 @@
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="276,41.6"
+          Size="276,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4576,32 +4576,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory"
           TopLeft="58,23.9285714285713" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Get Date Of Previous Load"
           TopLeft="25.5535728508349,236.325196309716" />
         <NodeLayout
-          Size="270.4,44"
+          Size="270,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Production"
           TopLeft="27.9642871378788,375.513168854398" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -4717,8 +4717,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Fcat StudentAttendanceByDay"
           TopLeft="59.4642857142858,576.071428571428" />
         <EdgeLayout
@@ -4746,32 +4746,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="422.4,1159.2"
-          Size="422.4,1201.6"
+          PanelSize="422,1159"
+          Size="422,1202"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance"
           TopLeft="24.3214285714288,12.4642857142899" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
           TopLeft="29.3630966367059,96.1694279477051" />
         <NodeLayout
-          Size="268.8,41.6"
+          Size="269,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="272.8,44"
+          Size="273,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="271.2,41.6"
+          Size="271,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Populate Staging"
           TopLeft="26.9499021683005,309.15017480596" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Set Table Name"
           TopLeft="28.8526771282118,24.3893103810526" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Update Lineage Table And Retrieve Key"
           TopLeft="28.2023823505479,167.516296463939" />
         <EdgeLayout
@@ -4887,32 +4887,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod"
           TopLeft="53.8888888336996,25.6777778030325" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268.8,41.6"
+          Size="269,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="272.8,44"
+          Size="273,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="271.2,41.6"
+          Size="271,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5028,32 +5028,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim StudentSection"
           TopLeft="492.510315205433,29.5158730716303" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Current Load"
           TopLeft="28.8869061794371,93.197999352662" />
         <NodeLayout
-          Size="267.2,41.6"
+          Size="267,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Get Date Of Previous Load"
           TopLeft="28.9464299936917,238.825196309716" />
         <NodeLayout
-          Size="270.4,44"
+          Size="270,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="276,41.6"
+          Size="276,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5169,8 +5169,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,476.8"
-          Size="316.8,520"
+          PanelSize="317,477"
+          Size="317,520"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Fcat StudentCourseGrades"
           TopLeft="265.908721935497,609.380952708114" />
         <EdgeLayout
@@ -5232,32 +5232,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="859.2,1184"
-          Size="859.2,1227.2"
+          PanelSize="859,1184"
+          Size="859,1227"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades"
           TopLeft="2053.96975866695,18.7888889944991" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268.8,41.6"
+          Size="269,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Previous Load"
           TopLeft="28.0535728508349,236.325196309716" />
         <NodeLayout
-          Size="268.8,44"
+          Size="269,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Populate Staging"
           TopLeft="24.3705371914306,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5373,32 +5373,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident"
           TopLeft="52.3214285714287,20.8928571428573" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268,41.6"
+          Size="268,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Get Date Of Previous Load"
           TopLeft="29.3035728508348,236.325196309716" />
         <NodeLayout
-          Size="268.8,43.2"
+          Size="269,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="272,41.6"
+          Size="272,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5514,8 +5514,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,484.8"
-          Size="316.8,528"
+          PanelSize="317,485"
+          Size="317,528"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Fcat StudentDiscipline"
           TopLeft="51.6428571428571,570.535714285714" />
         <EdgeLayout
@@ -5543,32 +5543,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="406.4,1158.4"
-          Size="406.4,1201.6"
+          PanelSize="406,1159"
+          Size="406,1202"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline"
           TopLeft="550.313490959702,16.8134921094054" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="268.8,41.6"
+          Size="269,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Previous Load"
           TopLeft="28.0535728508348,236.325196309716" />
         <NodeLayout
-          Size="272.8,44"
+          Size="273,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Production"
           TopLeft="27.9642871378787,375.513168854398" />
         <NodeLayout
-          Size="271.2,41.6"
+          Size="271,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5684,32 +5684,32 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,473.6"
-          Size="316.8,516.8"
+          PanelSize="317,474"
+          Size="317,517"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course"
           TopLeft="52.5,22.5" />
         <NodeLayout
-          Size="268,43.2"
+          Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Current Load"
           TopLeft="27.6964300362662,94.4360946005966" />
         <NodeLayout
-          Size="267.2,41.6"
+          Size="267,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Get Date Of Previous Load"
           TopLeft="27.7559538505211,241.301386805585" />
         <NodeLayout
-          Size="270.4,44"
+          Size="270,44"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Production"
           TopLeft="27.9642871378787,376.751264102333" />
         <NodeLayout
-          Size="276,41.6"
+          Size="276,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Populate Staging"
           TopLeft="24.3705371914307,306.261285894113" />
         <NodeLayout
-          Size="265.6,47.2"
+          Size="266,47"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Set Table Name"
           TopLeft="28.8526771282112,22.9448659251289" />
         <NodeLayout
-          Size="275.2,41.6"
+          Size="275,42"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript\Update Lineage Table And Retrieve Key"
           TopLeft="25.8214300642061,166.278201216004" />
         <EdgeLayout
@@ -5825,8 +5825,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="316.8,476.8"
-          Size="316.8,520"
+          PanelSize="317,477"
+          Size="317,520"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Fcat StudentCourseTranscript"
           TopLeft="58.9642857142858,568.214285714285" />
         <EdgeLayout
@@ -5855,7 +5855,7 @@
           HeaderHeight="43"
           IsExpanded="True"
           PanelSize="416,1160"
-          Size="416,1203.2"
+          Size="416,1203"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts"
           TopLeft="1536.68253782186,14.003968309727" />
         <EdgeLayout
@@ -5969,8 +5969,8 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="2938.4,1359.2"
-          Size="2938.4,1402.4"
+          PanelSize="2938,1359"
+          Size="2938,1402"
           Id="Package\Each of these containers run regardless of whether others succeed"
           TopLeft="812.111091960361,1002.83729886339" />
         <EdgeLayout
