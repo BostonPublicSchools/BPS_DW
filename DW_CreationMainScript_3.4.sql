@@ -1284,7 +1284,7 @@ if NOT EXISTS (select 1
 			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentAssessmentScore
 (
-  [_sourceKey] NVARCHAR(50) NOT NULL,
+  [_sourceKey] NVARCHAR(500) NOT NULL,
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
@@ -3791,7 +3791,7 @@ BEGIN
 				       N'N/A',       -- PrimaryElectronicMailAddress - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
-					   N'N/A',       -- EducationOrganizationId - int
+					   0,            -- EducationOrganizationId - int
 					   N'N/A',       -- ShortNameOfInstitution - nvarchar(500)
 					   N'N/A',       -- NameOfInstitution - nvarchar(500)
 				       N'N/A',       -- StaffUniqueId - nvarchar(32)
@@ -5119,9 +5119,11 @@ BEGIN
 		FROM dbo.DimStaff ds
 		     CROSS JOIN dbo.DimSchool dschool
 		WHERE 1=1 --ssa.StaffUSI = 9786
-		  AND ds.IsCurrent = 1		  
+		  AND ds.IsCurrent = 1				  
 		  AND dschool.DistrictSchoolCode <>  '9035' -- central office BPS
 		  AND dschool.IsCurrent = 1
+		  AND ds.IsLatest = 1
+		  AND dschool.IsLatest = 1
 		  AND EXISTS (SELECT 1 
 		              FROM #currentYearStaff_DistrictAdmins t
 					  WHERE ds._sourceKey = t.StaffSourceKey)
@@ -5142,6 +5144,8 @@ BEGIN
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1		  
 		  AND dschool.IsCurrent = 1
+		  AND ds.IsLatest = 1
+		  AND dschool.IsLatest = 1
         
 	    --re-creating the columnstore index
 		CREATE COLUMNSTORE INDEX CSI_Derived_StaffCurrentSchool  ON [Derived].[StaffCurrentSchools] ( [StaffKey],[SchoolKey])		
@@ -5192,6 +5196,7 @@ BEGIN
 			 CROSS JOIN allGradeLevels scgl 
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1
+		  AND ds.IsLatest = 1
 		  AND EXISTS (SELECT 1 
 		              FROM #currentYearStaff_DistrictAdmins t
 					  WHERE ds._sourceKey = t.StaffSourceKey)
@@ -5231,7 +5236,10 @@ BEGIN
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1		  
 		  AND dst.IsCurrent = 1
-		  AND dschool.IsCurrent = 1;
+		  AND dschool.IsCurrent = 1
+		  AND ds.IsLatest = 1
+		  AND dschool.IsLatest = 1
+		  AND dst.IsLatest=1;
 		
 
 	   --teachers
@@ -5306,6 +5314,8 @@ BEGIN
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1
 		  AND dst.IsCurrent = 1
+		  AND ds.IsLatest = 1		  
+		  AND dst.IsLatest=1		  
 		  AND EXISTS (SELECT 1 
 		              FROM #currentYearStaff_DistrictAdmins t
 					  WHERE ds._sourceKey = t.StaffSourceKey)
@@ -5327,7 +5337,10 @@ BEGIN
 			 INNER JOIN dbo.DimStudent dst ON dschool.SchoolKey	 = dst.SchoolKey
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1
-		  AND dst.IsCurrent = 1		*/  
+		  AND dst.IsCurrent = 1
+		  AND ds.IsLatest = 1		  
+		  AND dst.IsLatest=1
+		  */  
 		  
 
 		--teachers
@@ -5351,6 +5364,8 @@ BEGIN
 		WHERE 1=1 --ssa.StaffUSI = 9786
 		  AND ds.IsCurrent = 1		  
 		  AND dst.IsCurrent = 1		  
+		  AND ds.IsLatest = 1		  
+		  AND dst.IsLatest=1
 		  AND EXISTS (SELECT 1 
 		              FROM #currentYearStaff_Teachers t
 					  WHERE ds._sourceKey = t.StaffSourceKey)
@@ -8689,17 +8704,17 @@ BEGIN
 						   ,LiteralScoreResult
 						   ,LineageKey)
 		SELECT DISTINCT 
-		   [_sourceKey],
+		  LEN( [_sourceKey]),
 		   [StudentKey],
 		   [TimeKey],
 		   [AssessmentKey],
 		   ScoreResult,
 		   IntegerScoreResult,
 		   DecimalScoreResult,
-		   LiteralScoreResult,
-		   	@lineageKey AS LineageKey
+		   LiteralScoreResult
+		   	--@lineageKey AS LineageKey
 		FROM Staging.StudentAssessmentScore
-
+		ORDER BY LEN( [_sourceKey]) DESC 
 		--loading from legacy dw just once
 		IF (NOT EXISTS(SELECT 1  
 		               FROM dbo.FactStudentAssessmentScore 

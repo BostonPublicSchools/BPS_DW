@@ -1282,7 +1282,7 @@ if NOT EXISTS (select 1
 			   AND TABLE_SCHEMA = 'dbo')
 CREATE TABLE dbo.FactStudentAssessmentScore
 (
-  [_sourceKey] NVARCHAR(50) NOT NULL,
+  [_sourceKey] NVARCHAR(500) NOT NULL,
   StudentKey INT NOT NULL,
   TimeKey INT NOT NULL, 
   AssessmentKey INT NOT NULL,
@@ -3785,7 +3785,7 @@ BEGIN
 				       N'N/A',       -- PrimaryElectronicMailAddress - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_CodeValue - nvarchar(128)
 				       N'N/A',       -- PrimaryElectronicMailTypeDescriptor_Description - nvarchar(128)
-					   N'N/A',       -- EducationOrganizationId - int
+					   0,       -- EducationOrganizationId - int
 					   N'N/A',       -- ShortNameOfInstitution - nvarchar(500)
 					   N'N/A',       -- NameOfInstitution - nvarchar(500)
 				       N'N/A',       -- StaffUniqueId - nvarchar(32)
