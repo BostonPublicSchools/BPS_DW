@@ -3826,8 +3826,8 @@ BEGIN
 		SET prod.ValidTo = stage.ValidFrom,
 		    prod.IsLatest = 0 
 		FROM 
-			[dbo].[DimSchool] AS prod
-			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
+			[dbo].[DimStaff] AS prod
+			INNER JOIN Staging.Staff AS stage ON prod._sourceKey = stage._sourceKey
 		WHERE prod.ValidTo = '12/31/9999'
 
 

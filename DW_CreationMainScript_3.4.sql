@@ -3832,8 +3832,8 @@ BEGIN
 		SET prod.ValidTo = stage.ValidFrom,
 		    prod.IsLatest = 0 
 		FROM 
-			[dbo].[DimSchool] AS prod
-			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
+			[dbo].[DimStaff] AS prod
+			INNER JOIN Staging.Staff AS stage ON prod._sourceKey = stage._sourceKey
 		WHERE prod.ValidTo = '12/31/9999'
 
 
@@ -3929,7 +3929,7 @@ BEGIN
 					   d.ValidFrom, 
 					   d.ValidTo,
 					   d.IsLatest,
-					   ROW_NUMBER() OVER (PARTITION BY d._sourceKey ORDER BY d.ValidFrom Desc, d.ValidTo DESC) AS RowRankId
+					   ROW_NUMBER() OVER (PARTITION BY d._sourceKey ORDER BY d.ValidFrom Desc, d.ValidTo DESC, d.IsCurrent) AS RowRankId
 				FROM dbo.DimStaff d 
 			)
 
@@ -7646,6 +7646,9 @@ BEGIN
 		ON [dbo].[#AttedanceEventRankedByReason] ([StudentUSI],[SchoolId],[EventDate],[RowId])
 		INCLUDE (AttendanceEventCategoryDescriptor_CodeValue,[AttendanceEventReason])
 
+		CREATE NONCLUSTERED INDEX [#StudentsToBeProcessed_MainConvering]
+		ON [dbo].[#StudentsToBeProcessed] (StudentUSI,[EventDate])
+		INCLUDE ([StudentUniqueId])
 
 		INSERT INTO #DistinctAttedanceEvents
 		(
@@ -7733,7 +7736,7 @@ BEGIN
 		    _sourceSchoolKey,
 		    _sourceAttendanceEventCategoryKey
 		)	
-		SELECT DISTINCT         
+		SELECT    DISTINCT 
 				  CONCAT_WS('|',stbp.StudentUniqueId,CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
 				  NULL AS StudentKey,
 				  NULL AS TimeKey,	  
@@ -7751,9 +7754,7 @@ BEGIN
 			FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 
 				INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
 				INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
-																					 and cda.SchoolId=cdce.SchoolId
-				INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
-																	  and d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
+																					 and cda.SchoolId=cdce.SchoolId				
 	            INNER JOIN  #StudentsToBeProcessed stbp ON ssa.StudentUSI = stbp.StudentUSI
 				                                      AND (stbp.EventDate IS NULL OR 
 													       cdce.Date = stbp.EventDate)
@@ -7770,6 +7771,10 @@ BEGIN
 					 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
 				   )
 				AND ssa.SchoolYear >= 2019
+				AND EXISTS(SELECT 1 
+				           FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce 
+				           WHERE  cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+								and d_cdce.CodeValue='Instructional day') -- ONLY Instructional days)
 				
 			DROP TABLE #StudentsToBeProcessed, #AttedanceEventRankedByReason, #DistinctAttedanceEvents;
 			
