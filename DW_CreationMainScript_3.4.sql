@@ -4230,7 +4230,7 @@ BEGIN
 			   COALESCE(sexd.Description,'Not Selected') AS SexType_Description,
 			   CASE WHEN sexd.CodeValue  = 'Male' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
 			   CASE WHEN sexd.CodeValue  = 'Female' THEN 1 ELSE 0 END AS SexType_Female_Indicator,
-			   CASE WHEN sexd.CodeValue = 'NB' THEN 1 ELSE 0 END AS SexType_NonBinary_Indicator, -- todo: update code when BPS is ready
+			   CASE WHEN sexd.CodeValue = 'Nonbinary' THEN 1 ELSE 0 END AS SexType_NonBinary_Indicator, -- todo: update code when BPS is ready
 			   CASE WHEN sexd.CodeValue  = 'Not Selected' THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator,                
 			   COALESCE(sr.RaceCodes,'N/A') AS RaceCode,	   
 			   COALESCE(sr.RaceDescriptions,'N/A') AS RaceDescription,
@@ -4496,12 +4496,12 @@ BEGIN
 						CASE 
 							WHEN s.Sex = 'M' THEN 'Male'
 							WHEN s.Sex = 'F' THEN 'Female'
-							WHEN s.Sex = 'NB' THEN 'Non-Binary'
+							WHEN s.Sex = 'Nonbinary' THEN 'Non-Binary'
 							ELSE 'Not Selected' -- not selected
 						END AS SexType_Description,
 						CASE WHEN s.Sex = 'M' THEN 1 ELSE 0 END AS SexType_Male_Indicator,
 						CASE WHEN s.Sex = 'F' THEN 1 ELSE 0 END AS SexType_Female_Indicator, 
-						CASE WHEN s.Sex = 'NB' THEN 1 ELSE 0 END AS SexType_NonBinary_Indicator, -- todo: update code when BPS is ready
+						CASE WHEN s.Sex = 'Nonbinary' THEN 1 ELSE 0 END AS SexType_NonBinary_Indicator, -- todo: update code when BPS is ready
 						CASE WHEN s.Sex not in ( 'M','F') THEN 1 ELSE 0 END AS SexType_NotSelected_Indicator, -- NON BINARY
 
 						CASE WHEN sdir.IsNatAmer = 1 THEN 'American Indian - Alaskan Native'
