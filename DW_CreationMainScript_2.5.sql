@@ -3649,14 +3649,14 @@ BEGIN
 				,COALESCE(d_sc.Description,'N/A') as StaffClassificationDescriptor_Description
 				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffMainInfoModifiedDate
 				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(seoaa.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffEdOrgAssignmentModifiedDate
-				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(seoea.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffEdOrgEmploymentModifiedDate
+				,GETDATE() AS StaffEdOrgEmploymentModifiedDate
+				--,CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(seoea.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS StaffEdOrgEmploymentModifiedDate
 				--Making sure the first time, the ValidFrom is set to beginning of time 
 				,CASE WHEN @LastLoadDate <> '07/01/2015' THEN
 				           (SELECT MAX(t) FROM
                              (VALUES
                                 (s.LastModifiedDate)
-							   ,(seoaa.LastModifiedDate)
-							   ,(seoea.LastModifiedDate)
+							   ,(seoaa.LastModifiedDate)							   
                              ) AS [MaxLastModifiedDate](t)
                            )
 					ELSE 
@@ -3667,8 +3667,8 @@ BEGIN
 		--SELECT distinct *
 		FROM  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff s 
 			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationAssignmentAssociation seoaa ON s.StaffUSI = seoaa.StaffUSI
-			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationEmploymentAssociation seoea ON seoaa.StaffUSI = seoea.StaffUSI
-			                                                                                                         AND seoaa.EducationOrganizationId = seoea.EducationOrganizationId
+			  --INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StaffEducationOrganizationEmploymentAssociation seoea ON seoaa.StaffUSI = seoea.StaffUSI
+			                                                                                                         --AND seoaa.EducationOrganizationId = seoea.EducationOrganizationId
 			  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.EducationOrganization eo ON seoaa.EducationOrganizationId = eo.EducationOrganizationId
 
 			  --sex	 
@@ -7696,7 +7696,7 @@ BEGIN
 		    _sourceAttendanceEventCategoryKey
 		)	
 		SELECT DISTINCT         
-				  CONCAT_WS('|',stbp.StudentUniqueId,CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
+				  CONCAT_WS('|','Ed-Fi',stbp.StudentUniqueId,CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
 				  NULL AS StudentKey,
 				  NULL AS TimeKey,	  
 				  NULL AS SchoolKey,  
