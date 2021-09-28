@@ -1500,6 +1500,7 @@ CREATE TABLE Derived.StudentAttendanceADA
 );
 
 
+
 --Student Assessment Score
 if NOT EXISTS (select 1
              FROM INFORMATION_SCHEMA.TABLES
@@ -3007,111 +3008,111 @@ BEGIN
 				UNION ALL
 				SELECT daySeqNumber + 1
 				FROM daySeqs
-				WHERE daySeqNumber < DATEDIFF(DAY, @startDate, @endDate)),
-				 theDates (theDate)
-			AS (SELECT DATEADD(DAY, daySeqNumber, @startDate)
+				WHERE daySeqNumber < DATEDIFF(DAY, @startDate, DATEADD(DAY,-1,@endDate))),
+					theDates (theDate)
+			AS (SELECT DATEADD(DAY, daySeqNumber,@startDate)
 				FROM daySeqs),
-				 src
+					src
 			AS (SELECT TheDate = CONVERT(DATE, theDate),
-					   TheDay = DATEPART(DAY, theDate),
-					   TheDayName = DATENAME(WEEKDAY, theDate),
-					   TheWeek = DATEPART(WEEK, theDate),
-					   TheDayOfWeek = DATEPART(WEEKDAY, theDate),
-					   TheMonth = DATEPART(MONTH, theDate),
-					   TheMonthName = DATENAME(MONTH, theDate),
-					   TheQuarter = DATEPART(QUARTER, theDate),
-					   TheYear = DATEPART(YEAR, theDate),
-					   TheFirstOfMonth = DATEFROMPARTS(YEAR(theDate), MONTH(theDate), 1),
-					   TheLastOfYear = DATEFROMPARTS(YEAR(theDate), 12, 31),
-					   TheDayOfYear = DATEPART(DAYOFYEAR, theDate)
+						TheDay = DATEPART(DAY, theDate),
+						TheDayName = DATENAME(WEEKDAY, theDate),
+						TheWeek = DATEPART(WEEK, theDate),
+						TheDayOfWeek = DATEPART(WEEKDAY, theDate),
+						TheMonth = DATEPART(MONTH, theDate),
+						TheMonthName = DATENAME(MONTH, theDate),
+						TheQuarter = DATEPART(QUARTER, theDate),
+						TheYear = DATEPART(YEAR, theDate),
+						TheFirstOfMonth = DATEFROMPARTS(YEAR(theDate), MONTH(theDate), 1),
+						TheLastOfYear = DATEFROMPARTS(YEAR(theDate), 12, 31),
+						TheDayOfYear = DATEPART(DAYOFYEAR, theDate)
 				FROM theDates),
-				 timeDim
+					timeDim
 			AS (SELECT [SchoolDate] = TheDate,
-					   SchoolDate_MMYYYY = CONVERT(CHAR(2), CONVERT(CHAR(8), TheDate, 101)) + CONVERT(CHAR(4), TheYear),
-					   SchoolDate_Fomat1 = CONVERT(CHAR(10), TheDate, 101),
-					   SchoolDate_Fomat2 = CONVERT(CHAR(8), TheDate, 112),
-					   SchoolDate_Fomat3 = CONVERT(CHAR(10), TheDate, 120),
-					   SchoolYear = dbo.Func_ETL_GetSchoolYear(TheDate),
-					   SchoolYearDescription = CONVERT(NVARCHAR(MAX), dbo.Func_ETL_GetSchoolYear(TheDate) - 1) + ' - '
-											   + CONVERT(NVARCHAR(MAX), dbo.Func_ETL_GetSchoolYear(TheDate)),
-					   CalendarYear = TheYear,
-					   [DayOfMonth] = TheDay,
-					   DaySuffix = CONVERT(   CHAR(2),
-											  CASE
-												  WHEN TheDay / 10 = 1 THEN
-													  'th'
-												  ELSE
-													  CASE RIGHT(TheDay, 1)
-														  WHEN '1' THEN
-															  'st'
-														  WHEN '2' THEN
-															  'nd'
-														  WHEN '3' THEN
-															  'rd'
-														  ELSE
-															  'th'
-													  END
-											  END
-										  ),
-					   [DayName] = TheDayName,
-					   DayNameShort = FORMAT(TheDate, 'ddd'),
-					   [DayOfWeek] = TheDayOfWeek,
-					   WeekInMonth = CONVERT(
+						SchoolDate_MMYYYY = CONVERT(CHAR(2), CONVERT(CHAR(8), TheDate, 101)) + CONVERT(CHAR(4), TheYear),
+						SchoolDate_Fomat1 = CONVERT(CHAR(10), TheDate, 101),
+						SchoolDate_Fomat2 = CONVERT(CHAR(8), TheDate, 112),
+						SchoolDate_Fomat3 = CONVERT(CHAR(10), TheDate, 120),
+						SchoolYear = dbo.Func_ETL_GetSchoolYear(TheDate),
+						SchoolYearDescription = CONVERT(NVARCHAR(MAX), dbo.Func_ETL_GetSchoolYear(TheDate) - 1) + ' - '
+												+ CONVERT(NVARCHAR(MAX), dbo.Func_ETL_GetSchoolYear(TheDate)),
+						CalendarYear = TheYear,
+						[DayOfMonth] = TheDay,
+						DaySuffix = CONVERT(   CHAR(2),
+												CASE
+													WHEN TheDay / 10 = 1 THEN
+														'th'
+													ELSE
+														CASE RIGHT(TheDay, 1)
+															WHEN '1' THEN
+																'st'
+															WHEN '2' THEN
+																'nd'
+															WHEN '3' THEN
+																'rd'
+															ELSE
+																'th'
+														END
+												END
+											),
+						[DayName] = TheDayName,
+						DayNameShort = FORMAT(TheDate, 'ddd'),
+						[DayOfWeek] = TheDayOfWeek,
+						WeekInMonth = CONVERT(
 												TINYINT,
 												ROW_NUMBER() OVER (PARTITION BY TheFirstOfMonth, TheDayOfWeek ORDER BY TheDate)
 											),
-					   WeekOfMonth = CONVERT(TINYINT, DENSE_RANK() OVER (PARTITION BY TheYear, TheMonth ORDER BY TheWeek)),
-					   Weekend_Indicator = CASE
-											   WHEN TheDayOfWeek IN (   CASE @@DATEFIRST
+						WeekOfMonth = CONVERT(TINYINT, DENSE_RANK() OVER (PARTITION BY TheYear, TheMonth ORDER BY TheWeek)),
+						Weekend_Indicator = CASE
+												WHEN TheDayOfWeek IN (   CASE @@DATEFIRST
 																			WHEN 1 THEN
 																				6
 																			WHEN 7 THEN
 																				1
 																		END, 7
 																	) THEN
-												   1
-											   ELSE
-												   0
-										   END,
-					   WeekOfYear = TheWeek,
-					   FirstDayOfWeek = DATEADD(DAY, 1 - TheDayOfWeek, TheDate),
-					   LastDayOfWeek = DATEADD(DAY, 6, DATEADD(DAY, 1 - TheDayOfWeek, TheDate)),
-					   WeekBeforeChristmas_Indicator = CASE
-														   WHEN DATEPART(WEEK, TheDate) = DATEPART(WEEK, '12-25-' + CONVERT(NVARCHAR(4),TheYear)) - 1 THEN
-															   1
-														   ELSE
-															   0
-													   END,
-					   [Month] = TheMonth,
-					   [MonthName] = TheMonthName,
-					   MonthNameShort = FORMAT(TheDate, 'MMM'),
-					   FirstDayOfMonth = TheFirstOfMonth,
-					   LastDayOfMonth = MAX(TheDate) OVER (PARTITION BY TheYear, TheMonth),
-					   FirstDayOfNextMonth = DATEADD(MONTH, 1, TheFirstOfMonth),
-					   LastDayOfNextMonth = DATEADD(DAY, -1, DATEADD(MONTH, 2, TheFirstOfMonth)),
-					   [DayOfYear] = TheDayOfYear,
-					   DayOfSchoolYear = TheDayOfYear, --change this 
-					   LeapYear_Indicator = CONVERT(   BIT,
-													   CASE
-														   WHEN (TheYear % 400 = 0)
+													1
+												ELSE
+													0
+											END,
+						WeekOfYear = TheWeek,
+						FirstDayOfWeek = DATEADD(DAY, 1 - TheDayOfWeek, TheDate),
+						LastDayOfWeek = DATEADD(DAY, 6, DATEADD(DAY, 1 - TheDayOfWeek, TheDate)),
+						WeekBeforeChristmas_Indicator = CASE
+															WHEN DATEPART(WEEK, TheDate) = DATEPART(WEEK, '12-25-' + CONVERT(NVARCHAR(4),TheYear)) - 1 THEN
+																1
+															ELSE
+																0
+														END,
+						[Month] = TheMonth,
+						[MonthName] = TheMonthName,
+						MonthNameShort = FORMAT(TheDate, 'MMM'),
+						FirstDayOfMonth = TheFirstOfMonth,
+						LastDayOfMonth = DATEADD(DAY, -1, DATEADD(MONTH, 1, TheFirstOfMonth)),
+						FirstDayOfNextMonth = DATEADD(MONTH, 1, TheFirstOfMonth),
+						LastDayOfNextMonth = DATEADD(DAY, -1, DATEADD(MONTH, 2, TheFirstOfMonth)),
+						[DayOfYear] = TheDayOfYear,
+						DayOfSchoolYear = TheDayOfYear, --change this 
+						LeapYear_Indicator = CONVERT(   BIT,
+														CASE
+															WHEN (TheYear % 400 = 0)
 																OR
 																(
 																	TheYear % 4 = 0
 																	AND TheYear % 100 <> 0
 																) THEN
-															   1
-														   ELSE
-															   0
-													   END
-												   ),
-					   FederalHolidayName = [dbo].[Func_ETL_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
-					   FederalHoliday_Indicator = (CASE
+																1
+															ELSE
+																0
+														END
+													),
+						FederalHolidayName = [dbo].[Func_ETL_GetHolidayFromDate](TheDate), -- Memorial Day, 4th of July
+						FederalHoliday_Indicator = (CASE
 														WHEN [dbo].[Func_ETL_GetHolidayFromDate](TheDate) = 'Non-Holiday' THEN
 															0
 														ELSE
 															1
 													END
-												   )                                   --  True,False			  
+													)                                   --  True,False			  
 
 
 				FROM src)
@@ -3380,21 +3381,17 @@ BEGIN
 		
 		--updating staging keys
 		UPDATE t
-		SET t.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE t._sourceSchoolKey = ds._sourceKey									
-										AND t.ValidFrom >= ds.[ValidFrom]
-										AND t.ValidFrom < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE ds._sourceKey = '')
-							      ) 
+		SET t.SchoolKey =  (SELECT TOP (1) ds.SchoolKey
+							FROM dbo.DimSchool ds
+							WHERE t._sourceSchoolKey = ds._sourceKey									
+							   AND t.ValidFrom >= ds.[ValidFrom]
+							   AND t.ValidFrom < ds.[ValidTo]
+						    ORDER BY ds.[ValidFrom] DESC)
         --select *
 		FROM Staging.[Time] t
 		WHERE t._sourceSchoolKey IS NOT NULL; -- schools are not always required
-
+				
+		DELETE FROM Staging.[Time] WHERE _sourceSchoolKey IS NOT NULL AND SchoolKey IS NULL;
 		
 		
 		--staging table holds newer records. 
@@ -4272,12 +4269,28 @@ BEGIN
 	   
 			   --entry
 			   ssa.EntryDate,
-			   dbo.Func_ETL_GetSchoolYear((ssa.EntryDate)) AS EntrySchoolYear, 
+			    COALESCE(
+						   (
+						    SELECT TOP 1 cd.SchoolYear
+							FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cd
+							WHERE ssa.EntryDate = cd.Date
+							   AND ssa.SchoolId = cd.SchoolId
+						    ),
+							dbo.Func_ETL_GetSchoolYear((ssa.EntryDate))
+					   )AS EntrySchoolYear, 
 			   COALESCE(eglrt.CodeValue,'N/A') AS EntryCode,
        
 			   --exit
 			   ssa.ExitWithdrawDate,
-			   dbo.Func_ETL_GetSchoolYear((ssa.ExitWithdrawDate)) AS ExitWithdrawSchoolYear, 
+			   COALESCE(
+						   (
+						    SELECT TOP 1 cd.SchoolYear
+							FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cd
+							WHERE ssa.ExitWithdrawDate = cd.Date
+							   AND ssa.SchoolId = cd.SchoolId
+						    ),
+							dbo.Func_ETL_GetSchoolYear((ssa.ExitWithdrawDate))
+					   ) AS ExitWithdrawSchoolYear, 
 			   ewt.CodeValue ExitWithdrawCode,              
 
 			   CASE WHEN @LastLoadDate <> '07/01/2015' THEN COALESCE(s.LastModifiedDate,'07/01/2015') ELSE '07/01/2015' END AS SchoolCategoryModifiedDate,
@@ -4761,18 +4774,15 @@ BEGIN
 
         --updating keys
 		UPDATE t
-		SET t.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE t._sourceSchoolKey = ds._sourceKey									
-										AND t.ValidFrom >= ds.[ValidFrom]
-										AND t.ValidFrom < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE ds._sourceKey = '')
-							      ) 
+		SET t.SchoolKey =  (SELECT TOP (1) ds.SchoolKey
+							FROM dbo.DimSchool ds
+							WHERE t._sourceSchoolKey = ds._sourceKey									
+								AND t.ValidFrom >= ds.[ValidFrom]
+								AND t.ValidFrom < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC)
         FROM Staging.Student t;
+
+		DELETE FROM Staging.Student WHERE SchoolKey IS NULL;
 				
         --updating school names
 		UPDATE s
@@ -5903,18 +5913,15 @@ BEGIN
 				END
         --updating keys
 		UPDATE t
-		SET t.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE t._sourceSchoolKey = ds._sourceKey									
-										AND t.ValidFrom >= ds.[ValidFrom]
-										AND t.ValidFrom < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE ds._sourceKey = '')
-							      ) 
+		SET t.SchoolKey =  (SELECT TOP (1) ds.SchoolKey
+							FROM dbo.DimSchool ds
+							WHERE t._sourceSchoolKey = ds._sourceKey									
+								AND t.ValidFrom >= ds.[ValidFrom]
+								AND t.ValidFrom < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC)
         FROM Staging.DisciplineIncident t;
+
+		DELETE FROM Staging.DisciplineIncident WHERE SchoolKey IS NULL;
 
 		--updating school names
 		UPDATE di
@@ -6677,7 +6684,7 @@ BEGIN
 			
 							
 		
-		--[v34_EdFi_BPS_Production_Ods]
+		--[EdFi_BPS_Production_Ods]
 		--loading legacy data if it has not been loaded.
 		--load types are ignored as this data will only be loaded once.
 		IF NOT EXISTS(SELECT 1 
@@ -7106,20 +7113,18 @@ BEGIN
 				       )
 				  
 				END
+
         --updating keys
 		UPDATE t
-		SET t.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE t._sourceSchoolKey = ds._sourceKey									
-										AND t.ValidFrom >= ds.[ValidFrom]
-										AND t.ValidFrom < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE ds._sourceKey = '')
-							      ) 
+		SET t.SchoolKey =  (SELECT TOP (1) ds.SchoolKey
+							FROM dbo.DimSchool ds
+							WHERE t._sourceSchoolKey = ds._sourceKey									
+								AND t.ValidFrom >= ds.[ValidFrom]
+								AND t.ValidFrom < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC)
         FROM Staging.GradingPeriod t;
+
+		DELETE FROM Staging.GradingPeriod WHERE SchoolKey IS NULL;
 
 		--staging table holds newer records. 
 		--the matching prod records will be valid until the date in which the newest data change was identified		
@@ -7267,7 +7272,7 @@ BEGIN
 																											  AND ssa.LocalCourseCode = staff_sa.LocalCourseCode
 																											  AND ssa.SchoolYear = staff_sa.SchoolYear
 																											  AND ssa.UniqueSectionCode = staff_sa.UniqueSectionCode
-				  INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI																						  AND ssa.TermDescriptorId = staff_sa.TermDescriptorId
+				  INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI																						  AND ssa.TermDescriptorId = staff_sa.TermDescriptorId
 		WHERE ssa.SchoolYear >= 2019
 				AND (
 			  			(ssa.LastModifiedDate > @LastLoadDate AND ssa.LastModifiedDate <= @NewLoadDate)
@@ -7414,54 +7419,37 @@ BEGIN
 				       )
 				
 				END
-        --updating staging keys
+        
+		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = COALESCE(
-								(SELECT TOP (1) ds.StudentKey
-								FROM dbo.DimStudent ds
-								WHERE s._sourceStudentKey = ds._sourceKey									
-									AND s.ValidFrom >= ds.[ValidFrom]
-									AND s.ValidFrom < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC),
-								(SELECT ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE ds._sourceKey = '')
-							),
-			s.SchoolKey = COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE s.[_sourceSchoolKey] = ds._sourceKey									
-										AND s.ValidFrom >= ds.[ValidFrom]
-										AND s.ValidFrom < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-									 FROM dbo.DimSchool ds
-									 WHERE ds._sourceKey = '')
-							      ) ,
-			s.CourseKey = COALESCE(
-								(SELECT TOP (1) dc.CourseKey
-								FROM dbo.DimCourse dc
-								WHERE s._sourceCourseKey = dc._sourceKey									
-									AND s.ValidFrom >= dc.[ValidFrom]
-									AND s.ValidFrom < dc.[ValidTo]
-								ORDER BY dc.[ValidFrom] DESC),
-								(SELECT ds.CourseKey
-								 FROM dbo.DimCourse ds
-								 WHERE ds._sourceKey = '')
-
-							)	,
-			s.StaffKey = COALESCE(
-								(SELECT TOP (1) ds.StaffKey
-								FROM dbo.DimStaff ds
-								WHERE s._sourceCourseKey = ds._sourceKey									
-									AND s.ValidFrom >= ds.[ValidFrom]
-									AND s.ValidFrom < ds.[ValidTo]
-								ORDER BY ds.[ValidFrom] DESC),
-								(SELECT ds.StaffKey
-								 FROM dbo.DimStaff ds
-								 WHERE ds._sourceKey = '')
-							)
+		SET s.StudentKey = (SELECT TOP (1) ds.StudentKey
+							FROM dbo.DimStudent ds
+							WHERE s._sourceStudentKey = ds._sourceKey									
+								AND s.ValidFrom >= ds.[ValidFrom]
+								AND s.ValidFrom < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+			s.SchoolKey = (SELECT TOP (1) ds.SchoolKey
+						   FROM dbo.DimSchool ds
+						   WHERE s.[_sourceSchoolKey] = ds._sourceKey									
+								AND s.ValidFrom >= ds.[ValidFrom]
+								AND s.ValidFrom < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),							      
+			s.CourseKey = (SELECT TOP (1) dc.CourseKey
+						   FROM dbo.DimCourse dc
+						   WHERE s._sourceCourseKey = dc._sourceKey									
+								AND s.ValidFrom >= dc.[ValidFrom]
+								AND s.ValidFrom < dc.[ValidTo]
+						   ORDER BY dc.[ValidFrom] DESC),
+			s.StaffKey = (SELECT TOP (1) ds.StaffKey
+						  FROM dbo.DimStaff ds
+						  WHERE s._sourceCourseKey = ds._sourceKey									
+							AND s.ValidFrom >= ds.[ValidFrom]
+							AND s.ValidFrom < ds.[ValidTo]
+						  ORDER BY ds.[ValidFrom] DESC)
         FROM Staging.StudentSection s;
+
+		DELETE FROM Staging.StudentSection 
+		WHERE StudentKey IS NULL OR SchoolKey IS NULL OR CourseKey IS NULL OR StaffKey IS NULL;
 
 
 		--staging table holds newer records. 
@@ -7583,10 +7571,11 @@ BEGIN
 	
 		--DECLARE @LastLoadDate datetime= '07/01/2015' DECLARE @NewLoadDate datetime = GETDATE()
 		TRUNCATE TABLE Staging.StudentAttendanceByDay	
-		CREATE TABLE #StudentsToBeProcessed (StudentUSI INT, 
-		                                     StudentUniqueId NVARCHAR(32), 
-		                                     EventDate DATE ,
-											 LastModifiedDate DATETIME )
+
+		CREATE TABLE #StudentInstructionalDays (StudentUSI INT, 
+		                                         StudentUniqueId NVARCHAR(32), 
+		                                         SchoolId INT ,
+											     SchoolDate DATE)
 		  
 		CREATE TABLE #AttedanceEventRankedByReason (StudentUSI INT, 		                                            
 		                                            SchoolId INT, 
@@ -7609,6 +7598,9 @@ BEGIN
 		ON [dbo].[#AttedanceEventRankedByReason] ([StudentUSI],[SchoolId],[EventDate],[RowId])
 		INCLUDE (AttendanceEventCategoryDescriptor_CodeValue,[AttendanceEventReason])
 
+		CREATE NONCLUSTERED INDEX [#StudentInstructionalDays_MainConvering]
+		ON [dbo].[#StudentInstructionalDays] (StudentUSI,SchoolId,SchoolDate)
+		INCLUDE ([StudentUniqueId])
 
 		INSERT INTO #DistinctAttedanceEvents
 		(
@@ -7662,25 +7654,28 @@ BEGIN
 													EventDate,
 													AttendanceEventCategoryDescriptor_CodeValue
 										ORDER BY AttendanceEventReason DESC) AS RowId 
-			FROM #DistinctAttedanceEvents
+		FROM #DistinctAttedanceEvents
 
-			
-		IF (@LastLoadDate <> '07/01/2015')
-			BEGIN
-				INSERT INTO #StudentsToBeProcessed (StudentUSI, StudentUniqueId, EventDate, LastModifiedDate)
-				SELECT DISTINCT StudentUSI, StudentUniqueId, EventDate, LastModifiedDate
-				FROM #DistinctAttedanceEvents
-			END
-	    ELSE --this first time all students will be processed
-			BEGIN
-				INSERT INTO #StudentsToBeProcessed (StudentUSI, StudentUniqueId, EventDate, LastModifiedDate)
-				SELECT DISTINCT s.StudentUSI, s.StudentUniqueId, NULL AS EventDate, NULL AS LastModifiedDate --we don't care about event changes the first this runs. 
-				FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa
-				     INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student s ON ssa.StudentUSI = s.StudentUSI
-				WHERE ssa.SchoolYear >= 2019
-			END;
-		
-		
+		--all active students will be process daily
+		--since we are tracking positive attendance, all active students should have a record daily.
+		INSERT INTO #StudentInstructionalDays (StudentUSI, StudentUniqueId, SchoolId, SchoolDate)
+		SELECT DISTINCT st.StudentUSI, st.StudentUniqueId, ssa.SchoolId, cdce.Date
+		--select *  
+		FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 
+		    INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Student st ON ssa.StudentUSI = st.StudentUSI
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
+			INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
+																					and cda.SchoolId=cdce.SchoolId			
+		        
+		WHERE cdce.Date > @LastLoadDate
+		  AND cdce.Date <= @NewLoadDate
+		  AND ssa.SchoolYear >= 2019 
+		  AND cdce.Date BETWEEN ssa.EntryDate AND COALESCE(ssa.ExitWithdrawDate, GETDATE()) -- only students who were active during the school date being processed
+		  AND EXISTS(SELECT 1 
+				     FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce 
+				     WHERE  cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+					   AND d_cdce.CodeValue='Instructional day') -- ONLY Instructional days
+							
 		
 		INSERT INTO Staging.StudentAttendanceByDay
 		(
@@ -7696,45 +7691,27 @@ BEGIN
 		    _sourceSchoolKey,
 		    _sourceAttendanceEventCategoryKey
 		)	
-		SELECT DISTINCT         
-				  CONCAT_WS('|','Ed-Fi',stbp.StudentUniqueId,CONVERT(CHAR(10), cdce.Date, 101)) AS _sourceKey,
-				  NULL AS StudentKey,
-				  NULL AS TimeKey,	  
-				  NULL AS SchoolKey,  
-				  NULL AS AttendanceEventCategoryKey,				  
-				  ISNULL(ssae.AttendanceEventReason,'') AS AttendanceEventReason,
-				  --stbp.LastModifiedDate only makes sense when identifying deltas, the first time we just follow the calendar date
-				  cdce.Date AS ModifiedDate,
-				  CONCAT_WS('|','Ed-Fi',stbp.StudentUniqueId) AS _sourceStudentKey,
-		          cdce.Date AS _sourceTimeKey,		          
-				  CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),ssa.SchoolId))  AS _sourceSchoolKey,
-		          CONCAT_WS('|','Ed-Fi', ssae.AttendanceEventCategoryDescriptor_CodeValue)  AS _sourceAttendanceEventCategoryKey
-				  				  
-			--select *  
-			FROM [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.StudentSchoolAssociation ssa 
-				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
-				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
-																					 and cda.SchoolId=cdce.SchoolId
-				INNER JOIN [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce on cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
-																	  and d_cdce.CodeValue='Instructional day' -- ONLY Instructional days
-	            INNER JOIN  #StudentsToBeProcessed stbp ON ssa.StudentUSI = stbp.StudentUSI
-				                                      AND (stbp.EventDate IS NULL OR 
-													       cdce.Date = stbp.EventDate)
-				LEFT JOIN #AttedanceEventRankedByReason ssae on ssa.StudentUSI = ssae.StudentUSI
-															   AND ssa.SchoolId = ssae.SchoolId 
-															   AND cda.Date = ssae.EventDate
-															   AND ssae.RowId= 1	
-		        
-			WHERE  cdce.Date >= ssa.EntryDate 
-			   AND cdce.Date <= GETDATE()
-			   AND (
-					 (ssa.ExitWithdrawDate is null) 
-					  OR
-					 (ssa.ExitWithdrawDate is not null and cdce.Date<=ssa.ExitWithdrawDate) 
-				   )
-				AND ssa.SchoolYear >= 2019
+		SELECT  DISTINCT 
+				CONCAT_WS('|','Ed-Fi',st.StudentUniqueId,CONVERT(CHAR(10), st.SchoolDate, 101)) AS _sourceKey,
+				NULL AS StudentKey,
+				NULL AS TimeKey,	  
+				NULL AS SchoolKey,  
+				NULL AS AttendanceEventCategoryKey,				  
+				ISNULL(ssae.AttendanceEventReason,'') AS AttendanceEventReason,				
+				st.SchoolDate AS ModifiedDate,
+				CONCAT_WS('|','Ed-Fi',st.StudentUniqueId) AS _sourceStudentKey,
+		        st.SchoolDate AS _sourceTimeKey,		          
+				CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),st.SchoolId))  AS _sourceSchoolKey,
+		        CONCAT_WS('|','Ed-Fi', COALESCE(ssae.AttendanceEventCategoryDescriptor_CodeValue,'In Attendance'))  AS _sourceAttendanceEventCategoryKey -- default to 'In Attendance' when no negative attendance is found
 				
-			DROP TABLE #StudentsToBeProcessed, #AttedanceEventRankedByReason, #DistinctAttedanceEvents;
+		--select *  
+		FROM #StudentInstructionalDays st 
+			LEFT JOIN #AttedanceEventRankedByReason ssae on st.StudentUSI = ssae.StudentUSI
+														AND st.SchoolId = ssae.SchoolId 
+														AND st.SchoolDate = ssae.EventDate
+														AND ssae.RowId= 1	
+		    	
+		DROP TABLE #StudentInstructionalDays, #AttedanceEventRankedByReason, #DistinctAttedanceEvents;
 			
 			
 		
@@ -7758,6 +7735,7 @@ BEGIN
 	END CATCH;
 END;
 GO
+
 CREATE OR ALTER PROCEDURE [dbo].[Proc_ETL_FactStudentAttendanceByDay_PopulateProduction]
 @LineageKey INT,
 @LastDateLoaded DATETIME
@@ -7785,76 +7763,35 @@ BEGIN
       
 	    --updating staging keys
 		UPDATE s 
-		SET s.StudentKey = COALESCE(
-								(SELECT TOP (1) ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE s._sourceStudentKey = ds._sourceKey									
+		SET s.StudentKey =	(SELECT TOP (1) ds.StudentKey
+							 FROM dbo.DimStudent ds
+							 WHERE s._sourceStudentKey = ds._sourceKey									
+							   AND s.[ModifiedDate] >= ds.[ValidFrom]
+							   AND s.[ModifiedDate] < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+							
+			s.TimeKey =       (SELECT TOP (1) dt.TimeKey
+							   FROM dbo.DimTime dt
+									INNER JOIN dbo.DimSchool ds ON dt.SchoolKey = ds.SchoolKey
+							   WHERE s._sourceSchoolKey = ds._sourceKey
+							     AND s._sourceTimeKey = dt.SchoolDate
+							   ORDER BY dt.SchoolDate),
+			s.SchoolKey =    (SELECT TOP (1) ds.SchoolKey
+							  FROM dbo.DimSchool ds
+							  WHERE s._sourceSchoolKey = ds._sourceKey									
 									AND s.[ModifiedDate] >= ds.[ValidFrom]
 									AND s.[ModifiedDate] < ds.[ValidTo]
-								 ORDER BY ds.[ValidFrom] DESC),
-								(SELECT ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE ds._sourceKey = '')
-							),
-			s.TimeKey =  	COALESCE(
-			                 (SELECT TOP (1) dt.TimeKey
-							  FROM dbo.DimTime dt
-									INNER JOIN dbo.DimSchool ds ON dt.SchoolKey = ds.SchoolKey
-							  WHERE s._sourceSchoolKey = ds._sourceKey
-							    AND s._sourceTimeKey = dt.SchoolDate
-							 ORDER BY dt.SchoolDate),
-							 (SELECT TOP (1) dt.TimeKey
-							  FROM dbo.DimTime dt									
-							  WHERE s._sourceTimeKey = dt.SchoolDate
-							 ORDER BY dt.SchoolDate)
-							 ),
-			s.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									FROM dbo.DimSchool ds
-									WHERE s._sourceSchoolKey = ds._sourceKey									
-										AND s.[ModifiedDate] >= ds.[ValidFrom]
-										AND s.[ModifiedDate] < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-										FROM dbo.DimSchool ds
-										WHERE ds._sourceKey = '')
-							      ),		
-			s.AttendanceEventCategoryKey = COALESCE(
-													(
-														SELECT TOP (1) daec.AttendanceEventCategoryKey
-														FROM dbo.DimAttendanceEventCategory daec
-														WHERE s._sourceAttendanceEventCategoryKey = daec._sourceKey									
-														  AND s.[ModifiedDate] >= daec.[ValidFrom]
-														  AND s.[ModifiedDate] < daec.[ValidTo]
-														ORDER BY daec.[ValidFrom]
-													), 
-													(
-													 SELECT TOP(1) AttendanceEventCategoryKey 
-													 FROM [dbo].DimAttendanceEventCategory 
-													 WHERE AttendanceEventCategoryDescriptor_CodeValue = 'In Attendance'
-													)  
-										          )     
+							  ORDER BY ds.[ValidFrom] DESC),
+			s.AttendanceEventCategoryKey =( SELECT TOP (1) daec.AttendanceEventCategoryKey
+											FROM dbo.DimAttendanceEventCategory daec
+											WHERE s._sourceAttendanceEventCategoryKey = daec._sourceKey									
+												AND s.[ModifiedDate] >= daec.[ValidFrom]
+												AND s.[ModifiedDate] < daec.[ValidTo]
+											ORDER BY daec.[ValidFrom])  
         FROM Staging.StudentAttendanceByDay s;
 	
 	    DELETE FROM Staging.StudentAttendanceByDay 
-		WHERE TimeKey IS NULL;
-
-	    ;WITH DuplicateKeys AS 
-		(
-		  SELECT [StudentKey], [TimeKey],[SchoolKey],AttendanceEventCategoryKey
-		  FROM  Staging.StudentAttendanceByDay
-		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],AttendanceEventCategoryKey
-		  HAVING COUNT(*) > 1
-		)
-		
-		DELETE sd 
-		FROM Staging.StudentAttendanceByDay sd
-		WHERE EXISTS(SELECT 1 
-		             FROM DuplicateKeys dk 
-					 WHERE sd.[StudentKey] = dk.StudentKey
-					   AND sd.[TimeKey] = dk.[TimeKey]
-					   AND sd.[SchoolKey] = dk.[SchoolKey]
-					   AND sd.AttendanceEventCategoryKey = dk.AttendanceEventCategoryKey)
+		WHERE TimeKey IS NULL OR StudentKey IS NULL OR SchoolKey IS NULL OR AttendanceEventCategoryKey IS NULL;
 
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_FactStudentAttendanceByDay ON dbo.FactStudentAttendanceByDay;
@@ -8032,24 +7969,41 @@ BEGIN
 					 WHERE d_sabd.StudentId = st.StudentUniqueId
 					   AND d_sabd.[SchoolYear] = dt.SchoolYear)
 					   
-		INSERT INTO [Derived].[StudentAttendanceADA]([StudentId]
-																
-																,[FirstName]
-																,[LastName]
-																,[DistrictSchoolCode]
-																,[UmbrellaSchoolCode]
-																,[SchoolName]
-																,[SchoolYear]
-																,[NumberOfDaysPresent]
-																,[NumberOfDaysAbsent]
-																,[NumberOfDaysAbsentUnexcused]
-																,[NumberOfDaysMembership]
-																,[ADA])
+		--handling students who change their names
+		;WITH UniqueStudents AS 
+		(
+		  SELECT    DISTINCT
+					v_sabd.StudentId, 
+					v_sabd.FirstName, 
+					v_sabd.LastName,
+					v_sabd.AttedanceDate,
+					ROW_NUMBER() OVER (PARTITION BY v_sabd.StudentId ORDER BY v_sabd.AttedanceDate DESC) AS RankId
+		  FROM dbo.View_StudentAttendanceByDay v_sabd 
+		  WHERE EXISTS(SELECT 1 
+					   FROM Staging.StudentAttendanceByDay s_sabd
+							  INNER JOIN dbo.DimTime dt ON s_sabd.TimeKey = dt.TimeKey
+							  INNER JOIN dbo.DimStudent st ON s_sabd.StudentKey = st.StudentKey
+					   WHERE v_sabd.StudentId = st.StudentUniqueId
+						   AND v_sabd.[SchoolYear] = dt.SchoolYear) 
+		  
+		)
+		INSERT INTO [Derived].[StudentAttendanceADA]([StudentId]																
+													,[FirstName]
+													,[LastName]
+													,[DistrictSchoolCode]
+													,[UmbrellaSchoolCode]
+													,[SchoolName]
+													,[SchoolYear]
+													,[NumberOfDaysPresent]
+													,[NumberOfDaysAbsent]
+													,[NumberOfDaysAbsentUnexcused]
+													,[NumberOfDaysMembership]
+													,[ADA])
 
 		SELECT     DISTINCT
 					v_sabd.StudentId, 
-					v_sabd.FirstName, 
-					v_sabd.LastName, 
+					us.FirstName, 
+					us.LastName, 
 					v_sabd.[DistrictSchoolCode],
 					v_sabd.[UmbrellaSchoolCode],	   
 					v_sabd.SchoolName, 	   
@@ -8059,17 +8013,11 @@ BEGIN
 					COUNT(DISTINCT (CASE WHEN v_sabd.[UnexcusedAbsence] =1 THEN v_sabd.AttedanceDate ELSE NULL END))    AS NumberOfDaysAbsentUnexcused,
 					COUNT(DISTINCT v_sabd.AttedanceDate)   AS NumberOfDaysMembership,
 					COUNT(DISTINCT (CASE WHEN v_sabd.InAttendance =1 THEN v_sabd.AttedanceDate ELSE NULL END)) / CONVERT(Float,COUNT(DISTINCT v_sabd.AttedanceDate)) * 100 AS ADA			
-		FROM dbo.View_StudentAttendanceByDay v_sabd		
-		WHERE EXISTS(SELECT 1 
-		             FROM Staging.StudentAttendanceByDay s_sabd
-					      INNER JOIN dbo.DimTime dt ON s_sabd.TimeKey = dt.TimeKey
-						  INNER JOIN dbo.DimStudent st ON s_sabd.StudentKey = st.StudentKey
-					 WHERE v_sabd.StudentId = st.StudentUniqueId
-					   AND v_sabd.[SchoolYear] = dt.SchoolYear)
-		GROUP BY    v_sabd.StudentId, 
-					
-					v_sabd.FirstName, 
-					v_sabd.LastName, 
+		FROM dbo.View_StudentAttendanceByDay v_sabd	
+		     INNER JOIN UniqueStudents us ON v_sabd.StudentId = us.StudentId AND us.RankId = 1 --only the latest name		
+		GROUP BY    v_sabd.StudentId, 					
+					us.FirstName, 
+					us.LastName, 
 					v_sabd.[DistrictSchoolCode],
 					v_sabd.[UmbrellaSchoolCode],	   
 					v_sabd.SchoolName, 	   
@@ -8235,73 +8183,34 @@ BEGIN
 		 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = COALESCE(
-								(SELECT TOP (1) ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE s._sourceStudentKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								 ORDER BY ds.[ValidFrom] DESC),
-								(SELECT ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE ds._sourceKey = '')
-							),
-			s.TimeKey =  	COALESCE(
-			                 (SELECT TOP (1) dt.TimeKey
+		SET s.StudentKey = (SELECT TOP (1) ds.StudentKey
+							FROM dbo.DimStudent ds
+							WHERE s._sourceStudentKey = ds._sourceKey									
+							  AND s.[ModifiedDate] >= ds.[ValidFrom]
+							  AND s.[ModifiedDate] < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+			s.TimeKey =  	(SELECT TOP (1) dt.TimeKey
 							  FROM dbo.DimTime dt
 									INNER JOIN dbo.DimSchool ds ON dt.SchoolKey = ds.SchoolKey
 							  WHERE s._sourceSchoolKey = ds._sourceKey
 							    AND s._sourceTimeKey = dt.SchoolDate
-							 ORDER BY dt.SchoolDate),
-							 (SELECT TOP (1) dt.TimeKey
-							  FROM dbo.DimTime dt									
-							  WHERE s._sourceTimeKey = dt.SchoolDate
-							 ORDER BY dt.SchoolDate)
-							 ),
-			s.SchoolKey =  COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									FROM dbo.DimSchool ds
-									WHERE s._sourceSchoolKey = ds._sourceKey									
-										AND s.[ModifiedDate] >= ds.[ValidFrom]
-										AND s.[ModifiedDate] < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-										FROM dbo.DimSchool ds
-										WHERE ds._sourceKey = '')
-							      ),		
-			s.DisciplineIncidentKey =COALESCE(
-										(SELECT TOP (1) ddi.DisciplineIncidentKey
-										FROM dbo.DimDisciplineIncident ddi
-										WHERE s._sourceDisciplineIncidentKey = ddi._sourceKey									
-											AND s.[ModifiedDate] >= ddi.[ValidFrom]
-											AND s.[ModifiedDate] < ddi.[ValidTo]
-										ORDER BY ddi.[ValidFrom] DESC),
-										(SELECT ds.DisciplineIncidentKey
-										FROM dbo.DimDisciplineIncident ds
-										WHERE ds._sourceKey = '')
-									)  
-										             
+							 ORDER BY dt.SchoolDate),							 
+			s.SchoolKey =  (SELECT TOP (1) ds.SchoolKey
+							FROM dbo.DimSchool ds
+							WHERE s._sourceSchoolKey = ds._sourceKey									
+								AND s.[ModifiedDate] >= ds.[ValidFrom]
+								AND s.[ModifiedDate] < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+			s.DisciplineIncidentKey =(SELECT TOP (1) ddi.DisciplineIncidentKey
+									  FROM dbo.DimDisciplineIncident ddi
+									  WHERE s._sourceDisciplineIncidentKey = ddi._sourceKey									
+									    AND s.[ModifiedDate] >= ddi.[ValidFrom]
+										AND s.[ModifiedDate] < ddi.[ValidTo]
+									  ORDER BY ddi.[ValidFrom] DESC)										             
         FROM Staging.StudentDiscipline s;
 		
 		DELETE FROM  Staging.StudentDiscipline
-		WHERE TimeKey IS NULL;
-
-		;WITH DuplicateKeys AS 
-		(
-		  SELECT [StudentKey], [TimeKey],[SchoolKey],[DisciplineIncidentKey]
-		  FROM  Staging.StudentDiscipline
-		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],[DisciplineIncidentKey]
-		  HAVING COUNT(*) > 1
-		)
-		
-		DELETE sd 
-		FROM Staging.StudentDiscipline sd
-		WHERE EXISTS(SELECT 1 
-		             FROM DuplicateKeys dk 
-					 WHERE sd.[StudentKey] = dk.StudentKey
-					   AND sd.[TimeKey] = dk.[TimeKey]
-					   AND sd.[SchoolKey] = dk.[SchoolKey]
-					   AND sd.[DisciplineIncidentKey] = dk.[DisciplineIncidentKey])
+		WHERE StudentKey IS NULL OR TimeKey IS NULL OR SchoolKey IS NULL OR DisciplineIncidentKey IS NULL;
 		    
 
 		--dropping the columnstore index
@@ -8594,55 +8503,26 @@ BEGIN
 		 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = COALESCE(
-								(SELECT TOP (1) ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE s._sourceStudentKey = ds._sourceKey									
-									AND s.[ModifiedDate] >= ds.[ValidFrom]
-									AND s.[ModifiedDate] < ds.[ValidTo]
-								 ORDER BY ds.[ValidFrom] DESC),
-								(SELECT ds.StudentKey
-								 FROM dbo.DimStudent ds
-								 WHERE ds._sourceKey = '')
-							),
-			s.TimeKey = (
-							SELECT TOP (1) dt.TimeKey
-							FROM dbo.DimTime dt									
-							WHERE s._sourceTimeKey = dt.SchoolDate
-							ORDER BY dt.SchoolDate
-						),		
-			s.AssessmentKey =COALESCE(
-								(SELECT TOP (1) da.AssessmentKey
-								 FROM dbo.DimAssessment da
-								 WHERE s._sourceAssessmentKey = da._sourceKey									
-									 AND s.[ModifiedDate] >= da.[ValidFrom]
-									 AND s.[ModifiedDate] < da.[ValidTo]
-								 ORDER BY da.[ValidFrom] DESC),
-								 (SELECT da.AssessmentKey
-								 FROM dbo.DimAssessment da
-								 WHERE da._sourceKey = '')
-
-						 	 )  										             
+		SET s.StudentKey = (SELECT TOP (1) ds.StudentKey
+							FROM dbo.DimStudent ds
+							WHERE s._sourceStudentKey = ds._sourceKey									
+							  AND s.[ModifiedDate] >= ds.[ValidFrom]
+							  AND s.[ModifiedDate] < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+			s.TimeKey = (SELECT TOP (1) dt.TimeKey
+						 FROM dbo.DimTime dt									
+						 WHERE s._sourceTimeKey = dt.SchoolDate
+						 ORDER BY dt.SchoolDate),		
+			s.AssessmentKey =(SELECT TOP (1) da.AssessmentKey
+							  FROM dbo.DimAssessment da
+							  WHERE s._sourceAssessmentKey = da._sourceKey									
+							    AND s.[ModifiedDate] >= da.[ValidFrom]
+								AND s.[ModifiedDate] < da.[ValidTo]
+							  ORDER BY da.[ValidFrom] DESC)									             
         FROM Staging.StudentAssessmentScore s;
 		
-	    DELETE FROM Staging.StudentAssessmentScore 
-		WHERE TimeKey IS NULL
-        
-		;WITH DuplicateKeys AS 
-		(
-		  SELECT [StudentKey], [TimeKey],[AssessmentKey]
-		  FROM  Staging.StudentAssessmentScore
-		  GROUP BY [StudentKey], [TimeKey],[AssessmentKey]
-		  HAVING COUNT(*) > 1
-		)
-		
-		DELETE sd 
-		FROM Staging.StudentAssessmentScore sd
-		WHERE EXISTS(SELECT 1 
-		             FROM DuplicateKeys dk 
-					 WHERE sd.[StudentKey] = dk.StudentKey
-					   AND sd.[TimeKey] = dk.[TimeKey]
-					   AND sd.[AssessmentKey] = dk.[AssessmentKey])
+		DELETE FROM Staging.StudentAssessmentScore 
+		WHERE StudentKey IS NULL OR TimeKey IS NULL OR AssessmentKey IS NULL;
 
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentAssessmentScore ON dbo.FactStudentAssessmentScore;
@@ -9095,40 +8975,26 @@ BEGIN
 
 		--updating staging keys
 		UPDATE s 
-		SET s.StudentKey = COALESCE(
-									(SELECT TOP (1) ds.StudentKey
-									 FROM dbo.DimStudent ds
-									 WHERE s._sourceStudentKey = ds._sourceKey									
-										AND s.[ModifiedDate] >= ds.[ValidFrom]
-										AND s.[ModifiedDate] < ds.[ValidTo]
-									 ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.StudentKey
-									 FROM dbo.DimStudent ds
-									 WHERE ds._sourceKey = '')
-							       ),
-			s.SchoolKey = COALESCE(
-									(SELECT TOP (1) ds.SchoolKey
-									FROM dbo.DimSchool ds
-									WHERE s._sourceSchoolKey = ds._sourceKey									
-										AND s.[ModifiedDate] >= ds.[ValidFrom]
-										AND s.[ModifiedDate] < ds.[ValidTo]
-									ORDER BY ds.[ValidFrom] DESC),
-									(SELECT ds.SchoolKey
-										FROM dbo.DimSchool ds
-										WHERE ds._sourceKey = '')
-							      ),	
-			s.CourseKey = COALESCE(
-									(SELECT TOP (1) dc.CourseKey
-									FROM dbo.DimCourse dc
-									WHERE s._sourceSchoolKey = dc._sourceKey									
-										AND s.[ModifiedDate] >= dc.[ValidFrom]
-										AND s.[ModifiedDate] < dc.[ValidTo]
-									ORDER BY dc.[ValidFrom] DESC),
-									(SELECT dc.CourseKey
-										FROM dbo.DimCourse dc
-										WHERE dc._sourceKey = '')
-							      )												             
+		SET s.StudentKey = (SELECT TOP (1) ds.StudentKey
+							FROM dbo.DimStudent ds
+							WHERE s._sourceStudentKey = ds._sourceKey									
+							  AND s.[ModifiedDate] >= ds.[ValidFrom]
+							  AND s.[ModifiedDate] < ds.[ValidTo]
+							ORDER BY ds.[ValidFrom] DESC),
+			s.SchoolKey = (SELECT TOP (1) ds.SchoolKey
+						   FROM dbo.DimSchool ds
+						   WHERE s._sourceSchoolKey = ds._sourceKey									
+								AND s.[ModifiedDate] >= ds.[ValidFrom]
+								AND s.[ModifiedDate] < ds.[ValidTo]
+						   ORDER BY ds.[ValidFrom] DESC),
+			s.CourseKey = (SELECT TOP (1) dc.CourseKey
+						   FROM dbo.DimCourse dc
+						   WHERE s._sourceSchoolKey = dc._sourceKey									
+							 AND s.[ModifiedDate] >= dc.[ValidFrom]
+							 AND s.[ModifiedDate] < dc.[ValidTo]
+						   ORDER BY dc.[ValidFrom] DESC)										             
         FROM Staging.StudentCourseTranscript s;
+
 
 		--updating the timeKey
 		--this is a special case since we need the min date term
@@ -9164,29 +9030,12 @@ BEGIN
 							ORDER BY dt.SchoolDate )
          FROM Staging.StudentCourseTranscript s;
 		
+
 		--we don't have a date associate with the newly identified staging records 
 		--we cannot default unknown TimeKey to specific dates
 		--these must be bad records. Deleting...
 		DELETE FROM Staging.StudentCourseTranscript 
-		WHERE TimeKey IS null
-
-
-		;WITH DuplicateKeys AS 
-		(
-		  SELECT [StudentKey], [TimeKey],[SchoolKey],[CourseKey]
-		  FROM  Staging.StudentCourseTranscript
-		  GROUP BY [StudentKey], [TimeKey],[SchoolKey],[CourseKey]
-		  HAVING COUNT(*) > 1
-		)
-		
-		DELETE sd 
-		FROM Staging.StudentCourseTranscript sd
-		WHERE EXISTS(SELECT 1 
-		             FROM DuplicateKeys dk 
-					 WHERE sd.[StudentKey] = dk.StudentKey
-					   AND sd.[TimeKey] = dk.[TimeKey]
-					   AND sd.[SchoolKey] = dk.[SchoolKey]
-					   AND sd.CourseKey = dk.CourseKey)
+		WHERE StudentKey IS NULL OR SchoolKey IS NULL OR CourseKey IS NULL OR TimeKey IS NULL; 
 
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentCourseTranscript ON dbo.FactStudentCourseTranscript;		   
@@ -9444,7 +9293,7 @@ BEGIN
 																									  AND g.LocalCourseCode = staff_sa.LocalCourseCode
 																									  AND g.SchoolYear = staff_sa.SchoolYear
 																									  AND g.UniqueSectionCode = staff_sa.UniqueSectionCode
-				INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI										
+				INNER JOIN  [EDFISQL01].[EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI										
 
 		WHERE gt.CodeValue = 'Grading Period'
 		      AND g.SchoolYear >= 2019 
@@ -9514,49 +9363,23 @@ BEGIN
 											  )
 								ORDER BY dt.SchoolDate
 							),
-		     s.[GradingPeriodKey] = COALESCE(
-												(SELECT TOP (1) dgp.GradingPeriodKey
-												FROM dbo.DimGradingPeriod dgp
-												WHERE s.[_sourceGradingPeriodey] = dgp._sourceKey									
-													AND s.[ModifiedDate] >= dgp.[ValidFrom]
-													AND s.[ModifiedDate] < dgp.[ValidTo]
-												ORDER BY dgp.[ValidFrom] DESC),
-												(SELECT dgp.GradingPeriodKey
-												FROM dbo.DimGradingPeriod dgp
-												WHERE dgp._sourceKey = '')
-											),
-			s.[StudentSectionKey] = COALESCE(
-												(SELECT TOP (1) dss.StudentSectionKey
-												 FROM dbo.DimStudentSection dss
-												 WHERE s.[_sourceStudentSectionKey] = dss._sourceKey									
-													AND s.[ModifiedDate] >= dss.[ValidFrom]
-													AND s.[ModifiedDate] < dss.[ValidTo]
-												 ORDER BY dss.[ValidFrom] DESC),
-												(SELECT dss.StudentSectionKey
-												 FROM dbo.DimStudentSection dss
-												 WHERE dss._sourceKey = '')
-									       )													             
+		     s.[GradingPeriodKey] = (SELECT TOP (1) dgp.GradingPeriodKey
+									 FROM dbo.DimGradingPeriod dgp
+									 WHERE s.[_sourceGradingPeriodey] = dgp._sourceKey									
+									   AND s.[ModifiedDate] >= dgp.[ValidFrom]
+									   AND s.[ModifiedDate] < dgp.[ValidTo]
+									ORDER BY dgp.[ValidFrom] DESC),
+			s.[StudentSectionKey] = (SELECT TOP (1) dss.StudentSectionKey
+									 FROM dbo.DimStudentSection dss
+									 WHERE s.[_sourceStudentSectionKey] = dss._sourceKey									
+									   AND s.[ModifiedDate] >= dss.[ValidFrom]
+									   AND s.[ModifiedDate] < dss.[ValidTo]
+									 ORDER BY dss.[ValidFrom] DESC)													             
         FROM Staging.StudentCourseGrade s;
 
 		
 		DELETE FROM Staging.[StudentCourseGrade]
-		WHERE TimeKey IS NULL;
-		
-		;WITH DuplicateKeys AS 
-		(
-		  SELECT [TimeKey],[GradingPeriodKey],[StudentSectionKey]
-		  FROM  Staging.[StudentCourseGrade]
-		  GROUP BY [TimeKey],[GradingPeriodKey],[StudentSectionKey]
-		  HAVING COUNT(*) > 1
-		)
-		
-		DELETE sd	
-		FROM Staging.[StudentCourseGrade] sd
-		WHERE EXISTS(SELECT 1 
-		             FROM DuplicateKeys dk 
-					 WHERE sd.[TimeKey] = dk.[TimeKey]
-					   AND sd.[GradingPeriodKey] = dk.[GradingPeriodKey]
-					   AND sd.[StudentSectionKey] = dk.[StudentSectionKey])
+		WHERE TimeKey IS NULL OR GradingPeriodKey IS NULL OR StudentSectionKey IS NULL; 
 
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentCourseGrades ON dbo.FactStudentCourseGrade;		   
