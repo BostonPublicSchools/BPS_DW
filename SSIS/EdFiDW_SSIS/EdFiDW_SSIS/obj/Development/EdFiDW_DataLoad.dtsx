@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="240"
-  DTS:VersionGUID="{1A2EC82E-AB45-4CEC-A8F5-29217FCCCCD3}">
+  DTS:VersionBuild="241"
+  DTS:VersionGUID="{E55D8F0E-CA8C-4ED7-91B9-9E3FF8153CED}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYUYjdY5YMU2XBDQBIT7fUQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAABjjBrWGBFYkM8UDHfXnEchko1wSHBTjeDJ8KWp6/dYwAAAAAOgAAAAAIAACAAAACxWVYrvocxSX551qV/IV8GNqiyvT/KAnxowslgapA51CAAAAA5dvg8nYoduuhWDAGzbndB/Hc1yf8aOzDg6T3QAnUSwkAAAABFXxTg4TedrRdOa4KKQICubHjPdV9gc+UvWVOOHtZsRCuI284tOpWU6Kgd/yDqlU6fU17ioIzgKMzjzCr4YwCI</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYUYjdY5YMU2XBDQBIT7fUQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAAByz6EEbo3V/kVoh1HLG5GFJgYIwbEuymHTNSC+NBxe5wAAAAAOgAAAAAIAACAAAAAAObUHdgd1DG8QM7d0XVFgLZqehpv8rlR+bitrCpWngSAAAAAc+S5APE0O9paDCx09sJBVLkqLaYjJyUQSWUH05qdm1UAAAAAJ3tx5yVhbQQNhpEUnss7tg55PjncyZ8dIO/kgovK7eZdJk56l8Gs5SXIM4pV+IjQSB0Cyc/y1AKY2dsMXDzCT</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>

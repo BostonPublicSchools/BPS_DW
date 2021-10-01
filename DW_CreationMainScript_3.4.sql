@@ -7614,9 +7614,13 @@ BEGIN
 
 	BEGIN TRY
 	
-		--DECLARE @LastLoadDate datetime= '07/01/2015' DECLARE @NewLoadDate datetime = GETDATE()
+		--DECLARE @LastLoadDate datetime= '09/27/2015' DECLARE @NewLoadDate datetime = GETDATE()
+		DECLARE @CurrentSchoolYear INT 
+		SELECT TOP 1 @CurrentSchoolYear = SchoolYear
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType 
+	    WHERE CurrentSchoolYear = 1 
 		TRUNCATE TABLE Staging.StudentAttendanceByDay	
-
+		
 		CREATE TABLE #StudentInstructionalDays (StudentUSI INT, 
 		                                         StudentUniqueId NVARCHAR(32), 
 		                                         SchoolId INT ,
@@ -7670,8 +7674,11 @@ BEGIN
 		FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSchoolAttendanceEvent ssae
 		     INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student s ON ssae.StudentUSI = s.StudentUSI
 			 INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_ssae ON ssae.AttendanceEventCategoryDescriptorId = d_ssae.DescriptorId
-		WHERE SchoolYear >= 2019
-			AND (ssae.LastModifiedDate > @LastLoadDate  AND ssae.LastModifiedDate <= @NewLoadDate)
+		WHERE (@LastLoadDate = '07/01/2015' AND ssae.SchoolYear >= 2019)
+		      OR
+			  ssae.SchoolYear = @CurrentSchoolYear; --this will account for deletions in the ODS for the current school year.
+			  --AND (ssae.LastModifiedDate > @LastLoadDate  AND ssae.LastModifiedDate <= @NewLoadDate)
+
 		
 
 		INSERT INTO #AttedanceEventRankedByReason
@@ -7710,16 +7717,16 @@ BEGIN
 		    INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Student st ON ssa.StudentUSI = st.StudentUSI
 			INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
 			INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
-																					and cda.SchoolId=cdce.SchoolId			
-		        
-		WHERE cdce.Date > @LastLoadDate
-		  AND cdce.Date <= @NewLoadDate
-		  AND ssa.SchoolYear >= 2019 
-		  AND cdce.Date BETWEEN ssa.EntryDate AND COALESCE(ssa.ExitWithdrawDate, GETDATE()) -- only students who were active during the school date being processed
-		  AND EXISTS(SELECT 1 
-				     FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce 
-				     WHERE  cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
-					   AND d_cdce.CodeValue='Instructional day') -- ONLY Instructional days
+																					and cda.SchoolId=cdce.SchoolId		
+		WHERE (
+		        (@LastLoadDate = '07/01/2015' AND cdce.SchoolYear >= 2019)
+		          OR
+			     cdce.SchoolYear = @CurrentSchoolYear
+			  )			  
+			  AND EXISTS(SELECT 1 
+						 FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce 
+						 WHERE  cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
+						   AND d_cdce.CodeValue='Instructional day') -- ONLY Instructional days
 							
 		
 		INSERT INTO Staging.StudentAttendanceByDay
@@ -7759,6 +7766,7 @@ BEGIN
 		DROP TABLE #StudentInstructionalDays, #AttedanceEventRankedByReason, #DistinctAttedanceEvents;
 			
 			
+		
 		
 	END TRY
 	BEGIN CATCH
@@ -7842,14 +7850,20 @@ BEGIN
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_FactStudentAttendanceByDay ON dbo.FactStudentAttendanceByDay;
 
+		DECLARE @CurrentSchoolYear INT 
+		SELECT TOP 1 @CurrentSchoolYear = SchoolYear
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType 
+	    WHERE CurrentSchoolYear = 1 
+		
 		--deleting changed records
 		DELETE prod
 		FROM [dbo].FactStudentAttendanceByDay AS prod
-		WHERE EXISTS (SELECT 1 
-		              FROM [Staging].StudentAttendanceByDay stage
-					  WHERE prod._sourceKey = stage._sourceKey)
-					  
-	    
+		WHERE EXISTS(SELECT 1 
+		             FROM dbo.DimTime dt 
+					 WHERE prod.[TimeKey] = dt.TimeKey
+					   AND dt.SchoolYear = @CurrentSchoolYear)
+
+		
 		
 		INSERT INTO dbo.FactStudentAttendanceByDay
 		(
@@ -7934,9 +7948,9 @@ BEGIN
 		delete d_sabd
 		FROM  [Derived].[StudentAttendanceByDay] d_sabd
 		WHERE EXISTS(SELECT 1 
-		             FROM Staging.StudentAttendanceByDay s_sabd
-					 WHERE d_sabd.StudentKey = s_sabd.StudentKey
-					    AND d_sabd.[TimeKey] = s_sabd.[TimeKey])
+		             FROM dbo.DimTime dt 
+					 WHERE d_sabd.[TimeKey] = dt.TimeKey
+					   AND dt.SchoolYear = @CurrentSchoolYear)
 
 		INSERT INTO [Derived].[StudentAttendanceByDay]
 					([StudentKey]
@@ -8004,16 +8018,9 @@ BEGIN
 			,[InAttendance]
 			,[Tardy])
 			
-		--ADA
-		
-		DELETE d_sabd
-		FROM  [Derived].[StudentAttendanceADA] d_sabd
-		WHERE EXISTS(SELECT 1 
-		             FROM Staging.StudentAttendanceByDay s_sabd
-					      INNER JOIN dbo.DimTime dt ON s_sabd.TimeKey = dt.TimeKey
-						  INNER JOIN dbo.DimStudent st ON s_sabd.StudentKey = st.StudentKey
-					 WHERE d_sabd.StudentId = st.StudentUniqueId
-					   AND d_sabd.[SchoolYear] = dt.SchoolYear)
+		--ADA		
+		DELETE FROM [Derived].[StudentAttendanceADA] 
+		WHERE [SchoolYear] = @CurrentSchoolYear;
 					   
 	    --handling students who change their names
 		;WITH UniqueStudents AS 
@@ -8060,7 +8067,8 @@ BEGIN
 					COUNT(DISTINCT v_sabd.AttedanceDate)   AS NumberOfDaysMembership,
 					COUNT(DISTINCT (CASE WHEN v_sabd.InAttendance =1 THEN v_sabd.AttedanceDate ELSE NULL END)) / CONVERT(Float,COUNT(DISTINCT v_sabd.AttedanceDate)) * 100 AS ADA			
 		FROM dbo.View_StudentAttendanceByDay v_sabd	
-		     INNER JOIN UniqueStudents us ON v_sabd.StudentId = us.StudentId AND us.RankId = 1 --only the latest name		
+		     INNER JOIN UniqueStudents us ON v_sabd.StudentId = us.StudentId AND us.RankId = 1 --only the latest name	
+		WHERE v_sabd.SchoolYear = @CurrentSchoolYear
 		GROUP BY    v_sabd.StudentId, 					
 					us.FirstName, 
 					us.LastName, 
@@ -8069,8 +8077,6 @@ BEGIN
 					v_sabd.SchoolName, 	   
 					v_sabd.SchoolYear
 
-					
-		
 
         -- updating the EndTime to now and status to Success		
 		UPDATE dbo.ETL_Lineage
