@@ -3016,9 +3016,9 @@ BEGIN
 				UNION ALL
 				SELECT daySeqNumber + 1
 				FROM daySeqs
-				WHERE daySeqNumber < DATEDIFF(DAY, @startDate, DATEADD(DAY,-1,@endDate))),
+				WHERE daySeqNumber < DATEDIFF(DAY, DATEADD(DAY,1,@startDate), @endDate)),
 					theDates (theDate)
-			AS (SELECT DATEADD(DAY, daySeqNumber,@startDate)
+			AS (SELECT DATEADD(DAY, daySeqNumber,DATEADD(DAY,1,@startDate))
 				FROM daySeqs),
 					src
 			AS (SELECT TheDate = CONVERT(DATE, theDate),
@@ -3193,7 +3193,8 @@ BEGIN
 
 			--;WITH EdFiSchools AS
 			--( 
-				--DECLARE @startDate DATE = '20150701';    
+				--DECLARE @startDate DATE = '20150701';  
+				
 				SELECT DISTINCT 
 						cd.Date as SchoolDate, 	
 					   CONCAT_WS('|','Ed-Fi',Convert(NVARCHAR(MAX),s.SchoolId)) AS [_sourceKey],
@@ -3218,11 +3219,12 @@ BEGIN
 																					     AND cd.Date BETWEEN ses.BeginDate AND ses.EndDate
 					INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor td ON ses.TermDescriptorId = td.DescriptorId
 
-				WHERE  cd.Date >= @startDate AND 
-					  (
-					   (ses.LastModifiedDate > @LastLoadDate AND ses.LastModifiedDate <= @NewLoadDate) OR 
-					   (cedv.LastModifiedDate > @LastLoadDate AND cedv.LastModifiedDate <= @NewLoadDate)
-					  )
+				WHERE  (cd.Date > CONVERT(DATE,@LastLoadDate) AND cd.Date <= CONVERT(DATE,@NewLoadDate))
+					    OR
+					   (
+					    (ses.LastModifiedDate > @LastLoadDate AND ses.LastModifiedDate <= @NewLoadDate) OR 
+					    (cedv.LastModifiedDate > @LastLoadDate AND cedv.LastModifiedDate <= @NewLoadDate)
+					   )
 			--)
 			
 		
@@ -3321,13 +3323,7 @@ BEGIN
 				  ,es.[_sourceKey] AS [_sourceSchoolKey]
 
 				  ,CASE WHEN @LastLoadDate <> '07/01/2015' THEN
-							  COALESCE(
-							  (SELECT MAX(t) FROM
-								 (VALUES
-								   (es.SchoolSessionModifiedDate)
-								 , (es.CalendarEventTypeModifiedDate)                             
-								 ) AS [MaxLastModifiedDate](t)
-							   ),'07/01/2015')
+							  nst.[SchoolDate]
 						ELSE 
 							  '07/01/2015' -- setting the validFrom to beginning of time during thre first load. 
 					END AS ValidFrom
@@ -3339,7 +3335,7 @@ BEGIN
 		 END
 
 		
-
+		
 
 			
 	END TRY
@@ -3413,8 +3409,12 @@ BEGIN
 		    prod.IsLatest = 0
 		FROM 
 			[dbo].[DimTime] AS prod
-			INNER JOIN Staging.[Time] AS stage ON prod.SchoolDate = stage.SchoolDate
+			INNER JOIN Staging.[Time] AS stage ON prod.SchoolDate = stage.SchoolDate			                             
 		WHERE prod.ValidTo = '12/31/9999'
+		AND stage.[_sourceSchoolKey] IS NOT NULL -- only records associated with schools will slowly change 
+		AND EXISTS (SELECT 1 
+		            FROM dbo.DimSchool ds
+					WHERE stage.[_sourceSchoolKey] = ds._sourceKey)
 		
 		INSERT INTO dbo.DimTime
 		(
@@ -4118,7 +4118,7 @@ BEGIN
 							dbo.Func_ETL_GetFullName(staff.FirstName,staff.MiddleName,staff.LastSurname) AS HomeRoomTeacher,
 							ROW_NUMBER() OVER (PARTITION BY std_sa.StudentUSI, 
 															std_sa.SchoolYear, 
-															std_sa.SchoolId ORDER BY staff_sa.BeginDate DESC) AS RowRankId INTO 
+															std_sa.SchoolId ORDER BY staff_sa.BeginDate DESC) AS RowRankId 
 			FROM  #StudentsWithChanges s
 			      INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
 				  INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.SectionIdentifier = staff_sa.SectionIdentifier
@@ -7718,11 +7718,13 @@ BEGIN
 			INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDate cda on ssa.SchoolId = cda.SchoolId 														   
 			INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CalendarDateCalendarEvent cdce on cda.Date=cdce.Date 
 																					and cda.SchoolId=cdce.SchoolId		
-		WHERE (
+		WHERE (		       
 		        (@LastLoadDate = '07/01/2015' AND cdce.SchoolYear >= 2019)
-		          OR
+		         OR
 			     cdce.SchoolYear = @CurrentSchoolYear
-			  )			  
+			  )	
+			  AND cdce.Date BETWEEN ssa.EntryDate AND COALESCE(ssa.ExitWithdrawDate,GETDATE())
+			  AND cdce.Date <= GETDATE()
 			  AND EXISTS(SELECT 1 
 						 FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d_cdce 
 						 WHERE  cdce.CalendarEventDescriptorId = d_cdce.DescriptorId
@@ -7845,7 +7847,7 @@ BEGIN
 	    DELETE FROM Staging.StudentAttendanceByDay 
 		WHERE TimeKey IS NULL OR StudentKey IS NULL OR SchoolKey IS NULL OR AttendanceEventCategoryKey IS NULL;
 
-	  			   
+		
 					 
 		--dropping the columnstore index
 		DROP INDEX IF EXISTS CSI_FactStudentAttendanceByDay ON dbo.FactStudentAttendanceByDay;
