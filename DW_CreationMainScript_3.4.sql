@@ -4107,10 +4107,15 @@ BEGIN
 			  LEFT JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor d ON sr.RaceDescriptorId = d.DescriptorId	    
 		GROUP BY s.StudentUSI
 			
-			
-		 
+		DECLARE @CurrentSchoolYear INT 
+		SELECT TOP 1 @CurrentSchoolYear = SchoolYear
+		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType 
+	    WHERE CurrentSchoolYear = 1 
+
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate(); DECLARE @CurrentSchoolYear INT = 2022
 		;WITH StudentHomeRooomByYear AS
 		(
+		    
 			SELECT DISTINCT std_sa.StudentUSI, 
 							std_sa.SchoolYear, 
 							std_sa.SchoolId,  
@@ -4122,12 +4127,22 @@ BEGIN
 			FROM  #StudentsWithChanges s
 			      INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StudentSectionAssociation std_sa ON s.StudentUSI = std_sa.StudentUSI			
 				  INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.StaffSectionAssociation staff_sa  ON std_sa.SectionIdentifier = staff_sa.SectionIdentifier
-																										AND std_sa.SchoolYear = staff_sa.SchoolYear
+																										     AND std_sa.SchoolYear = staff_sa.SchoolYear
+																											 AND std_sa.SchoolId = staff_sa.SchoolId
+																											 AND std_sa.LocalCourseCode = staff_sa.LocalCourseCode
+																											 AND std_sa.SessionName = staff_sa.SessionName
+																											 AND std_sa.BeginDate = staff_sa.BeginDate
 				 INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff on staff_sa.StaffUSI = staff.StaffUSI
 			WHERE std_sa.HomeroomIndicator = 1
-				 AND std_sa.SchoolYear >= 2019
-				 AND std_sa.EndDate > GETDATE()				 
+				  AND 
+				  (
+				    (@LastLoadDate = '07/01/2015' AND std_sa.SchoolYear >= 2019)
+				    OR
+				    std_sa.SchoolYear	= @CurrentSchoolYear			
+				  )
+ 				  
         )
+		
 			
 		
 		INSERT INTO Staging.[Student]
@@ -7619,6 +7634,7 @@ BEGIN
 		SELECT TOP 1 @CurrentSchoolYear = SchoolYear
 		FROM  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.SchoolYearType 
 	    WHERE CurrentSchoolYear = 1 
+
 		TRUNCATE TABLE Staging.StudentAttendanceByDay	
 		
 		CREATE TABLE #StudentInstructionalDays (StudentUSI INT, 
