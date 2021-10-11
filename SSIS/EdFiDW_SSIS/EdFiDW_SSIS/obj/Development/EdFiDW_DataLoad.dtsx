@@ -11,8 +11,8 @@
   DTS:LocaleID="1033"
   DTS:ObjectName="EdFiDW_DataLoad"
   DTS:PackageType="5"
-  DTS:VersionBuild="249"
-  DTS:VersionGUID="{BDD888A9-2F5A-41DF-A887-5449498B539B}">
+  DTS:VersionBuild="253"
+  DTS:VersionGUID="{48B574D2-651F-4DFC-B227-6BC6E24BB50C}">
   <DTS:Property
     DTS:Name="PackageFormatVersion">8</DTS:Property>
   <DTS:ConnectionManagers>
@@ -27,7 +27,7 @@
           <DTS:Password
             DTS:Name="Password"
             Sensitive="1"
-            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYUYjdY5YMU2XBDQBIT7fUQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAADw3F+NeVgb5jHurmmB+s+JtG0oPS2D8kCJDLdmhS0BnwAAAAAOgAAAAAIAACAAAADRINequ8HCE+CHHgMjTUI22Cs52q5L8UAf6/jD0+bQwiAAAAAn9ZGM5ZtPzhEyh/FNlNih0hwztCxtzELawcNi1Os5fkAAAABnVESwFRH7kinqFAoCVNFrWVESxx9b5AOsHIX0wrB/Gw0KoS+hbRBbjh0c8Yq3CODREi33z/DEv/mATrr6T2dg</DTS:Password>
+            Encrypted="1">AQAAANCMnd8BFdERjHoAwE/Cl+sBAAAAYUYjdY5YMU2XBDQBIT7fUQAAAAAIAAAARABUAFMAAAAQZgAAAAEAACAAAABEs8yL3cX9dyvbb68LunOksqo3+wATcp+8ecHWj5FtYQAAAAAOgAAAAAIAACAAAACnFr+BcVRoChu3xyWdIiJ80wSv+7wDm5Bg16GnF1b2AiAAAACdT9HMH3iVl+bISaZUuQF+X4Gi65oeI6eBmS0QexESW0AAAACRAFFkyhkphtR5rJIUiLKKO2xxa8HefLvgR1ExurrjFeVy48NpZTk9OJi4s/nunzvohpFA7rTH4+unCllM1HH4</DTS:Password>
         </DTS:ConnectionManager>
       </DTS:ObjectData>
     </DTS:ConnectionManager>
@@ -622,7 +622,6 @@
               DTS:refId="Package\Core ITems  - Schools, Time, and Students have to successfully load before any other data domain can load\Student Dimension\Populate Staging"
               DTS:CreationName="Microsoft.ExecuteSQLTask"
               DTS:Description="Populate Staging"
-              DTS:Disabled="True"
               DTS:DTSID="{217CC6BE-A678-45E9-A6EB-E52ECCF212D3}"
               DTS:ExecutableType="Microsoft.ExecuteSQLTask"
               DTS:LocaleID="-1"
@@ -3408,20 +3407,20 @@
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint]"
           DTS:CreationName=""
-          DTS:DTSID="{0685532C-D709-4AA9-AA82-7A3DFFF875B6}"
+          DTS:DTSID="{AB2269C0-5584-4E32-B787-A067DB6A68F9}"
           DTS:From="Package\Each of these containers run regardless of whether others succeed\Transcripts"
           DTS:LogicalAnd="True"
           DTS:ObjectName="Constraint"
-          DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Attendance"
           DTS:Value="2" />
         <DTS:PrecedenceConstraint
-          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
+          DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 1]"
           DTS:CreationName=""
-          DTS:DTSID="{CBEAEE07-18E7-4BB3-932F-5F38B58FCBC5}"
+          DTS:DTSID="{98D918BE-56DD-4B02-B823-88847D803062}"
           DTS:From="Package\Each of these containers run regardless of whether others succeed\Attendance"
           DTS:LogicalAnd="True"
-          DTS:ObjectName="Constraint 3"
-          DTS:To="Package\Each of these containers run regardless of whether others succeed\Discipline"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\Each of these containers run regardless of whether others succeed\Course Grades"
           DTS:Value="2" />
         <DTS:PrecedenceConstraint
           DTS:refId="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 4]"
@@ -4439,7 +4438,7 @@
           PanelSize="418,1157"
           Size="418,1200"
           Id="Package\Each of these containers run regardless of whether others succeed\Assessment"
-          TopLeft="1051.5912686271,12.8849206808352" />
+          TopLeft="524.924601960433,37.8849206808352" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance\Dim AttendanceEventCategory\Get Date Of Current Load"
@@ -4750,7 +4749,7 @@
           PanelSize="422,1159"
           Size="422,1202"
           Id="Package\Each of these containers run regardless of whether others succeed\Attendance"
-          TopLeft="24.3214285714288,12.4642857142899" />
+          TopLeft="1517.65476190476,42.1666666666667" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades\Dim GradingPeriod\Get Date Of Current Load"
@@ -5233,10 +5232,10 @@
         <ContainerLayout
           HeaderHeight="43"
           IsExpanded="True"
-          PanelSize="859,1184"
-          Size="859,1227"
+          PanelSize="859,1161"
+          Size="859,1204"
           Id="Package\Each of these containers run regardless of whether others succeed\Course Grades"
-          TopLeft="2053.96975866695,18.7888889944991" />
+          TopLeft="2023.96975866695,43.7888889944988" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline\Dim DisciplineIncident\Get Date Of Current Load"
@@ -5547,7 +5546,7 @@
           PanelSize="406,1159"
           Size="406,1202"
           Id="Package\Each of these containers run regardless of whether others succeed\Discipline"
-          TopLeft="550.313490959702,16.8134921094054" />
+          TopLeft="23.6468242930353,41.8134921094054" />
         <NodeLayout
           Size="268,43"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts\Dim Course\Get Date Of Current Load"
@@ -5858,70 +5857,10 @@
           PanelSize="416,1160"
           Size="416,1203"
           Id="Package\Each of these containers run regardless of whether others succeed\Transcripts"
-          TopLeft="1536.68253782186,14.003968309727" />
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint]"
-          TopLeft="1952.68253782186,615.603968309727">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="101.28722084509,16.784920684772"
-              Start="0,0"
-              End="93.7872208450899,16.784920684772">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="46.643610422545,0" />
-                  <mssgle:CubicBezierSegment
-                    Point1="46.643610422545,0"
-                    Point2="50.643610422545,0"
-                    Point3="50.643610422545,4" />
-                  <mssgle:LineSegment
-                    End="50.643610422545,12.784920684772" />
-                  <mssgle:CubicBezierSegment
-                    Point1="50.643610422545,12.784920684772"
-                    Point2="50.643610422545,16.784920684772"
-                    Point3="54.643610422545,16.784920684772" />
-                  <mssgle:LineSegment
-                    End="93.7872208450899,16.784920684772" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="25.339157297545,-17.609375,50.60890625,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
-        <EdgeLayout
-          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 3]"
-          TopLeft="446.321428571429,615.638888911848">
-          <EdgeLayout.Curve>
-            <mssgle:Curve
-              StartConnector="{assembly:Null}"
-              EndConnector="103.992062388273,0"
-              Start="0,0"
-              End="96.4920623882732,0">
-              <mssgle:Curve.Segments>
-                <mssgle:SegmentCollection
-                  Capacity="5">
-                  <mssgle:LineSegment
-                    End="96.4920623882732,0" />
-                </mssgle:SegmentCollection>
-              </mssgle:Curve.Segments>
-            </mssgle:Curve>
-          </EdgeLayout.Curve>
-          <EdgeLayout.Labels>
-            <mssgm:EdgeLabel
-              BoundingBox="22.9415780691366,5,50.60890625,11.609375"
-              RelativePosition="Any" />
-          </EdgeLayout.Labels>
-        </EdgeLayout>
+          TopLeft="1010.01587115519,39.003968309727" />
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 4]"
-          TopLeft="956.313490959702,615.34920639512">
+          TopLeft="429.646824293035,640.34920639512">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -5945,7 +5884,7 @@
         </EdgeLayout>
         <EdgeLayout
           Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 5]"
-          TopLeft="1469.1912686271,614.244444495281">
+          TopLeft="942.524601960433,639.244444495281">
           <EdgeLayout.Curve>
             <mssgle:Curve
               StartConnector="{assembly:Null}"
@@ -5964,6 +5903,54 @@
           <EdgeLayout.Labels>
             <mssgm:EdgeLabel
               BoundingBox="4.6911814723801,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint]"
+          TopLeft="1426.01587115519,641.835317488197">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="91.6388907495686,0"
+              Start="0,0"
+              End="84.1388907495686,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="84.1388907495686,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="16.7649922497843,5,50.60890625,11.609375"
+              RelativePosition="Any" />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\Each of these containers run regardless of whether others succeed.PrecedenceConstraints[Constraint 1]"
+          TopLeft="1939.65476190476,644.477777830583">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="84.314996762188,0"
+              Start="0,0"
+              End="76.814996762188,0">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="76.814996762188,0" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <mssgm:EdgeLabel
+              BoundingBox="13.103045256094,5,50.60890625,11.609375"
               RelativePosition="Any" />
           </EdgeLayout.Labels>
         </EdgeLayout>

@@ -3839,8 +3839,8 @@ BEGIN
 		SET prod.ValidTo = stage.ValidFrom,
 		    prod.IsLatest = 0 
 		FROM 
-			[dbo].[DimSchool] AS prod
-			INNER JOIN Staging.School AS stage ON prod._sourceKey = stage._sourceKey
+			[dbo].[DimStaff] AS prod
+			INNER JOIN Staging.Staff AS stage ON prod._sourceKey = stage._sourceKey
 		WHERE prod.ValidTo = '12/31/9999'
 
 
@@ -6319,7 +6319,7 @@ BEGIN
 								  CAST(perf2 AS NVARCHAR(MAX)) AS [Proficiency level 2]
      
 							FROM [BPSGranary02].[RAEDatabase].[dbo].[mcasitems] 
-							WHERE schyear in (2015,2016,2017) ) scores
+							WHERE schyear in ('2015','2016','2017') ) scores
 					UNPIVOT
 					(
 					   scorevalue
