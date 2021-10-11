@@ -7374,7 +7374,7 @@ BEGIN
                             ) AS [MaxLastModifiedDate](t)
                         )
 				ELSE 
-					    '07/01/2015' -- setting the validFrom to beggining of time during thre first load. 
+					    ssa.BeginDate -- setting the validFrom to beggining of the staff-student section association during thre first load. 
 			END AS ValidFrom,
 			'12/31/9999' AS ValidTo,
 			1 AS IsCurrent	
@@ -7385,6 +7385,8 @@ BEGIN
 																											  AND ssa.SchoolYear = staff_sa.SchoolYear
 																											  AND ssa.SectionIdentifier = staff_sa.SectionIdentifier
 																											  AND ssa.SessionName = staff_sa.SessionName
+																											  AND ssa.BeginDate = staff_sa.BeginDate
+																											  AND ssa.SectionIdentifier = staff_sa.SectionIdentifier
 				 INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI
 				 INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.CourseOffering co ON ssa.SchoolId = co.SchoolId
 				                                                                       AND ssa.LocalCourseCode = co.LocalCourseCode
@@ -7504,7 +7506,7 @@ BEGIN
 						   ORDER BY dc.[ValidFrom] DESC),
 			s.StaffKey = (SELECT TOP (1) ds.StaffKey
 						  FROM dbo.DimStaff ds
-						  WHERE s._sourceCourseKey = ds._sourceKey									
+						  WHERE s._sourceStaffKey = ds._sourceKey									
 							AND s.ValidFrom >= ds.[ValidFrom]
 							AND s.ValidFrom < ds.[ValidTo]
 						  ORDER BY ds.[ValidFrom] DESC)
@@ -8596,7 +8598,7 @@ BEGIN
 		WHERE StudentKey IS NULL OR TimeKey IS NULL OR AssessmentKey IS NULL;
 		
 		
-
+			
 		--dropping the columnstore index
         DROP INDEX IF EXISTS CSI_FactStudentAssessmentScore ON dbo.FactStudentAssessmentScore;
 	    
@@ -8651,7 +8653,7 @@ BEGIN
 									  CAST(perf2 AS NVARCHAR(MAX)) AS [Proficiency level 2]
      
 								FROM [BPSGranary02].[RAEDatabase].[dbo].[mcasitems] 
-								WHERE schyear >= 2015 ) scores
+								WHERE schyear in ('2015','2016','2017') ) scores
 						UNPIVOT
 						(
 						   scorevalue
@@ -9341,7 +9343,7 @@ BEGIN
 		    _sourceGradingPeriodey,
 		    _sourceStudentSectionKey
 		)
-		
+		--DECLARE @LastLoadDate datetime = '07/01/2015' declare @NewLoadDate datetime = getdate();
 		SELECT DISTINCT
 			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId,g.SchoolId,g.LocalCourseCode,staff.StaffUniqueId,g.SchoolYear,g.SectionIdentifier,g.SessionName,CONVERT(NVARCHAR, g.BeginDate, 112),td_gp.CodeValue,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceKey,
 			   NULL AS TimeKey,	  			   
@@ -9350,7 +9352,7 @@ BEGIN
 			   g.LetterGradeEarned,
 			   g.NumericGradeEarned,
 			   g.LastModifiedDate AS ModifiedDate,			   			   
-			   CONCAT_WS('|','Ed-Fi',gp.GradingPeriodDescriptorId,gp.SchoolId,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceGradingPeriodKey,		          
+			   CONCAT_WS('|','Ed-Fi',gpd.CodeValue,gp.SchoolId,CONVERT(NVARCHAR, gp.BeginDate, 112)) AS _sourceGradingPeriodKey,		          
 			   CONCAT_WS('|','Ed-Fi',s.StudentUniqueId,g.SchoolId,g.LocalCourseCode,staff.StaffUniqueId,g.SchoolYear,g.SectionIdentifier,g.SessionName, CONVERT(NVARCHAR, g.BeginDate, 112) ) AS _sourceStudentSectionKey
 		--select *
 		FROM [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Grade AS g
@@ -9365,7 +9367,8 @@ BEGIN
 																									  AND g.LocalCourseCode = staff_sa.LocalCourseCode
 																									  AND g.SchoolYear = staff_sa.SchoolYear
 																									  AND g.SectionIdentifier = staff_sa.SectionIdentifier
-				INNER JOIN  [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI	
+				INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Staff staff ON staff_sa.StaffUSI = staff.StaffUSI	
+				INNER JOIN [EDFISQL01].[v34_EdFi_BPS_Production_Ods].edfi.Descriptor AS gpd ON	gp.GradingPeriodDescriptorId = gpd.DescriptorId
 		WHERE td_gt.CodeValue = 'Grading Period'
 		      AND g.SchoolYear >= 2019 
 		      AND (
